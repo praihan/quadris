@@ -1,13 +1,21 @@
 CXX=g++-5
+BUILD_DIR=build/
+EXEC=quadris
 
 all:
-	@mkdir -p build/
-	@cmake -DCMAKE_CXX_COMPILER=${CXX} -B./build/ -H.
-	@make -C build/
-	@cp build/quadris .
+	@mkdir -p ${BUILD_DIR}
+	@cmake -DCMAKE_CXX_COMPILER=${CXX} -B${BUILD_DIR} -H.
+	@make -C ${BUILD_DIR}
+	@cp ${BUILD_DIR}/${EXEC} .
+
+debug:
+	@mkdir -p ${BUILD_DIR}
+	@cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=${CXX} -B${BUILD_DIR} -H.
+	@make -C ${BUILD_DIR}
+	@cp ${BUILD_DIR}/${EXEC} .
 
 clean:
-	@rm -rf build/
-	@rm -f quadris
+	@rm -rf ${BUILD_DIR}
+	@rm -f ${EXEC}
 
 .PHONY: all clean debug
