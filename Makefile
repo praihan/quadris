@@ -1,6 +1,6 @@
 CXX=g++-5
 
-all: clean
+all:
 	@mkdir -p build/
 	@cmake -DCMAKE_CXX_COMPILER=${CXX} -B./build/ -H.
 	@make -C build/
