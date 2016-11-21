@@ -1,7 +1,7 @@
 #ifndef GRAPHIC_DISPLAY_H_
 #define GRAPHIC_DISPLAY_H_
 
-#include "Display.h";
+#include "Display.h"
 
 namespace qd {
 

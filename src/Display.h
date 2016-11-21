@@ -2,12 +2,13 @@
 #define DISPLAY_H_
 
 #include "Event.h"
+#include "Board.h"
 
 namespace qd {
 
   class Display {
   protected:
-    Display(const Grid&);
+    Display(const Board&);
 
     virtual void onGameStarted() = 0;
     virtual void onCellUpdated() = 0;

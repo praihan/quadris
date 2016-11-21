@@ -1,7 +1,7 @@
 #ifndef TEXT_DISPLAY_H_
 #define TEXT_DISPLAY_H_
 
-#include "Display.h";
+#include "Display.h"
 
 namespace qd {
 
