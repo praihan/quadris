@@ -22,13 +22,21 @@ set (SOURCES
   src/Levels/Level4.cc
 
   src/Block.h
+  src/Block.cc
   src/Blocks/BlockI.h
+  src/Blocks/BlockI.cc
   src/Blocks/BlockJ.h
+  src/Blocks/BlockJ.cc
   src/Blocks/BlockL.h
+  src/Blocks/BlockL.cc
   src/Blocks/BlockO.h
+  src/Blocks/BlockO.cc
   src/Blocks/BlockS.h
+  src/Blocks/BlockS.cc
   src/Blocks/BlockT.h
+  src/Blocks/BlockT.cc
   src/Blocks/BlockZ.h
+  src/Blocks/BlockZ.cc
 
   src/Display.h
   src/Display.cc
