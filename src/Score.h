@@ -6,12 +6,15 @@
 namespace qd {
 
   class Score {
+  public:
+    const Event<>& scoreUpdated() const;
+    const Event<>& hiScoreUpdated() const;
+
   private:
     int _currentScore;
     int _hiScore;
-  public:
-    Event<> scoreUpdated();
-    Event<> hiScoreUpdated();
+    Event<> _scoreUpdated;
+    Event<> _hiScoreUpdate;
   };
 
 }
