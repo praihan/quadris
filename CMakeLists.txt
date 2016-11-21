@@ -32,6 +32,7 @@ set (SOURCES
   src/Cell.h
   src/Position.h
   src/Score.h
+  src/Score.cc
 
   src/Command.h
   src/CommandInterpreter.h

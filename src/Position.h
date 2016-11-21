@@ -3,8 +3,7 @@
 
 namespace qd {
 
-  class Position {
-  public:
+  struct Position {
     int x;
     int y;
   };

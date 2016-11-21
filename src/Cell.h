@@ -5,8 +5,7 @@
 
 namespace qd {
 
-  class Cell {
-  public:
+  struct Cell {
     Type blockType;
   };
 }
