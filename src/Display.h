@@ -18,7 +18,7 @@ namespace qd {
     virtual void onGameEnded() = 0;
 
   protected:
-    ObserverSlot<> _gameStartSlot;
+    ObserverSlot<> _gameStartedSlot;
     ObserverSlot<> _cellUpdatedSlot;
     ObserverSlot<> _scoreUpdatedSlot;
     ObserverSlot<> _hiScoreUpdatedSlot;

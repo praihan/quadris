@@ -40,6 +40,9 @@ namespace qd {
     Event<> _nextBlockGenerated;
     Event<> _gameEnded;
 
+    ObserverSlot<> _scoreUpdatedSlot;
+    ObserverSlot<> _hiScoreUpdatedSlot;
+
   };
 
 }
