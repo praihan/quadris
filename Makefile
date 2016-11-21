@@ -17,5 +17,6 @@ debug:
 clean:
 	@rm -rf ${BUILD_DIR}
 	@rm -f ${EXEC}
+	@rm -rf ${EXEC}.dSYM/
 
 .PHONY: all clean debug
