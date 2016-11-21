@@ -29,15 +29,19 @@ set (SOURCES
   src/Displays/TextDisplay.h
 
   src/Board.h
+  src/Board.cc
   src/Cell.h
   src/Position.h
   src/Score.h
   src/Score.cc
 
   src/Command.h
+  src/Command.cc
   src/CommandInterpreter.h
+  src/CommandInterpreter.cc
 
   src/CommandLineArguments.h
+  src/CommandLineArguments.cc
 )
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXXFLAGS}")

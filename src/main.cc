@@ -17,5 +17,8 @@ int main() {
 
   auto s2 = std::move(s1);
 
+  // e.~Event<int>();
+  // new (std::addressof(e)) qd::Event<int>{};
+
   e.notifyObservers(5);
 }

@@ -6,13 +6,26 @@
 #include "Level.h"
 #include "Score.h"
 #include "Cell.h"
+#include "Command.h"
 #include <array>
 #include <memory>
-
 
 namespace qd {
 
   class Board {
+  public:
+    void reset();
+    void executeCommand(const Command& command);
+    void seedWith(int seed);
+    void setStartLevel(int level);
+
+    const Event<>& gameStarted() const;
+    const Event<>& cellUpdated() const;
+    const Event<>& scoreUpdated() const;
+    const Event<>& highScoreUpdated() const;
+    const Event<>& nextBlockGenerated() const;
+    const Event<>& gameEnded() const;
+
   private:
     std::array<std::array<Cell, 11>, 18> _cells;
     std::unique_ptr<Block> _activeBlock;
@@ -27,18 +40,6 @@ namespace qd {
     Event<> _nextBlockGenerated;
     Event<> _gameEnded;
 
-  public:
-    reset();
-    executeCommand(Command command);
-    seedWith(int seed);
-    setStartLevel(int level);
-
-    const Event<>& gameStarted() const;
-    const Event<>& cellUpdated() const;
-    const Event<>& scoreUpdated() const;
-    const Event<>& highScoreUpdated() const;
-    const Event<>& nextBlockGenerated() const;
-    const Event<>& gameEnded() const;
   };
 
 }

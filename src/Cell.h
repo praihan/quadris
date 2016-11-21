@@ -6,7 +6,7 @@
 namespace qd {
 
   struct Cell {
-    Type blockType;
+    Block::Type blockType;
   };
 }
 

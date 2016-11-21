@@ -31,8 +31,14 @@ namespace qd {
       HINT
     };
 
+    Command(Type, const std::vector<std::string>& = {});
+
     Type type() const;
-    std::vector<std::string> arguments;
+    const std::vector<std::string>& arguments() const;
+
+  private:
+    Type _type;
+    std::vector<std::string> _arguments;
   };
 
 }

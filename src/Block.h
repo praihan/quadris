@@ -37,7 +37,7 @@ namespace qd {
         Position, // value_type
         std::ptrdiff_t, // difference_type,
         const Position*, // pointer
-        Position, // reference
+        Position // reference
       > {
     public:
       PositionIterator(const Block* block, typename std::vector<Position>::const_iterator iter);
@@ -52,17 +52,17 @@ namespace qd {
       bool operator<(const PositionIterator& other) const;
       bool operator<=(const PositionIterator& other) const;
 
-      It& operator--();
-      It operator--(int);
+      PositionIterator& operator--();
+      PositionIterator operator--(int);
 
-      It& operator++();
-      It operator++(int);
+      PositionIterator& operator++();
+      PositionIterator operator++(int);
 
       reference operator*() const;
       reference operator->() const;
 
       bool operator==(const PositionIterator& other) const;
-      bool !=(const PositionIterator& other) const;
+      bool operator!=(const PositionIterator& other) const;
 
     private:
       const Block* _block;
