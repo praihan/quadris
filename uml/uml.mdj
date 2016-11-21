@@ -2821,7 +2821,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "+withRotation(rotationType: RotationType): Block",
+											"text": "+rotate(rotationType: RotationType)",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -16172,7 +16172,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFYdU1/XTFKuPs="
 							},
-							"name": "withRotation",
+							"name": "rotate",
 							"visibility": "public",
 							"isStatic": false,
 							"isLeaf": false,
@@ -16192,24 +16192,6 @@
 									"isOrdered": false,
 									"isUnique": false,
 									"direction": "in"
-								},
-								{
-									"_type": "UMLParameter",
-									"_id": "AAAAAAFYdVrF4zNzBd8=",
-									"_parent": {
-										"$ref": "AAAAAAFYdVjlMTNn618="
-									},
-									"name": "return",
-									"visibility": "public",
-									"isStatic": false,
-									"isLeaf": false,
-									"type": {
-										"$ref": "AAAAAAFYdU1/XTFKuPs="
-									},
-									"isReadOnly": false,
-									"isOrdered": false,
-									"isUnique": false,
-									"direction": "return"
 								}
 							],
 							"concurrency": "sequential",
