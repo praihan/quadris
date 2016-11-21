@@ -71,7 +71,7 @@ namespace qd {
 
     Position position;
    
-    virtual std::unique_ptr<Block> withRotation(Rotation) const = 0;
+    virtual void rotate(Rotation) = 0;
     virtual PositionIterator begin() const; // we need to provide an implementation
     virtual PositionIterator end() const; // same here
     virtual Type type() const = 0;

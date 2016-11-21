@@ -11,7 +11,7 @@ namespace qd {
 
   class BlockT : public Block {
   public:
-    virtual std::unique_ptr<Block> withRotation(Rotation) const override;
+    virtual void rotate(Rotation) override;
     virtual Type type() const override;
   };
 
