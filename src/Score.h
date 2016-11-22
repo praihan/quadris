@@ -10,6 +10,9 @@ namespace qd {
     const Event<>& scoreUpdated() const;
     const Event<>& hiScoreUpdated() const;
 
+    void incrementBy(int deltaScore);
+    void reset();
+
   private:
     int _currentScore;
     int _hiScore;
