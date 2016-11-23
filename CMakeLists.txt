@@ -1,10 +1,14 @@
 cmake_minimum_required (VERSION 2.8.11)
 project (quadris)
 
-set (CXXFLAGS "-std=c++14 -Wall -Wextra -Werror -pedantic")
+list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+
+set (CXXFLAGS "-std=c++14 -Wall -Wextra -Werror -pedantic -pthread")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXXFLAGS}")
 
-find_package(GTK2 2.4 REQUIRED gtkmm)
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(GTKMM gtkmm-2.4)
 
 set (SOURCES
   src/main.cc
@@ -63,9 +67,9 @@ set (SOURCES
   src/CommandLineArguments.cc
 )
 
-include_directories(${GTK2_INCLUDE_DIRS})
-include_directories(src/)
+add_executable (quadris ${SOURCES})
 
-add_executable(quadris ${SOURCES})
+link_directories(${GTKMM_LIBRARY_DIRS})
 
-target_link_libraries(quadris ${GTK2_LIBRARIES})
+target_include_directories (quadris PRIVATE src/ ${GTKMM_INCLUDE_DIRS})
+target_link_libraries (quadris ${GTKMM_LIBRARIES})

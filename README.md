@@ -10,6 +10,7 @@ First, you will need:
 * `make` (GNU)
 * `cmake` >= 2.8.11
 * `gtkmm` 2.4 (`sudo apt-get install libgtkmm-2.4-dev`)
+* `pkg-config`
 
 1. Execute `make` in the root directory.
 2. Execure `./quadris` to run the program.

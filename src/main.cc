@@ -1,24 +1,32 @@
 #include "Event.h"
 #include <iostream>
 
-struct A {
-  void f(int i) { std::cout << i << " called in A" << std::endl; }
+#include <gtkmm.h>
+#include <thread>
+#include "Utility.h"
+
+struct Wnd {
+  Wnd() {
+    static const Gtk::Main main = qd::iife([]() {
+      const char* _dummy_argv[] = {""};
+      const char** _dummy_argv2 = _dummy_argv;
+      char*** const _dummy_argv_ptr = const_cast<char***>(&_dummy_argv2);
+
+      int _dummy_argc = 1;
+      return Gtk::Main{&_dummy_argc, _dummy_argv_ptr};
+    });
+
+    t = std::thread{[]() {
+      Gtk::Window window;
+      Gtk::Main::run(window);
+    }};
+  }
+
+  std::thread t;
 };
 
 int main() {
-  qd::Event<int> e;
-  qd::ObserverSlot<int> a_slot;
-  qd::ObserverSlot<int> s1;
-
-  A a;
-
-  e.addObserver(a_slot, std::bind(&A::f, std::addressof(a), std::placeholders::_1));
-  e.addObserver(s1, [](int i) { std::cout << i << " called 1" << std::endl; });
-
-  auto s2 = std::move(s1);
-
-  // e.~Event<int>();
-  // new (std::addressof(e)) qd::Event<int>{};
-
-  e.notifyObservers(5);
+  Wnd wnd;
+  std::cout << "Hello World!" << std::endl;
+  wnd.t.join();
 }
