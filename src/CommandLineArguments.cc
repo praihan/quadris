@@ -28,7 +28,7 @@ qd::CommandLineArguments::CommandLineArguments(const int argc, char* argv[]) {
 
   auto getNextArg = [argc, argv, &i](const std::string& argName) -> std::string {
     if ((i + 1) >= argc) {
-      throw std::runtime_error{"Expected value for argument: " + argName};
+      throw BadCommandLineArgumentError{"Expected value for argument: " + argName};
     }
     return argv[i + 1];
   };
@@ -43,7 +43,7 @@ qd::CommandLineArguments::CommandLineArguments(const int argc, char* argv[]) {
   argument_actions[ARG_SEED] = [this, &i, &getNextArg]() {
     int seed;
     if (!tryParseInt(seed, getNextArg(ARG_SEED))) {
-      throw std::runtime_error{ARG_SEED};
+      throw BadCommandLineArgumentError{ARG_SEED};
     }
     this->seed = std::make_unique<int>(seed);
     ++i;
@@ -58,7 +58,7 @@ qd::CommandLineArguments::CommandLineArguments(const int argc, char* argv[]) {
   argument_actions[ARG_STARTLEVEL] = [this, &i, &getNextArg]() {
     int startLevel;
     if (!tryParseInt(startLevel, getNextArg(ARG_STARTLEVEL))) {
-      throw std::runtime_error{ARG_STARTLEVEL};
+      throw BadCommandLineArgumentError{ARG_STARTLEVEL};
     }
     this->startLevel = std::make_unique<int>(startLevel);
     ++i;
@@ -73,7 +73,7 @@ qd::CommandLineArguments::CommandLineArguments(const int argc, char* argv[]) {
       (action->second)();
     }
     else {
-      throw std::runtime_error{"Unknown argument name: " + arg};
+      throw BadCommandLineArgumentError{"Unknown argument name: " + arg};
     }
   }
 }

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <stdexcept>
 
 namespace qd {
 
@@ -14,6 +15,11 @@ namespace qd {
     std::unique_ptr<int> startLevel;
     std::unique_ptr<std::string> scriptFile;
     std::unique_ptr<int> seed;
+  };
+
+  class BadCommandLineArgumentError : public std::runtime_error {
+  public:
+    using std::runtime_error::runtime_error;
   };
 
 }
