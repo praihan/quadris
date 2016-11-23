@@ -3,12 +3,10 @@ project (quadris)
 
 list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
-set (CXXFLAGS "-std=c++14 -Wall -Wextra -Werror -pedantic -pthread")
+find_package (X11 REQUIRED)
+
+set (CXXFLAGS "-std=c++14 -Wall -Wextra -Werror -pedantic")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXXFLAGS}")
-
-find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(GTKMM gtkmm-2.4)
 
 set (SOURCES
   src/main.cc
@@ -69,7 +67,5 @@ set (SOURCES
 
 add_executable (quadris ${SOURCES})
 
-link_directories(${GTKMM_LIBRARY_DIRS})
-
-target_include_directories (quadris PRIVATE src/ ${GTKMM_INCLUDE_DIRS})
-target_link_libraries (quadris ${GTKMM_LIBRARIES})
+target_include_directories (quadris PRIVATE src/ ${X11_INCLUDE_DIR})
+target_link_libraries (quadris ${X11_LIBRARIES})
