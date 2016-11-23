@@ -2,7 +2,9 @@ cmake_minimum_required (VERSION 2.8.11)
 project (quadris)
 
 set (CXXFLAGS "-std=c++14 -Wall -Wextra -Werror -pedantic")
-include_directories(src/)
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXXFLAGS}")
+
+find_package(GTK2 2.4 REQUIRED gtkmm)
 
 set (SOURCES
   src/main.cc
@@ -61,5 +63,9 @@ set (SOURCES
   src/CommandLineArguments.cc
 )
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXXFLAGS}")
+include_directories(${GTK2_INCLUDE_DIRS})
+include_directories(src/)
+
 add_executable(quadris ${SOURCES})
+
+target_link_libraries(quadris ${GTK2_LIBRARIES})
