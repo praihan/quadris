@@ -1,7 +1,7 @@
 #include "Event.h"
 #include <iostream>
 
-#include <gtkmm.h>
+#include "Gtk.h"
 #include <thread>
 #include "Utility.h"
 
