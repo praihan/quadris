@@ -5,18 +5,18 @@ EXEC=quadris
 all:
 	@mkdir -p ${BUILD_DIR}
 	@cmake -DCMAKE_CXX_COMPILER=${CXX} -B${BUILD_DIR} -H.
-	@make -C ${BUILD_DIR}
+	@make -s -C ${BUILD_DIR}
 	@cp ${BUILD_DIR}/${EXEC} .
 
 debug:
 	@mkdir -p ${BUILD_DIR}
 	@cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=${CXX} -B${BUILD_DIR} -H.
-	@make -C ${BUILD_DIR}
+	@make -s -C ${BUILD_DIR}
 	@cp ${BUILD_DIR}/${EXEC} .
 
 clean:
-	@rm -rf ${BUILD_DIR}
-	@rm -f ${EXEC}
+	@rm -rfv ${BUILD_DIR}
+	@rm -fv ${EXEC}
 	@rm -rf ${EXEC}.dSYM/
 
 .PHONY: all clean debug
