@@ -8,6 +8,7 @@ namespace qd {
   class Level0 : public Level {
   private:
     std::vector<Block::Type> _sequence;
+    mutable std::vector<Block::Type>::const_iterator _current;
   public:
     Level0();
     virtual int levelNumber() const override;

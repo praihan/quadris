@@ -30,6 +30,8 @@ namespace qd {
       }
       _sequence.emplace_back(blockIter->second);
     }
+
+    _current = _sequence.cend();
   }
 
   int Level0::levelNumber() const {
@@ -37,8 +39,15 @@ namespace qd {
   }
 
   Block::Type Level0::nextBlockType() const {
-
-    return Block::Type::EMPTY;
+    
+    if (_current == this->_sequence.cend()) {
+      this->_current = this->_sequence.cbegin();
+    }
+    else {
+      this->_current++;
+    }
+    
+    return *this->_current;
   }
 
   void Level0::useSequence(const std::string& sequenceFileName) {
