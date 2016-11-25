@@ -1,4 +1,5 @@
-CXX=g++-5
+CXX=clang++
+# CXX=g++-5
 BUILD_DIR=build/
 EXEC=quadris
 
