@@ -1,5 +1,8 @@
 #include "Level.h"
 
-void qd::Level::updateScore(Score&, const std::vector<int>& lineNumbersCleared) {
+void qd::Level::updateScore(
+  qd::Score&,
+  const std::vector<int>& lineNumbersCleared
+) const {
   
 }

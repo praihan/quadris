@@ -5,7 +5,7 @@ list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
 find_package (X11 REQUIRED)
 
-set (CXXFLAGS "-std=c++14 -Wall -Wextra -Werror -Wno-variadic-macros -pedantic")
+set (CXXFLAGS "-std=c++14 -Wall -Wextra -Werror -Wno-variadic-macros -Wno-unused-parameter -pedantic")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXXFLAGS}")
 
 set (SOURCES
@@ -14,6 +14,7 @@ set (SOURCES
   src/Event.h
 
   src/Level.h
+  src/Level.cc
   src/Levels/Level0.h
   src/Levels/Level0.cc
   src/Levels/Level1.h
