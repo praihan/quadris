@@ -1,13 +1,17 @@
 #include "Level4.h"
 
-int qd::Level4::levelNumber() const {
-  return 4;
-}
+namespace qd {
 
-qd::Block::Type qd::Level4::nextBlockType() const {
-  return qd::Block::Type::EMPTY;
-}
+  int Level4::levelNumber() const {
+    return 4;
+  }
 
-void qd::Level4::useSequence(const std::string& sequenceFileName) {
+  qd::Block::Type Level4::nextBlockType() const {
 
+    return qd::Block::Type::EMPTY;
+  }
+
+  void Level4::useSequence(const std::string& sequenceFileName) {
+
+  }
 }

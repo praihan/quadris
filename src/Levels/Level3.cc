@@ -1,13 +1,17 @@
 #include "Level3.h"
 
-int qd::Level3::levelNumber() const {
-  return 3;
-}
+namespace qd {
 
-qd::Block::Type qd::Level3::nextBlockType() const {
-  return qd::Block::Type::EMPTY;
-}
+  int Level3::levelNumber() const {
+    return 3;
+  }
 
-void qd::Level3::useSequence(const std::string& sequenceFileName) {
+  qd::Block::Type Level3::nextBlockType() const {
 
+    return qd::Block::Type::EMPTY;
+  }
+
+  void Level3::useSequence(const std::string& sequenceFileName) {
+
+  }
 }
