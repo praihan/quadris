@@ -9,6 +9,8 @@ namespace qd {
   class Command {
   public:
     enum class Type {
+      UNKNOWN,
+
       LEFT,
       RIGHT,
       DOWN,
@@ -39,6 +41,11 @@ namespace qd {
   private:
     Type _type;
     std::vector<std::string> _arguments;
+  };
+
+  class CommandError : public std::runtime_error {
+  public:
+    using std::runtime_error::runtime_error;
   };
 
 }
