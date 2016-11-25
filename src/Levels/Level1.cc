@@ -6,9 +6,9 @@ namespace qd {
     return 1;
   }
 
-  qd::Block::Type Level1::nextBlockType() const {
+  Block::Type Level1::nextBlockType() const {
 
-    return qd::Block::Type::EMPTY;
+    return Block::Type::EMPTY;
   }
 
   void Level1::useSequence(const std::string& sequenceFileName) {
