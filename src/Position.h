@@ -8,6 +8,8 @@ namespace qd {
     int y;
   };
 
+  Position operator+(const Position& p1, const Position& p2);
+
 }
 
 #endif
