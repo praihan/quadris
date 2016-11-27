@@ -1,13 +1,56 @@
+#include "Block.h"
 #include "Level0.h"
+#include <fstream>
+#include <map>
 
-int qd::Level0::levelNumber() const {
-  return 0;
-}
+namespace qd {
 
-qd::Block::Type qd::Level0::nextBlockType() const {
-  return qd::Block::Type::EMPTY;
-}
+  namespace {
+    const std::map<std::string, Block::Type> blockMap {
+      { "I", Block::Type::BLOCK_I },
+      { "J", Block::Type::BLOCK_J },
+      { "L", Block::Type::BLOCK_L },
+      { "O", Block::Type::BLOCK_O },
+      { "S", Block::Type::BLOCK_S },
+      { "T", Block::Type::BLOCK_T },
+      { "Z", Block::Type::BLOCK_Z } 
+    };
+  }
 
-void qd::Level0::useSequence(const std::string& sequenceFileName) {
+  Level0::Level0() {
+    std::ifstream file;
+    file.open("sequence.txt");
 
+    std::string nextBlock;
+    
+    while (file >> nextBlock) {
+      auto blockIter = blockMap.find(nextBlock);
+      if (blockIter == blockMap.end()) {
+        // could not find error
+      }
+      _sequence.emplace_back(blockIter->second);
+    }
+
+    _current = _sequence.cend();
+  }
+
+  int Level0::levelNumber() const {
+    return 0;
+  }
+
+  Block::Type Level0::nextBlockType() const {
+    
+    if (_current == this->_sequence.cend()) {
+      this->_current = this->_sequence.cbegin();
+    }
+    else {
+      this->_current++;
+    }
+    
+    return *this->_current;
+  }
+
+  void Level0::useSequence(const std::string& sequenceFileName) {
+  
+  }
 }

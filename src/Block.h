@@ -40,7 +40,7 @@ namespace qd {
         Position // reference
       > {
     public:
-      PositionIterator(const Block* block, typename std::vector<Position>::const_iterator iter);
+      PositionIterator(const Block& block, typename std::vector<Position>::const_iterator iter);
 
       PositionIterator& operator+=(difference_type n);
       PositionIterator operator+(difference_type n) const;
@@ -65,7 +65,7 @@ namespace qd {
       bool operator!=(const PositionIterator& other) const;
 
     private:
-      const Block* _block;
+      const Block& _block;
       typename std::vector<Position>::const_iterator _iter;
     };
 
