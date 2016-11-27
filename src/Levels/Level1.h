@@ -5,7 +5,6 @@
 #include "Level.h"
 
 namespace qd {
-
   class Level1 : public Level {
   public:
     virtual int levelNumber() const override;
