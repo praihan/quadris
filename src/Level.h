@@ -1,10 +1,10 @@
 #ifndef LEVEL_H_
 #define LEVEL_H_
 
-#include "Board.h"
 #include "Command.h"
 
 namespace qd {
+  class Board;
 
   class Level {
   public:

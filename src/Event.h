@@ -143,7 +143,7 @@ namespace qd {
     for (auto& l : this->_listeners) {
       assert(l != nullptr);
       assert(static_cast<bool>(l->_callback));
-      l->_callback(std::forward<EventArgs>(args)...);
+      l->_callback(args...);
     }
   }
 } // namespace qd

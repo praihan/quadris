@@ -4,6 +4,8 @@
 #include "Event.h"
 #include "Score.h"
 #include "Cell.h"
+#include "Block.h"
+#include "Level.h"
 #include <array>
 #include <memory>
 #include <cstddef>
@@ -20,18 +22,17 @@ namespace qd {
   constexpr std::size_t BOARD_WIDTH = 11;
   constexpr std::size_t BOARD_HEIGHT = 15;
 
-  using LevelFactory = std::function<std::unique_ptr<Level>>;
-  using CellGrid = std::array<std::array<Cell, BOARD_HEIGHT>, BOARD_WIDTH + 3>;
-  using RandomEngine = std::mt19937;
-
-  struct BoardInitArgs {
-    int seed;
-    int levelNumber;
-  };
-
   class Board {
   public:
-    Board(const BoardInitArgs&);
+    struct InitArgs {
+      int seed;
+      int levelNumber;
+    };
+    using LevelFactory = std::function<std::unique_ptr<Level>(Board&)>;
+    using CellGrid = std::array<std::array<Cell, BOARD_HEIGHT>, BOARD_WIDTH + 3>;
+    using RandomEngine = std::mt19937;
+
+    Board(const InitArgs&);
 
     void reset();
     void executeCommand(const Command& command);
@@ -47,6 +48,19 @@ namespace qd {
     RandomEngine& randomEngine();
     const RandomEngine& randomEngine() const;
 
+    const Event<>& gameStarted() const;
+    Event<>& gameStarted();
+    const Event<>& cellUpdated() const;
+    Event<>& cellUpdated();
+    const Event<int>& scoreUpdated() const;
+    Event<int>& scoreUpdated();
+    const Event<int>& hiScoreUpdated() const;
+    Event<int>& hiScoreUpdated();
+    const Event<>& nextBlockGenerated() const;
+    Event<>& nextBlockGenerated();
+    const Event<>& gameEnded() const;
+    Event<>& gameEnded();
+
   private:
     CellGrid _cells;
     std::unique_ptr<Block> _activeBlock;
@@ -57,27 +71,20 @@ namespace qd {
 
     Event<> _gameStarted;
     Event<> _cellUpdated;
-    Event<> _scoreUpdated;
-    Event<> _highScoreUpdated;
+    Event<int> _scoreUpdated;
+    Event<int> _hiScoreUpdated;
     Event<> _nextBlockGenerated;
     Event<> _gameEnded;
 
-    ObserverSlot<> _scoreUpdatedSlot;
-    ObserverSlot<> _hiScoreUpdatedSlot;
+    ObserverSlot<int> _scoreUpdatedSlot;
+    ObserverSlot<int> _hiScoreUpdatedSlot;
 
-  public:
-    const Event<>& gameStarted() const;
-    Event<>& gameStarted();
-    const Event<>& cellUpdated() const;
-    Event<>& cellUpdated();
-    const Event<>& scoreUpdated() const;
-    Event<>& scoreUpdated();
-    const Event<>& highScoreUpdated() const;
-    Event<>& highScoreUpdated();
-    const Event<>& nextBlockGenerated() const;
-    Event<>& nextBlockGenerated();
-    const Event<>& gameEnded() const;
-    Event<>& gameEnded();
+  private:
+    void _changeLevelTo(int levelNumber);
+
+    // All these do are forward the event from the Score to our own observers
+    void _scoreUpdatedObserver(int score);
+    void _hiScoreUpdatedObserver(int score);
   };
 
 }

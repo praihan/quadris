@@ -2,6 +2,7 @@
 #define COMMAND_H_
 
 #include <vector>
+#include <string>
 #include "Event.h"
 
 namespace qd {
