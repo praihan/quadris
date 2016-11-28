@@ -5,9 +5,9 @@ namespace qd {
 
   struct Position {
     Position() = default;
-    Position(int, int);
-    int x;
-    int y;
+    Position(int row, int col);
+    int row;
+    int col;
   };
 
   Position operator+(const Position& p1, const Position& p2);

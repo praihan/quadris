@@ -1,17 +1,17 @@
 #include "Position.h"
 
 namespace qd {
-  Position::Position(int x, int y) : x(x), y(y) { }
+  Position::Position(int row, int col) : row{row}, col{col} { }
 
   Position operator+(const Position& p1, const Position& p2) {
     Position ret;
-    ret.x = p1.x + p2.x;
-    ret.y = p1.y + p2.y;
+    ret.row = p1.row + p2.row;
+    ret.col = p1.col + p2.col;
     return ret;
   }
 
   bool operator==(const Position& p1, const Position& p2) {
-    return p1.x == p2.x && p1.y == p2.y;
+    return p1.row == p2.row && p1.col == p2.col;
   }
   bool operator!=(const Position& p1, const Position& p2) {
     return !(p1 == p2);
