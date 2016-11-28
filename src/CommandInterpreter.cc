@@ -1,82 +1,55 @@
 #include "CommandInterpreter.h"
+#include <utility>
 
 namespace qd {
-  CommandInterpreter::CommandInterpreter(std::istream& in) : _input(in) {}
+  CommandInterpreter::CommandInterpreter(std::istream& in) : _input(in) {
+    _commandMappings = {
+      { "left", Command::Type::LEFT },
+      { "right", Command::Type::RIGHT },
+      { "down", Command::Type::DOWN },
+      { "clockwise", Command::Type::CLOCKWISE },
+      { "counterclockwise", Command::Type::COUNTER_CLOCKWISE },
+      { "drop", Command::Type::DROP },
+      { "levelup", Command::Type::LEVELUP },
+      { "leveldown", Command::Type::LEVELDOWN },
+      { "norandom", Command::Type::NORANDOM },
+      { "random", Command::Type::RANDOM },
+      { "sequence", Command::Type::SEQUENCE },
+      { "I", Command::Type::BLOCK_I },
+      { "J", Command::Type::BLOCK_J },
+      { "L", Command::Type::BLOCK_L },
+      { "O", Command::Type::BLOCK_O },
+      { "S", Command::Type::BLOCK_S },
+      { "T", Command::Type::BLOCK_T },
+      { "Z", Command::Type::BLOCK_Z },
+      { "restart", Command::Type::RESTART },
+      { "hint", Command::Type::HINT },
+    };
+  }
+  
   Command CommandInterpreter::nextCommand() {
     std::string s;
     if (!(_input >> s)) {
       throw CommandError("Reached end of command input");
     }
 
-    if (s == "left") {
-      return { Command::Type::LEFT };
-    }
-    else if (s == "right") {
-      return { Command::Type::RIGHT };
-    }
-    else if (s == "down") {
-      return { Command::Type::DOWN };
-    }
-    else if (s == "clockwise") {
-      return { Command::Type::CLOCKWISE };
-    }
-    else if (s == "counterclockwise") {
-      return { Command::Type::COUNTER_CLOCKWISE };
-    }
-    else if (s == "drop") {
-      return { Command::Type::DROP };
-    }
-    else if (s == "levelup") {
-      return { Command::Type::LEVELUP };
-    }
-    else if (s == "leveldown") {
-      return { Command::Type::LEVELDOWN };
-    }
-    else if (s == "norandom") {
-      if (!(_input >> s)) {
-        throw CommandError("Reached end of command input");
-      }
-      
-      return { Command::Type::NORANDOM, { s } };
-    }
-    else if (s == "random") {
-      return { Command::Type::RANDOM };
-    }
-    else if (s == "sequence") {
-      if (!(_input >> s)) {
-        throw CommandError("Reached end of command input");
-      }
-      return { Command::Type::SEQUENCE, { s } };
-    }
-    else if (s == "I") {
-      return { Command::Type::BLOCK_I };
-    }
-    else if (s == "J") {
-      return { Command::Type::BLOCK_J };
-    }
-    else if (s == "L") {
-      return { Command::Type::BLOCK_L };
-    }
-    else if (s == "O") {
-      return { Command::Type::BLOCK_O };
-    }
-    else if (s == "S") {
-      return { Command::Type::BLOCK_S };
-    }
-    else if (s == "T") {
-      return { Command::Type::BLOCK_T };
-    }
-    else if (s == "Z") {
-      return { Command::Type::BLOCK_Z };
-    }
-    else if (s == "restart") {
-      return { Command::Type::RESTART };
-    }
-    else if (s == "hint") {
-      return { Command::Type::HINT };
-    }
-    else {
+    auto commandTypeMapping = _commandMappings.find(s);
+    if (commandTypeMapping == _commandMappings.end()) {
       return { Command::Type::UNKNOWN };
+    }
+
+    auto commandType = commandTypeMapping->second;
+    switch (commandType) {
+      case Command::Type::NORANDOM:
+      case Command::Type::SEQUENCE: {
+        if (!(_input >> s)) {
+          throw CommandError("Reached end of command input");
+        }
+        return { commandType, { s } };
+      }
+      break;
+      default:
+        return { commandType };
     }
   }
 }

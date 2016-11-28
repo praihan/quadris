@@ -3,6 +3,7 @@
 
 #include "Command.h"
 #include <istream>
+#include <unordered_map>
 
 namespace qd {
 
@@ -12,6 +13,8 @@ namespace qd {
     Command nextCommand();
   private:
     std::istream& _input;
+
+    std::unordered_map<std::string, Command::Type> _commandMappings;
   };
 
 }
