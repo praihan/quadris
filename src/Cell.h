@@ -10,7 +10,4 @@ namespace qd {
   };
 }
 
-
-
-
 #endif

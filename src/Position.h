@@ -9,6 +9,8 @@ namespace qd {
   };
 
   Position operator+(const Position& p1, const Position& p2);
+  bool operator==(const Position& p1, const Position& p2);
+  bool operator!=(const Position& p1, const Position& p2);
 
 }
 
