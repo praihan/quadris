@@ -17,6 +17,10 @@ namespace qd {
     );
   }
 
+  void Board::executeCommand(const Command& command) {
+    // TODO: This shit
+  }
+
   void Board::reset() {
     _score.reset();
     // TODO:
