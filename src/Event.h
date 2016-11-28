@@ -51,7 +51,7 @@ namespace qd {
 
     template <class Function>
     void addObserver(SlotType& slot, Function&& callback) const;
-    void notifyObservers(EventArgs&&... args);
+    void notifyObservers(EventArgs... args);
 
   private:
     mutable std::vector<SlotType*> _listeners;
@@ -138,7 +138,7 @@ namespace qd {
 
   template <class... EventArgs>
   void Event<EventArgs...>::notifyObservers(
-    EventArgs&&... args
+    EventArgs... args
   ) {
     for (auto& l : this->_listeners) {
       assert(l != nullptr);

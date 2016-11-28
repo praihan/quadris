@@ -1,19 +1,21 @@
 #include "Score.h"
 
 namespace qd {
-  const Event<>& Score::scoreUpdated() {
+  Score::Score() : _currentScore(0), _hiScore(0) {}
+
+  const Event<int>& Score::scoreUpdated() const {
     return _scoreUpdated;
   }
 
-  const Event<>& Score::hiScoreUpdated() {
+  const Event<int>& Score::hiScoreUpdated() const {
     return _hiScoreUpdated;
   }
 
   void Score::incrementBy(int deltaScore) { // increments score and hiScore if necessary
     _currentScore += deltaScore;
 
-    if (_currentScore > hiScore) {
-      _hiScore = currentScore;
+    if (_currentScore > _hiScore) {
+      _hiScore = _currentScore;
       _hiScoreUpdated.notifyObservers(_hiScore);
     }
 

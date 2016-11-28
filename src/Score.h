@@ -7,8 +7,9 @@ namespace qd {
 
   class Score {
   public:
-    const Event<>& scoreUpdated() const;
-    const Event<>& hiScoreUpdated() const;
+    Score();
+    const Event<int>& scoreUpdated() const;
+    const Event<int>& hiScoreUpdated() const;
 
     void incrementBy(int deltaScore);
     void reset();
@@ -17,7 +18,7 @@ namespace qd {
     int _currentScore;
     int _hiScore;
     Event<int> _scoreUpdated;
-    Event<int> _hiScoreUpdate;
+    Event<int> _hiScoreUpdated;
   };
 
 }
