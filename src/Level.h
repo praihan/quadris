@@ -8,7 +8,10 @@ namespace qd {
 
   class Level {
   public:
-    virtual void executeCommand(Board& sender, const Command& command) = 0;
+    Level(Board&);
+    virtual void executeCommand(const Command& command) = 0;
+  protected:
+    Board& _board;
   };
 
 }

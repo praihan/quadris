@@ -9,10 +9,10 @@ namespace qd {
     std::vector<Block::Type> _sequence;
     std::vector<Block::Type>::const_iterator _current;
   public:
-    Level0();
+    Level0(Board&);
     virtual int levelNumber() const override;
     virtual Block::Type nextBlockType() override;
-    virtual void executeCommand(Board& sender, const Command& command) override;
+    virtual void executeCommand(const Command& command) override;
   };
 
 }

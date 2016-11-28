@@ -34,7 +34,7 @@ namespace qd {
     return weightedBlockTypes[rand];
   }
 
-  void Level1::executeCommand(Board& sender, const Command& command) {
+  void Level1::executeCommand(const Command& command) {
 
   }
 }

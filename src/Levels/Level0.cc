@@ -17,7 +17,7 @@ namespace qd {
     };
   }
 
-  Level0::Level0() {
+  Level0::Level0(Board& b) : BaseLevel(b) {
     std::ifstream file;
     file.open("sequence.txt");
 
@@ -50,7 +50,7 @@ namespace qd {
     return *this->_current;
   }
 
-  void Level0::executeCommand(Board& sender, const Command& command) {
+  void Level0::executeCommand(const Command& command) {
 
   }
 }
