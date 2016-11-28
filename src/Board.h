@@ -48,6 +48,9 @@ namespace qd {
     RandomEngine& randomEngine();
     const RandomEngine& randomEngine() const;
 
+    Block& activeBlock();
+    const Block& activeBlock() const;
+
     const Event<>& gameStarted() const;
     Event<>& gameStarted();
     const Event<>& cellUpdated() const;

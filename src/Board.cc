@@ -46,6 +46,9 @@ namespace qd {
   Board::RandomEngine& Board::randomEngine() { return _randomEngine; }
   const Board::RandomEngine& Board::randomEngine() const { return _randomEngine; }
 
+  Block& Board::activeBlock() { assert(_activeBlock != nullptr); return *_activeBlock; }
+  const Block& Board::activeBlock() const { assert(_activeBlock != nullptr); return *_activeBlock; }
+
   const Event<>& Board::gameStarted() const { return _gameStarted; }
   Event<>& Board::gameStarted() { return _gameStarted; }
   const Event<>& Board::cellUpdated() const { return _cellUpdated; }
