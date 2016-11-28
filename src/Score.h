@@ -16,8 +16,8 @@ namespace qd {
   private:
     int _currentScore;
     int _hiScore;
-    Event<> _scoreUpdated;
-    Event<> _hiScoreUpdate;
+    Event<int> _scoreUpdated;
+    Event<int> _hiScoreUpdate;
   };
 
 }
