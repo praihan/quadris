@@ -38,7 +38,7 @@ namespace qd {
     return 0;
   }
 
-  Block::Type Level0::nextBlockType() const {
+  Block::Type Level0::nextBlockType() {
     
     if (_current == this->_sequence.cend()) {
       this->_current = this->_sequence.cbegin();
@@ -50,7 +50,7 @@ namespace qd {
     return *this->_current;
   }
 
-  void Level0::useSequence(const std::string& sequenceFileName) {
-  
+  void Level0::executeCommand(Board& sender, const Command& command) {
+
   }
 }

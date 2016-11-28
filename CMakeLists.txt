@@ -15,6 +15,8 @@ set (SOURCES
 
   src/Level.h
   src/Level.cc
+  src/Levels/BaseLevel.h
+  src/Levels/BaseLevel.cc
   src/Levels/Level0.h
   src/Levels/Level0.cc
   src/Levels/Level1.h
@@ -52,7 +54,6 @@ set (SOURCES
 
   src/Board.h
   src/Board.cc
-  src/BoardInitArgs.h
   src/Cell.h
   src/Position.h
   src/Position.cc

@@ -3,7 +3,6 @@
 #include <array>
 #include <cstdlib>
 
-
 namespace qd {
 
   namespace {
@@ -29,13 +28,13 @@ namespace qd {
     return 1;
   }
 
-  Block::Type Level1::nextBlockType() const {
+  Block::Type Level1::nextBlockType() {
     int rand = std::rand() % (weightedBlockTypes.size());
     
     return weightedBlockTypes[rand];
   }
 
-  void Level1::useSequence(const std::string& sequenceFileName) {
-  
+  void Level1::executeCommand(Board& sender, const Command& command) {
+
   }
 }
