@@ -16,6 +16,8 @@ namespace qd {
     std::vector<Position> occupiedPositions;
 
   public:
+    virtual ~Block() = default;
+
     enum class Type {
       EMPTY,
       BLOCK_I,

@@ -4,6 +4,8 @@
 namespace qd {
 
   struct Position {
+    Position() = default;
+    Position(int, int);
     int x;
     int y;
   };

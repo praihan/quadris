@@ -1,6 +1,8 @@
 #include "Position.h"
 
 namespace qd {
+  Position::Position(int x, int y) : x(x), y(y) { }
+
   Position operator+(const Position& p1, const Position& p2) {
     Position ret;
     ret.x = p1.x + p2.x;
