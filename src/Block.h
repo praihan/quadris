@@ -72,9 +72,10 @@ namespace qd {
     Position position;
    
     virtual void rotate(Rotation) = 0;
-    virtual PositionIterator begin() const; // we need to provide an implementation
-    virtual PositionIterator end() const; // same here
+    virtual PositionIterator begin() const;
+    virtual PositionIterator end() const;
     virtual Type type() const = 0;
+    virtual std::unique_ptr<Block> clone() = 0;
   };
 
 }

@@ -11,7 +11,7 @@ namespace qd {
     return Block::Type::EMPTY;
   }
 
-  void Level4::executeCommand(Board& sender, const Command& command) {
+  void Level4::executeCommand(const Command& command) {
 
   }
 }

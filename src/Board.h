@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <functional>
 #include <map>
+#include <random>
 
 namespace qd {
 
@@ -21,6 +22,7 @@ namespace qd {
 
   using LevelFactory = std::function<std::unique_ptr<Level>>;
   using CellGrid = std::array<std::array<Cell, BOARD_HEIGHT>, BOARD_WIDTH + 3>;
+  using RandomEngine = std::mt19937;
 
   struct BoardInitArgs {
     int seed;
@@ -34,23 +36,7 @@ namespace qd {
     void reset();
     void executeCommand(const Command& command);
 
-    const Event<>& gameStarted() const;
-    const Event<>& cellUpdated() const;
-    const Event<>& scoreUpdated() const;
-    const Event<>& highScoreUpdated() const;
-    const Event<>& nextBlockGenerated() const;
-    const Event<>& gameEnded() const;
-    Event<>& gameStarted();
-    Event<>& cellUpdated();
-    Event<>& scoreUpdated();
-    Event<>& highScoreUpdated();
-    Event<>& nextBlockGenerated();
-    Event<>& gameEnded();
-
-    void registerLevel(
-      int levelNumber,
-      const LevelFactory& factory
-    );
+    void registerLevel(int levelNumber, const LevelFactory& factory);
 
     CellGrid& cells();
     const CellGrid& cells() const;
@@ -58,12 +44,15 @@ namespace qd {
     Score& score();
     const Score& score() const;
 
+    RandomEngine& randomEngine();
+    const RandomEngine& randomEngine() const;
+
   private:
     CellGrid _cells;
     std::unique_ptr<Block> _activeBlock;
     Score _score;
     std::unique_ptr<Level> _level;
-    int _seed;
+    RandomEngine _randomEngine;
     std::map<int, LevelFactory> _levelFactories;
 
     Event<> _gameStarted;
@@ -75,6 +64,20 @@ namespace qd {
 
     ObserverSlot<> _scoreUpdatedSlot;
     ObserverSlot<> _hiScoreUpdatedSlot;
+
+  public:
+    const Event<>& gameStarted() const;
+    Event<>& gameStarted();
+    const Event<>& cellUpdated() const;
+    Event<>& cellUpdated();
+    const Event<>& scoreUpdated() const;
+    Event<>& scoreUpdated();
+    const Event<>& highScoreUpdated() const;
+    Event<>& highScoreUpdated();
+    const Event<>& nextBlockGenerated() const;
+    Event<>& nextBlockGenerated();
+    const Event<>& gameEnded() const;
+    Event<>& gameEnded();
   };
 
 }

@@ -29,7 +29,7 @@ namespace qd {
     return weightedBlockTypes[rand];
   }
 
-  void Level2::executeCommand(Board& sender, const Command& command) {
+  void Level2::executeCommand(const Command& command) {
 
   }
 }
