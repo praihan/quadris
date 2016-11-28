@@ -6,12 +6,12 @@ namespace qd {
     return 4;
   }
 
-  Block::Type Level4::nextBlockType() const {
+  Block::Type Level4::nextBlockType() {
 
     return Block::Type::EMPTY;
   }
 
-  void Level4::useSequence(const std::string& sequenceFileName) {
+  void Level4::executeCommand(Board& sender, const Command& command) {
 
   }
 }

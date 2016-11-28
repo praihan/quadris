@@ -1,16 +1,14 @@
 #ifndef LEVEL3_H_
 #define LEVEL3_H_
 
-#include <string>
-#include "Level.h"
+#include "BaseLevel.h"
 
 namespace qd {
-
-  class Level3 : public Level {
+  class Level3 : public BaseLevel {
   public:
     virtual int levelNumber() const override;
-    virtual Block::Type nextBlockType() const override;
-    virtual void useSequence(const std::string& sequenceFileName) override;
+    virtual Block::Type nextBlockType() override;
+    virtual void executeCommand(Board& sender, const Command& command) override;
   };
 
 }

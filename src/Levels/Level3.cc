@@ -7,7 +7,7 @@
 namespace qd {
 
   namespace {
-    std::array<Block::Type,27> weightedBlockTypes {
+    std::array<Block::Type,9> weightedBlockTypes {
       {
         Block::Type::BLOCK_I,
         Block::Type::BLOCK_J,
@@ -26,13 +26,13 @@ namespace qd {
     return 3;
   }
 
-  Block::Type Level3::nextBlockType() const {
+  Block::Type Level3::nextBlockType() {
     int rand = std::rand() % (weightedBlockTypes.size());
     
     return weightedBlockTypes[rand];
   }
 
-  void Level3::useSequence(const std::string& sequenceFileName) {
-  
+  void Level3::executeCommand(Board& sender, const Command& command) {
+
   }
 }
