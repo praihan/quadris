@@ -60,8 +60,9 @@ namespace qd {
   Event<>& Board::gameEnded() { return _gameEnded; }
 
   void Board::_changeLevelTo(int levelNumber) {
-    // TODO: implement changeLevelTo
-    // Note that the current level may be nullptr
+    auto levelFactory = _levelFactories.find(levelNumber);
+    assert(levelFactory != _levelFactories.end());
+    _level = (levelFactory->second)(*this);
   }
 
   void Board::_scoreUpdatedObserver(int score) { _scoreUpdated.notifyObservers(score); }
