@@ -77,7 +77,7 @@ namespace qd {
 
   Block::Type BlockJ::type() const {return Block::Type::BLOCK_J;}
 
-  std::unique_ptr<Block> BlockJ::clone() {
+  std::unique_ptr<Block> BlockJ::clone() const {
     return std::make_unique<BlockJ>(*this);
   }
 }

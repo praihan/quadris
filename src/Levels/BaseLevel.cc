@@ -1,3 +1,4 @@
+#include <iostream>
 #include <cassert>
 #include <memory>
 #include "BaseLevel.h"
@@ -15,7 +16,6 @@ namespace qd {
   bool BaseLevel::_isCellOccupied(const Position &p) const {
     return _board.cells()[p.col][p.row].blockType != Block::Type::EMPTY;
   }
-
   bool BaseLevel::_isValidBlock(const Block &b) const {
     for (Position p : b) {
       if (p.row < 0 || p.row >= static_cast<int>(BOARD_HEIGHT)) {
@@ -28,27 +28,26 @@ namespace qd {
         return false;
       }
     }
-
     return true;
   }
 
   bool BaseLevel::_canMove(const Block &b, const Direction d) const {
-    for (Position p : b) {
-      switch(d) {
+    std::unique_ptr<Block> bCopy = b.clone();
+
+    switch(d) {
       default:
       case Direction::DOWN:
-        p.row++;
+        bCopy->position.row++;
         break;
       case Direction::LEFT:
-        p.col--;
+        bCopy->position.col--;
         break;
       case Direction::RIGHT: 
-        p.col++;
+        bCopy->position.col++;
         break;
       }
-    }
 
-    return _isValidBlock(b);
+    return _isValidBlock(*bCopy);
   }
 
   void BaseLevel::_clearActiveBlockCells() {
@@ -116,8 +115,14 @@ namespace qd {
           activeBlock.position.col -= 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
 
+          std::cout << "GOOD" << std::endl;
+          std::cout << activeBlock.position.row << activeBlock.position.col << std::endl;
+
           return true;
         }
+
+          std::cout << "BAD" << std::endl;
+          std::cout << activeBlock.position.row << activeBlock.position.col << std::endl;
 
         return false;
       }
@@ -129,8 +134,14 @@ namespace qd {
           activeBlock.position.col += 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
 
+          std::cout << "GOOD" << std::endl;
+          std::cout << activeBlock.position.row << activeBlock.position.col << std::endl;
+
           return true;
         }
+
+          std::cout << "BAD" << std::endl;
+          std::cout << activeBlock.position.row << activeBlock.position.col << std::endl;
 
         return false; 
       }
@@ -142,8 +153,14 @@ namespace qd {
           activeBlock.position.row += 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
 
+          std::cout << "GOOD" << std::endl;
+          std::cout << activeBlock.position.row << activeBlock.position.col << std::endl;
+
           return true;
         }
+        
+        std::cout << "BAD" << std::endl;
+        std::cout << activeBlock.position.row << activeBlock.position.col << std::endl;
 
         return false;
       }
@@ -203,7 +220,7 @@ namespace qd {
 
         _board.cellsUpdated().notifyObservers(_board.cells());
 
-        _board.activeBlock() = nullptr;
+        _board.activeBlock().reset();
         _ensureActiveBlock();
         
         // TODO: account for false

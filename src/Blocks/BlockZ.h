@@ -16,7 +16,7 @@ namespace qd {
     BlockZ();
     virtual void rotate(Rotation) override;
     virtual Type type() const override;
-    virtual std::unique_ptr<Block> clone() override;
+    virtual std::unique_ptr<Block> clone() const override;
   };
 
 }

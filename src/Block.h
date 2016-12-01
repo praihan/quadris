@@ -77,7 +77,7 @@ namespace qd {
     virtual PositionIterator begin() const;
     virtual PositionIterator end() const;
     virtual Type type() const = 0;
-    virtual std::unique_ptr<Block> clone() = 0;
+    virtual std::unique_ptr<Block> clone() const = 0;
   };
 
 }

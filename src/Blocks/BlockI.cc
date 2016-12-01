@@ -31,7 +31,7 @@ namespace qd {
 
   Block::Type BlockI::type() const {return Block::Type::BLOCK_I;}
 
-  std::unique_ptr<Block> BlockI::clone() {
+  std::unique_ptr<Block> BlockI::clone()  const {
     return std::make_unique<BlockI>(*this);
   }
 }
