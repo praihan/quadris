@@ -37,6 +37,9 @@ namespace qd {
       case Command::Type::BLOCK_S:
       case Command::Type::BLOCK_T:
       case Command::Type::BLOCK_Z:
+      case Command::Type::NORANDOM:
+      case Command::Type::RANDOM:
+      case Command::Type::SEQUENCE:
         assert(_level != nullptr);
         _level->executeCommand(command);
         break;
@@ -50,9 +53,6 @@ namespace qd {
         // failure is okay
         _changeLevelTo(_currentLevelNumber - 1);
         break;
-      case Command::Type::NORANDOM:
-      case Command::Type::RANDOM:
-      case Command::Type::SEQUENCE:
       case Command::Type::RESTART:
       case Command::Type::HINT:
         assert(!"Not implemented");
