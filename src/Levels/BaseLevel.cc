@@ -71,6 +71,7 @@ namespace qd {
         }
       }
       break;
+
       case Command::Type::RIGHT: {
         Block &activeBlock = _board.activeBlock();
         if (_canMove(activeBlock, BaseLevel::Direction::RIGHT)) {
@@ -79,6 +80,7 @@ namespace qd {
         }  
       }
       break;
+
       case Command::Type::DOWN: {
         Block &activeBlock = _board.activeBlock();
         if (_canMove(activeBlock, BaseLevel::Direction::DOWN)) {
@@ -87,6 +89,7 @@ namespace qd {
         }  
       }
       break;
+
       case Command::Type::CLOCKWISE: {
         Block &activeBlock = _board.activeBlock();
 
@@ -104,6 +107,7 @@ namespace qd {
         _setActiveBlockCells();
       }
       break;
+
       case Command::Type::COUNTER_CLOCKWISE: {
         Block &activeBlock = _board.activeBlock();
 
@@ -121,6 +125,7 @@ namespace qd {
         _setActiveBlockCells();
       }
       break;
+
       case Command::Type::DROP: {
         Block &activeBlock = _board.activeBlock();
 
@@ -135,6 +140,36 @@ namespace qd {
         _board.cellsUpdated().notifyObservers(_board.cells());
       }
       break;
+
+      case Command::Type::BLOCK_I: {
+        //
+      }
+      break;
+
+      case Command::Type::BLOCK_J: {
+      }
+      break;
+
+      case Command::Type::BLOCK_L: {
+      }
+      break;
+
+      case Command::Type::BLOCK_O: {
+      }
+      break;
+
+      case Command::Type::BLOCK_S: {
+      }
+      break;
+      
+      case Command::Type::BLOCK_Z: {
+      }
+      break;
+
+      case Command::Type::BLOCK_T: {
+      }
+      break;
+
       default: 
       break;
     }
