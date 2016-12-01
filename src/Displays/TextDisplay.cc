@@ -128,7 +128,6 @@ namespace qd {
       return;
     }
     for (Position p : *sampleBlock) {
-      std::cout << p << std::endl;
       nextBlockLineItr[p.row][p.col] = blockTypeToChar.at(sampleBlock->type());
     }
   }

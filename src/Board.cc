@@ -23,7 +23,6 @@ namespace qd {
     if (command.multiplier() == 0) {
       return;
     }
-    std::cout << "MULTIPLIER: " << command.multiplier() << std::endl;
     auto commandType = command.type();
     switch (commandType) {
       case Command::Type::LEFT:
@@ -46,14 +45,16 @@ namespace qd {
         _level->executeCommand(command);
         break;
       case Command::Type::LEVELUP:
-        assert(_level != nullptr);
-        // failure is okay
-        _changeLevelTo(_currentLevelNumber + 1);
+        for (auto i = 0u; i < command.multiplier(); ++i) {
+          // failure is okay
+          _changeLevelTo(_currentLevelNumber + 1);
+        }
         break;
       case Command::Type::LEVELDOWN:
-        assert(_level != nullptr);
-        // failure is okay
-        _changeLevelTo(_currentLevelNumber - 1);
+        for (auto i = 0u; i < command.multiplier(); ++i) {
+          // failure is okay
+          _changeLevelTo(_currentLevelNumber - 1);
+        }
         break;
       case Command::Type::RESTART:
         reset();

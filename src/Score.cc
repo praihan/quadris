@@ -25,5 +25,6 @@ namespace qd {
   void Score::reset() { // resets current score to 0
     _currentScore = 0;
     _scoreUpdated.notifyObservers(_currentScore);
+    _hiScoreUpdated.notifyObservers(_hiScore);
   }
 }
