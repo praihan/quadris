@@ -6,7 +6,7 @@
 namespace qd {
 
   struct Position {
-    Position() = default;
+    Position();
     Position(int row, int col);
     int row;
     int col;

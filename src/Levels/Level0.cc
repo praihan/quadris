@@ -38,6 +38,7 @@ namespace qd {
 
     _current = _sequence.cend();
 
+    _nextBlockType = nextBlockType();
     _ensureActiveBlock();
   }
 

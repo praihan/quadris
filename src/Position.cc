@@ -1,6 +1,7 @@
 #include "Position.h"
 
 namespace qd {
+  Position::Position() : Position{0, 0} { }
   Position::Position(int row, int col) : row{row}, col{col} { }
 
   Position operator+(const Position& p1, const Position& p2) {

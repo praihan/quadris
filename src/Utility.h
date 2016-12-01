@@ -9,7 +9,7 @@ namespace qd {
     return std::forward<F>(f)();
   }
 
-  bool tryParseInt(int& outVal, const std::string& str) {
+  inline bool tryParseInt(int& outVal, const std::string& str) {
     try {
       outVal = std::stoi(str);
       return true;
