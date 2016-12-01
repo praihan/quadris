@@ -26,10 +26,19 @@ namespace qd {
     virtual Block::Type nextBlockType() = 0;
     virtual void executeCommand(const Command& command) override;
   protected:
+    enum class Direction {
+      DOWN,
+      LEFT,
+      RIGHT
+    };
+
     bool _isCellOccupied(const Position &p) const;
-    bool _canMoveLeft(const Block &b) const;
-    bool _canMoveRight(const Block &b) const;
-    bool _canMoveDown(const Block &b) const;
+    bool _isValidBlock(const Block &b) const;
+    bool _canMove(const Block &b, const Direction d) const;
+    void _moveBlock(const Position& dest);
+    void _clearActiveBlockCells();
+    void _setActiveBlockCells();
+
   };
 }
 
