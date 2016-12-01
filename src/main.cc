@@ -51,14 +51,12 @@ int main(int argc, char* argv[]) {
     while (true) {
       try {
         qd::Command command = commandInterpreter.nextCommand();
-        if (command.type() == qd::Command::Type::IGNORE) {
-          continue;
-        }
         if (command.type() == qd::Command::Type::UNKNOWN) {
           std::cerr << "Error: Unknown command '" <<  command.name() << "'" << std::endl;
           continue;
         }
         board.executeCommand(command);
+        textDisplay.outputDisplay();
       }
       catch (const qd::CommandArityError& cmdArityErr) {
         std::cerr << "Error: " << cmdArityErr.what() << std::endl;

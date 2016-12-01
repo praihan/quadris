@@ -62,8 +62,7 @@ namespace qd {
         assert(!"Not implemented");
         break;
       case Command::Type::UNKNOWN:
-      case Command::Type::IGNORE:
-        assert(!"Command with type UNKNOWN/IGNORE should never get here");
+        assert(!"Command with type UNKNOWN should never get here");
         break;
     }
   }

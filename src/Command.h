@@ -11,7 +11,6 @@ namespace qd {
   public:
     enum class Type {
       UNKNOWN,
-      IGNORE,
 
       LEFT,
       RIGHT,

@@ -24,5 +24,9 @@ namespace qd {
 
   void GraphicDisplay::onGameEnded() {
 
-  } 
+  }
+
+  void GraphicDisplay::outputDisplay() {
+
+  }
 }

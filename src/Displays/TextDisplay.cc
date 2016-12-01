@@ -20,11 +20,15 @@ namespace qd {
   }
 
   void TextDisplay::onGameStarted() {
-
+    std::cout << "GAME STARTED" << std::endl;
   }
 
   void TextDisplay::onGameEnded() {
     std::cout << "GAME RESET" << std::endl;
+  }
+
+  void TextDisplay::outputDisplay() {
+    std::cout << "OUTPUT" << std::endl;
   }
 
 }

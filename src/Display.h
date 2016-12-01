@@ -20,6 +20,9 @@ namespace qd {
     virtual void onGameStarted() = 0;
     virtual void onGameEnded() = 0;
 
+  public:
+    virtual void outputDisplay() = 0;
+
   protected:
     ObserverSlot<> _gameResetSlot;
     ObserverSlot<const Board::CellGrid&, const Block*> _cellsUpdatedSlot;
