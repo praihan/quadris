@@ -9,7 +9,7 @@ namespace qd {
     occupiedPositions.emplace_back(2, 1);
     occupiedPositions.emplace_back(3, 0);
     occupiedPositions.emplace_back(3, 1);
-    occupiedPositions.emplace_back(3, 3);
+    occupiedPositions.emplace_back(3, 2);
   }
 
   void BlockT::rotate(Rotation dir) { // T rotation with 4 states
@@ -39,7 +39,7 @@ namespace qd {
         occupiedPositions[0] = {2,1};
         occupiedPositions[1] = {3,0};
         occupiedPositions[2] = {3,1};
-        occupiedPositions[3] = {3,3};
+        occupiedPositions[3] = {3,2};
         state = 0;
       }
     }
@@ -55,7 +55,7 @@ namespace qd {
         occupiedPositions[0] = {2,1};
         occupiedPositions[1] = {3,0};
         occupiedPositions[2] = {3,1};
-        occupiedPositions[3] = {3,3};
+        occupiedPositions[3] = {3,2};
         state = 0;
       }
       else if (state == 2) {
