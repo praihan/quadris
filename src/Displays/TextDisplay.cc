@@ -2,10 +2,6 @@
 
 namespace qd {
 
-  void TextDisplay::onGameStarted() {
-    
-  }
-
   void TextDisplay::onCellsUpdated(const Board::CellGrid& cells) {
   
   }
@@ -22,7 +18,7 @@ namespace qd {
   
   }
 
-  void TextDisplay::onGameEnded() {
+  void TextDisplay::onGameReset() {
   
   }
 

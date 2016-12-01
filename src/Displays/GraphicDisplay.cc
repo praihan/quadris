@@ -1,11 +1,7 @@
 #include "GraphicDisplay.h"
 
 namespace qd {
-
-  void GraphicDisplay::onGameStarted() {
-
-  }
-
+  
   void GraphicDisplay::onCellsUpdated(const Board::CellGrid& cells) {
     
   }
@@ -22,7 +18,7 @@ namespace qd {
   
   }
 
-  void GraphicDisplay::onGameEnded() {
+  void GraphicDisplay::onGameReset() {
 
   } 
 }
