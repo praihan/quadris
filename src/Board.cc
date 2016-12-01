@@ -51,8 +51,8 @@ namespace qd {
 
   const Event<>& Board::gameStarted() const { return _gameStarted; }
   Event<>& Board::gameStarted() { return _gameStarted; }
-  const Event<>& Board::cellUpdated() const { return _cellUpdated; }
-  Event<>& Board::cellUpdated() { return _cellUpdated; }
+  const Event<const CellGrid&>& Board::cellsUpdated() const { return _cellsUpdated; }
+  Event<const CellGrid&>& Board::cellsUpdated() { return _cellsUpdated; }
   const Event<int>& Board::scoreUpdated() const { return _scoreUpdated; }
   Event<int>& Board::scoreUpdated() { return _scoreUpdated; }
   const Event<int>& Board::hiScoreUpdated() const { return _hiScoreUpdated; }

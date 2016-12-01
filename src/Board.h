@@ -53,8 +53,8 @@ namespace qd {
 
     const Event<>& gameStarted() const;
     Event<>& gameStarted();
-    const Event<>& cellUpdated() const;
-    Event<>& cellUpdated();
+    const Event<const CellGrid&>& cellsUpdated() const;
+    Event<const CellGrid&>& cellsUpdated();
     const Event<int>& scoreUpdated() const;
     Event<int>& scoreUpdated();
     const Event<int>& hiScoreUpdated() const;
@@ -73,7 +73,7 @@ namespace qd {
     std::map<int, LevelFactory> _levelFactories;
 
     Event<> _gameStarted;
-    Event<> _cellUpdated;
+    Event<CellGrid&> _cellsUpdated;
     Event<int> _scoreUpdated;
     Event<int> _hiScoreUpdated;
     Event<> _nextBlockGenerated;

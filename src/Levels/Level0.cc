@@ -51,6 +51,5 @@ namespace qd {
   }
 
   void Level0::executeCommand(const Command& command) {
-
   }
 }

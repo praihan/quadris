@@ -1,7 +1,7 @@
 #include "Block.h"
 #include "Level1.h"
 #include <array>
-#include <cstdlib>
+#include "Board.h"
 
 namespace qd {
 
@@ -29,12 +29,13 @@ namespace qd {
   }
 
   Block::Type Level1::nextBlockType() {
-    int rand = std::rand() % (weightedBlockTypes.size());
+    std::uniform_int_distribution<> dis(0, (weightedBlockTypes.size() - 1));
     
-    return weightedBlockTypes[rand];
+    auto index = dis(_board.randomEngine());
+    
+    return weightedBlockTypes[index];
   }
 
   void Level1::executeCommand(const Command& command) {
-
   }
 }
