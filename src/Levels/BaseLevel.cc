@@ -60,14 +60,19 @@ namespace qd {
     }
   }
 
-  void BaseLevel::executeCommand(const Command& command) {
+  bool BaseLevel::executeCommand(const Command& command) {
     switch (command.type()) {
       case Command::Type::LEFT: {
         Block &activeBlock = _board.activeBlock();
+        
         if (_canMove(activeBlock, Direction::LEFT)) {
           activeBlock.position.col -= 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
+
+          return true;
         }
+
+        return false;
       }
       break;
 
@@ -76,16 +81,24 @@ namespace qd {
         if (_canMove(activeBlock, Direction::RIGHT)) {
           activeBlock.position.col += 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
+
+          return true;
         }
+
+        return false; 
       }
       break;
 
       case Command::Type::DOWN: {
         Block &activeBlock = _board.activeBlock();
-        if (_canMove(activeBlock, gDirection::DOWN)) {
+        if (_canMove(activeBlock, Direction::DOWN)) {
           activeBlock.position.row += 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
+
+          return true;
         }
+
+        return false;
       }
       break;
 
@@ -98,12 +111,14 @@ namespace qd {
         
         if (_isValidBlock(activeBlock)) {
           _board.cellsUpdated().notifyObservers(_board.cells());
+          _setActiveBlockCells();
+          return true;
         }
         else {
           activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
+          _setActiveBlockCells();
+          return false;
         }
-
-        _setActiveBlockCells();
       }
       break;
 
@@ -116,12 +131,15 @@ namespace qd {
         
         if (_isValidBlock(activeBlock)) {
           _board.cellsUpdated().notifyObservers(_board.cells());
+          _setActiveBlockCells();
+          return true;
         }
         else {
           activeBlock.rotate(Block::Rotation::CLOCKWISE);
-        }
+          _setActiveBlockCells();
+          return false;
 
-        _setActiveBlockCells();
+        }
       }
       break;
 
@@ -137,39 +155,49 @@ namespace qd {
         _setActiveBlockCells();
 
         _board.cellsUpdated().notifyObservers(_board.cells());
+        
+        // TODO: account for false
+        return true;
       }
       break;
 
       case Command::Type::BLOCK_I: {
-        //
+        return false;
       }
       break;
 
       case Command::Type::BLOCK_J: {
+        return false;
       }
       break;
 
       case Command::Type::BLOCK_L: {
+        return false;
       }
       break;
 
       case Command::Type::BLOCK_O: {
+        return false;
       }
       break;
 
       case Command::Type::BLOCK_S: {
+        return false;
       }
       break;
       
       case Command::Type::BLOCK_Z: {
+        return false;
       }
       break;
 
       case Command::Type::BLOCK_T: {
+        return false;
       }
       break;
 
       default:
+        return false;
       break;
     }
   }

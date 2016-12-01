@@ -12,7 +12,7 @@ namespace qd {
     Level0(Board&);
     virtual int levelNumber() const override;
     virtual Block::Type nextBlockType() override;
-    virtual void executeCommand(const Command& command) override;
+    virtual bool executeCommand(const Command& command) override;
   };
 
 }

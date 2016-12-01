@@ -32,11 +32,15 @@ namespace qd {
     return weightedBlockTypes[rand];
   }
 
-  void Level3::executeCommand(const Command& command) {
-    BaseLevel::executeCommand(command);
+  bool Level3::executeCommand(const Command& command) {
+    bool success = BaseLevel::executeCommand(command);
     
     if (command.type() == Command::Type::LEFT || command.type() == Command::Type::RIGHT || command.type() == Command::Type::DOWN || 
         command.type() == Command::Type::CLOCKWISE || command.type() == Command::Type::COUNTER_CLOCKWISE) {
+      if (!success) {
+        return false;
+      }
+      
       Block &activeBlock = _board.activeBlock();
       
       if (_canMove(activeBlock, BaseLevel::Direction::DOWN)) {
@@ -44,5 +48,7 @@ namespace qd {
         _board.cellsUpdated().notifyObservers(_board.cells());
       }
     }
+
+    return true;
   }
 }
