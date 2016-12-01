@@ -45,7 +45,7 @@ namespace qd {
       
       if (_canMove(activeBlock, BaseLevel::Direction::DOWN) && success) {
         activeBlock.position.row += 1;
-        _board.cellsUpdated().notifyObservers(_board.cells());
+        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
       }
     }
 

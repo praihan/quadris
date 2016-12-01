@@ -3,7 +3,7 @@
 
 namespace qd {
 
-  void TextDisplay::onCellsUpdated(const Board::CellGrid& cells) {
+  void TextDisplay::onCellsUpdated(const Board::CellGrid& cells, const Block* b) {
     std::cout << "CELLS UPDATED" << std::endl;
   }
 

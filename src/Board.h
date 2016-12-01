@@ -53,8 +53,8 @@ namespace qd {
     std::unique_ptr<Block>& activeBlock();
     const std::unique_ptr<Block>& activeBlock() const;
 
-    const Event<const CellGrid&>& cellsUpdated() const;
-    Event<const CellGrid&>& cellsUpdated();
+    const Event<const CellGrid&, const Block*>& cellsUpdated() const;
+    Event<const CellGrid&, const Block*>& cellsUpdated();
     const Event<int>& scoreUpdated() const;
     Event<int>& scoreUpdated();
     const Event<int>& hiScoreUpdated() const;
@@ -72,7 +72,7 @@ namespace qd {
     RandomEngine _randomEngine;
     std::map<int, LevelFactory> _levelFactories;
 
-    Event<const CellGrid&> _cellsUpdated;
+    Event<const CellGrid&, const Block*> _cellsUpdated;
     Event<int> _scoreUpdated;
     Event<int> _hiScoreUpdated;
     Event<Block::Type> _nextBlockGenerated;

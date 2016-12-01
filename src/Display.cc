@@ -6,7 +6,10 @@ namespace qd {
 
   Display::Display(const Board& board) {
     board.cellsUpdated().addObserver(
-      _cellsUpdatedSlot, std::bind(&Display::onCellsUpdated, this, std::placeholders::_1)
+      _cellsUpdatedSlot, std::bind(
+        &Display::onCellsUpdated, this,
+        std::placeholders::_1, std::placeholders::_2
+      )
     );
     board.scoreUpdated().addObserver(
       _scoreUpdatedSlot, std::bind(&Display::onScoreUpdated, this, std::placeholders::_1)

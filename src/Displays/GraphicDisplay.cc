@@ -2,7 +2,7 @@
 
 namespace qd {
   
-  void GraphicDisplay::onCellsUpdated(const Board::CellGrid& cells) {
+  void GraphicDisplay::onCellsUpdated(const Board::CellGrid& cells, const Block* b) {
     
   }
 

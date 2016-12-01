@@ -6,12 +6,14 @@
 
 namespace qd {
 
+  class Block;
+
   class Display {
   public:
     Display(const Board&);
 
   protected:
-    virtual void onCellsUpdated(const Board::CellGrid&) = 0;
+    virtual void onCellsUpdated(const Board::CellGrid&, const Block*) = 0;
     virtual void onScoreUpdated(int score) = 0;
     virtual void onHiScoreUpdated(int hiScore) = 0;
     virtual void onNextBlockGenerated(Block::Type) = 0;
@@ -19,7 +21,7 @@ namespace qd {
 
   protected:
     ObserverSlot<> _gameResetSlot;
-    ObserverSlot<const Board::CellGrid&> _cellsUpdatedSlot;
+    ObserverSlot<const Board::CellGrid&, const Block*> _cellsUpdatedSlot;
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;
     ObserverSlot<Block::Type> _nextBlockGeneratedSlot;

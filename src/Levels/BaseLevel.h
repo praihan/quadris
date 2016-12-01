@@ -36,8 +36,6 @@ namespace qd {
     bool _isValidBlock(const Block &b) const;
     bool _canMove(const Block &b, Direction d) const;
     void _moveBlock(const Position& dest);
-    void _clearActiveBlockCells();
-    void _setActiveBlockCells();
     void _ensureActiveBlock();
 
   };

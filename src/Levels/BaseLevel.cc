@@ -32,41 +32,24 @@ namespace qd {
     return true;
   }
 
-  bool BaseLevel::_canMove(const Block &b, const Direction d) const {
+  bool BaseLevel::_canMove(const Block &b, Direction d) const {
     for (Position p : b) {
-      switch(d) {
-      default:
-      case Direction::DOWN:
-        p.row++;
-        break;
-      case Direction::LEFT:
-        p.col--;
-        break;
-      case Direction::RIGHT: 
-        p.col++;
-        break;
+      switch (d) {
+        case Direction::DOWN:
+          p.row++;
+          break;
+        case Direction::LEFT:
+          p.col--;
+          break;
+        case Direction::RIGHT: 
+          p.col++;
+          break;
+      }
+      if (_isCellOccupied(p)) {
+        return false;
       }
     }
-
-    return _isValidBlock(b);
-  }
-
-  void BaseLevel::_clearActiveBlockCells() {
-    Block &activeBlock = *_board.activeBlock();
-    Board::CellGrid &cg = _board.cells(); 
-
-    for (Position p : activeBlock) {
-      cg[p.row][p.col].blockType = Block::Type::EMPTY;
-    }
-  }
-
-  void BaseLevel::_setActiveBlockCells() {
-    Block &activeBlock = *_board.activeBlock();
-    Board::CellGrid &cg = _board.cells(); 
-
-    for (Position p : activeBlock) {
-      cg[p.row][p.col].blockType = activeBlock.type();
-    }
+    return true;
   }
 
   void BaseLevel::_ensureActiveBlock() {
@@ -114,7 +97,7 @@ namespace qd {
         
         if (_canMove(activeBlock, Direction::LEFT)) {
           activeBlock.position.col -= 1;
-          _board.cellsUpdated().notifyObservers(_board.cells());
+          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
 
           return true;
         }
@@ -127,7 +110,7 @@ namespace qd {
         Block &activeBlock = *_board.activeBlock();
         if (_canMove(activeBlock, Direction::RIGHT)) {
           activeBlock.position.col += 1;
-          _board.cellsUpdated().notifyObservers(_board.cells());
+          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
 
           return true;
         }
@@ -140,7 +123,7 @@ namespace qd {
         Block &activeBlock = *_board.activeBlock();
         if (_canMove(activeBlock, Direction::DOWN)) {
           activeBlock.position.row += 1;
-          _board.cellsUpdated().notifyObservers(_board.cells());
+          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
 
           return true;
         }
@@ -151,19 +134,15 @@ namespace qd {
 
       case Command::Type::CLOCKWISE: {
         Block &activeBlock = *_board.activeBlock();
-
-        _clearActiveBlockCells();
         
         activeBlock.rotate(Block::Rotation::CLOCKWISE);
         
         if (_isValidBlock(activeBlock)) {
-          _board.cellsUpdated().notifyObservers(_board.cells());
-          _setActiveBlockCells();
+          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
           return true;
         }
         else {
           activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
-          _setActiveBlockCells();
           return false;
         }
       }
@@ -172,18 +151,14 @@ namespace qd {
       case Command::Type::COUNTER_CLOCKWISE: {
         Block &activeBlock = *_board.activeBlock();
 
-        _clearActiveBlockCells();
-
         activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
         
         if (_isValidBlock(activeBlock)) {
-          _board.cellsUpdated().notifyObservers(_board.cells());
-          _setActiveBlockCells();
+          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
           return true;
         }
         else {
           activeBlock.rotate(Block::Rotation::CLOCKWISE);
-          _setActiveBlockCells();
           return false;
 
         }
@@ -193,15 +168,11 @@ namespace qd {
       case Command::Type::DROP: {
         Block &activeBlock = *_board.activeBlock();
 
-        _clearActiveBlockCells();
-
         while (_canMove(activeBlock, BaseLevel::Direction::DOWN)) {
           activeBlock.position.row += 1;
         }
 
-        _setActiveBlockCells();
-
-        _board.cellsUpdated().notifyObservers(_board.cells());
+        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
 
         _board.activeBlock() = nullptr;
         _ensureActiveBlock();

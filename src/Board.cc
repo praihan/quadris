@@ -68,7 +68,7 @@ namespace qd {
   }
 
   void Board::reset() {
-    cellsUpdated().notifyObservers(cells() = CellGrid{});
+    cellsUpdated().notifyObservers(cells() = CellGrid{}, nullptr);
     score().reset();
     gameReset().notifyObservers();
   }
@@ -93,8 +93,8 @@ namespace qd {
   std::unique_ptr<Block>& Board::activeBlock() { return _activeBlock; }
   const std::unique_ptr<Block>& Board::activeBlock() const { return _activeBlock; }
 
-  const Event<const Board::CellGrid&>& Board::cellsUpdated() const { return _cellsUpdated; }
-  Event<const Board::CellGrid&>& Board::cellsUpdated() { return _cellsUpdated; }
+  const Event<const Board::CellGrid&, const Block*>& Board::cellsUpdated() const { return _cellsUpdated; }
+  Event<const Board::CellGrid&, const Block*>& Board::cellsUpdated() { return _cellsUpdated; }
   const Event<int>& Board::scoreUpdated() const { return _scoreUpdated; }
   Event<int>& Board::scoreUpdated() { return _scoreUpdated; }
   const Event<int>& Board::hiScoreUpdated() const { return _hiScoreUpdated; }

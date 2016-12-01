@@ -10,7 +10,7 @@ namespace qd {
     using Display::Display;
 
   protected:
-    virtual void onCellsUpdated(const Board::CellGrid&) override;
+    virtual void onCellsUpdated(const Board::CellGrid&, const Block* b) override;
     virtual void onScoreUpdated(int score) override;
     virtual void onHiScoreUpdated(int hiScore) override;
     virtual void onNextBlockGenerated(Block::Type) override;
