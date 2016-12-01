@@ -20,8 +20,11 @@ namespace qd {
     board.nextBlockGenerated().addObserver(
       _nextBlockGeneratedSlot, std::bind(&Display::onNextBlockGenerated, this, std::placeholders::_1)
     );
-    board.gameReset().addObserver(
-      _gameResetSlot, std::bind(&Display::onGameReset, this)
+    board.gameStarted().addObserver(
+      _gameStartedSlot, std::bind(&Display::onGameStarted, this)
+    );
+    board.gameEnded().addObserver(
+      _gameEndedSlot, std::bind(&Display::onGameEnded, this)
     );
   }
 }

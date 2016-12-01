@@ -18,7 +18,11 @@ namespace qd {
   
   }
 
-  void GraphicDisplay::onGameReset() {
+  void GraphicDisplay::onGameStarted() {
+
+  }
+
+  void GraphicDisplay::onGameEnded() {
 
   } 
 }

@@ -25,17 +25,17 @@ namespace qd {
   class Board {
   public:
     using LevelFactory = std::function<std::unique_ptr<Level>(Board&)>;
-    using CellGrid = std::array<std::array<Cell, BOARD_HEIGHT>, BOARD_WIDTH + 3>;
+    using CellGrid = std::array<std::array<Cell, BOARD_WIDTH>, BOARD_HEIGHT + 3>;
     using RandomEngine = std::mt19937;
 
     struct InitArgs {
       int seed;
       int levelNumber;
-      std::map<int, const LevelFactory> levelFactories;
     };
 
     Board(const InitArgs&);
 
+    void start();
     void reset();
     void executeCommand(const Command& command);
 
@@ -61,8 +61,10 @@ namespace qd {
     Event<int>& hiScoreUpdated();
     const Event<Block::Type>& nextBlockGenerated() const;
     Event<Block::Type>& nextBlockGenerated();
-    const Event<>& gameReset() const;
-    Event<>& gameReset();
+    const Event<>& gameStarted() const;
+    Event<>& gameStarted();
+    const Event<>& gameEnded() const;
+    Event<>& gameEnded();
 
   private:
     CellGrid _cells;
@@ -76,7 +78,8 @@ namespace qd {
     Event<int> _scoreUpdated;
     Event<int> _hiScoreUpdated;
     Event<Block::Type> _nextBlockGenerated;
-    Event<> _gameReset;
+    Event<> _gameStarted;
+    Event<> _gameEnded;
 
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;

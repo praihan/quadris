@@ -14,11 +14,7 @@ namespace qd {
       _hiScoreUpdatedSlot,
       std::bind(&Board::_hiScoreUpdatedObserver, this, std::placeholders::_1)
     );
-    for (const auto& levelFactoryPair : initArgs.levelFactories) {
-      registerLevel(levelFactoryPair.first, levelFactoryPair.second);
-    }
-    bool changeSuccessful = _changeLevelTo(initArgs.levelNumber);
-    assert(changeSuccessful);
+    _currentLevelNumber = initArgs.levelNumber;
   }
 
   void Board::executeCommand(const Command& command) {
@@ -67,10 +63,17 @@ namespace qd {
     }
   }
 
-  void Board::reset() {
-    cellsUpdated().notifyObservers(cells() = CellGrid{}, nullptr);
+  void Board::start() {
+    bool changeSuccessful = _changeLevelTo(_currentLevelNumber);
+    assert(changeSuccessful);
+    cells() = CellGrid{};
     score().reset();
-    gameReset().notifyObservers();
+    gameStarted().notifyObservers();
+  }
+
+  void Board::reset() {
+    gameEnded().notifyObservers();
+    start();
   }
 
   void Board::registerLevel(
@@ -101,8 +104,10 @@ namespace qd {
   Event<int>& Board::hiScoreUpdated() { return _hiScoreUpdated; }
   const Event<Block::Type>& Board::nextBlockGenerated() const { return _nextBlockGenerated; }
   Event<Block::Type>& Board::nextBlockGenerated() { return _nextBlockGenerated; }
-  const Event<>& Board::gameReset() const { return _gameReset; }
-  Event<>& Board::gameReset() { return _gameReset; }
+  const Event<>& Board::gameStarted() const { return _gameStarted; }
+  Event<>& Board::gameStarted() { return _gameStarted; }
+  const Event<>& Board::gameEnded() const { return _gameEnded; }
+  Event<>& Board::gameEnded() { return _gameEnded; }
 
   bool Board::_changeLevelTo(int levelNumber) {
     auto levelFactory = _levelFactories.find(levelNumber);

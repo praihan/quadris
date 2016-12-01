@@ -36,17 +36,18 @@ int main(int argc, char* argv[]) {
   qd::Board::InitArgs boardInitArgs;
   boardInitArgs.seed = (cmdLineArgs.seed ? *cmdLineArgs.seed : 420);
   boardInitArgs.levelNumber = (cmdLineArgs.startLevel ? *cmdLineArgs.startLevel : 0);
-  boardInitArgs.levelFactories = {
-    { 0, makeLevelFactory<qd::Level0>() },
-    { 1, makeLevelFactory<qd::Level1>() },
-  };
 
   qd::Board board { boardInitArgs };
+  board.registerLevel(0, makeLevelFactory<qd::Level0>());
+  board.registerLevel(1, makeLevelFactory<qd::Level1>());
+
   qd::TextDisplay textDisplay { board };
 
   qd::CommandInterpreter commandInterpreter { std::cin };
 
   try {
+    board.start();
+
     while (true) {
       try {
         qd::Command command = commandInterpreter.nextCommand();

@@ -19,7 +19,11 @@ namespace qd {
     std::cout << "NEXT BLOCK GENERATED" << std::endl;
   }
 
-  void TextDisplay::onGameReset() {
+  void TextDisplay::onGameStarted() {
+
+  }
+
+  void TextDisplay::onGameEnded() {
     std::cout << "GAME RESET" << std::endl;
   }
 

@@ -17,7 +17,8 @@ namespace qd {
     virtual void onScoreUpdated(int score) = 0;
     virtual void onHiScoreUpdated(int hiScore) = 0;
     virtual void onNextBlockGenerated(Block::Type) = 0;
-    virtual void onGameReset() = 0;
+    virtual void onGameStarted() = 0;
+    virtual void onGameEnded() = 0;
 
   protected:
     ObserverSlot<> _gameResetSlot;
@@ -25,6 +26,7 @@ namespace qd {
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;
     ObserverSlot<Block::Type> _nextBlockGeneratedSlot;
+    ObserverSlot<> _gameStartedSlot;
     ObserverSlot<> _gameEndedSlot;
   };
 
