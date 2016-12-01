@@ -50,8 +50,8 @@ namespace qd {
     RandomEngine& randomEngine();
     const RandomEngine& randomEngine() const;
 
-    Block& activeBlock();
-    const Block& activeBlock() const;
+    std::unique_ptr<Block>& activeBlock();
+    const std::unique_ptr<Block>& activeBlock() const;
 
     const Event<const CellGrid&>& cellsUpdated() const;
     Event<const CellGrid&>& cellsUpdated();
@@ -59,8 +59,8 @@ namespace qd {
     Event<int>& scoreUpdated();
     const Event<int>& hiScoreUpdated() const;
     Event<int>& hiScoreUpdated();
-    const Event<>& nextBlockGenerated() const;
-    Event<>& nextBlockGenerated();
+    const Event<Block::Type>& nextBlockGenerated() const;
+    Event<Block::Type>& nextBlockGenerated();
     const Event<>& gameReset() const;
     Event<>& gameReset();
 
@@ -75,7 +75,7 @@ namespace qd {
     Event<const CellGrid&> _cellsUpdated;
     Event<int> _scoreUpdated;
     Event<int> _hiScoreUpdated;
-    Event<> _nextBlockGenerated;
+    Event<Block::Type> _nextBlockGenerated;
     Event<> _gameReset;
 
     ObserverSlot<int> _scoreUpdatedSlot;

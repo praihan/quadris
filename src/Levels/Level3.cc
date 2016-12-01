@@ -41,7 +41,7 @@ namespace qd {
         return false;
       }
       
-      Block &activeBlock = _board.activeBlock();
+      Block &activeBlock = *_board.activeBlock();
       
       if (_canMove(activeBlock, BaseLevel::Direction::DOWN)) {
         activeBlock.position.row += 1;

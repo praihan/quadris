@@ -88,8 +88,8 @@ namespace qd {
   Board::RandomEngine& Board::randomEngine() { return _randomEngine; }
   const Board::RandomEngine& Board::randomEngine() const { return _randomEngine; }
 
-  Block& Board::activeBlock() { assert(_activeBlock != nullptr); return *_activeBlock; }
-  const Block& Board::activeBlock() const { assert(_activeBlock != nullptr); return *_activeBlock; }
+  std::unique_ptr<Block>& Board::activeBlock() { return _activeBlock; }
+  const std::unique_ptr<Block>& Board::activeBlock() const { return _activeBlock; }
 
   const Event<const Board::CellGrid&>& Board::cellsUpdated() const { return _cellsUpdated; }
   Event<const Board::CellGrid&>& Board::cellsUpdated() { return _cellsUpdated; }
@@ -97,8 +97,8 @@ namespace qd {
   Event<int>& Board::scoreUpdated() { return _scoreUpdated; }
   const Event<int>& Board::hiScoreUpdated() const { return _hiScoreUpdated; }
   Event<int>& Board::hiScoreUpdated() { return _hiScoreUpdated; }
-  const Event<>& Board::nextBlockGenerated() const { return _nextBlockGenerated; }
-  Event<>& Board::nextBlockGenerated() { return _nextBlockGenerated; }
+  const Event<Block::Type>& Board::nextBlockGenerated() const { return _nextBlockGenerated; }
+  Event<Block::Type>& Board::nextBlockGenerated() { return _nextBlockGenerated; }
   const Event<>& Board::gameReset() const { return _gameReset; }
   Event<>& Board::gameReset() { return _gameReset; }
 

@@ -15,7 +15,7 @@ namespace qd {
     std::cout << "HI SCORE UPDATED: " << hiScore << std::endl;
   }
 
-  void TextDisplay::onNextBlockGenerated() {
+  void TextDisplay::onNextBlockGenerated(Block::Type) {
     std::cout << "NEXT BLOCK GENERATED" << std::endl;
   }
 

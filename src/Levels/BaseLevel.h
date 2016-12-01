@@ -38,6 +38,7 @@ namespace qd {
     void _moveBlock(const Position& dest);
     void _clearActiveBlockCells();
     void _setActiveBlockCells();
+    void _ensureActiveBlock();
 
   };
 }

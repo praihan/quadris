@@ -15,7 +15,7 @@ namespace qd {
       _hiScoreUpdatedSlot, std::bind(&Display::onHiScoreUpdated, this, std::placeholders::_1)
     );
     board.nextBlockGenerated().addObserver(
-      _nextBlockGeneratedSlot, std::bind(&Display::onNextBlockGenerated, this)
+      _nextBlockGeneratedSlot, std::bind(&Display::onNextBlockGenerated, this, std::placeholders::_1)
     );
     board.gameReset().addObserver(
       _gameResetSlot, std::bind(&Display::onGameReset, this)

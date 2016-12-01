@@ -14,7 +14,7 @@ namespace qd {
     virtual void onCellsUpdated(const Board::CellGrid&) = 0;
     virtual void onScoreUpdated(int score) = 0;
     virtual void onHiScoreUpdated(int hiScore) = 0;
-    virtual void onNextBlockGenerated() = 0;
+    virtual void onNextBlockGenerated(Block::Type) = 0;
     virtual void onGameReset() = 0;
 
   protected:
@@ -22,7 +22,7 @@ namespace qd {
     ObserverSlot<const Board::CellGrid&> _cellsUpdatedSlot;
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;
-    ObserverSlot<> _nextBlockGeneratedSlot;
+    ObserverSlot<Block::Type> _nextBlockGeneratedSlot;
     ObserverSlot<> _gameEndedSlot;
   };
 

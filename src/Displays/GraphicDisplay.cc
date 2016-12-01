@@ -14,7 +14,7 @@ namespace qd {
 
   }
 
-  void GraphicDisplay::onNextBlockGenerated() {
+  void GraphicDisplay::onNextBlockGenerated(Block::Type) {
   
   }
 
