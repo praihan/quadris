@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     { 1, makeLevelFactory<qd::Level1>() },
   };
 
-  qd::Board b { boardInitArgs };
+  qd::Board board { boardInitArgs };
 
   qd::CommandInterpreter commandInterpreter { std::cin };
 
@@ -46,6 +46,7 @@ int main(int argc, char* argv[]) {
           std::cerr << "Error: Unknown command '" <<  command.name() << "'" << std::endl;
           continue;
         }
+        board.executeCommand(command);
       }
       catch (const qd::CommandArityError& cmdArityErr) {
         std::cerr << "Error: " << cmdArityErr.what() << std::endl;

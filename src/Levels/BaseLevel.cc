@@ -4,11 +4,7 @@
 
 namespace qd {
   bool BaseLevel::_isCellOccupied(const Position &p) const {
-    if (_board.cells()[p.col][p.row].blockType == Block::Type::EMPTY) {
-      return false;
-    }
-  
-    return true;
+    return _board.cells()[p.col][p.row].blockType != Block::Type::EMPTY;
   }
 
   bool BaseLevel::_isValidBlock(const Block &b) const {
@@ -25,7 +21,7 @@ namespace qd {
   }
 
   bool BaseLevel::_canMove(const Block &b, const Direction d) const {
-    for (Position p : b) {  
+    for (Position p : b) {
       switch(d) {
       default:
       case Direction::DOWN:
@@ -62,7 +58,7 @@ namespace qd {
   }
 
   void BaseLevel::executeCommand(const Command& command) {
-    switch (command.type()) { 
+    switch (command.type()) {
       case Command::Type::LEFT: {
         Block &activeBlock = _board.activeBlock();
         if (_canMove(activeBlock, BaseLevel::Direction::LEFT)) {
