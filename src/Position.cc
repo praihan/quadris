@@ -16,4 +16,8 @@ namespace qd {
   bool operator!=(const Position& p1, const Position& p2) {
     return !(p1 == p2);
   }
+  std::ostream& operator<<(std::ostream& os, const Position& p) {
+    os << "Position(row=" << p.row << ",col=" << p.col << ")";
+    return os;
+  }
 }

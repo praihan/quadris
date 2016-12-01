@@ -12,16 +12,19 @@
 #include "Blocks/BlockZ.h"
 
 namespace qd {
-  bool BaseLevel::_isCellOccupied(const Position &p) const {
+  bool BaseLevel::_isCellOccupied(const Position& p) const {
     return _board.cells()[p.col][p.row].blockType != Block::Type::EMPTY;
+  }
+
+  bool BaseLevel::_isCellInBound(const Position& p) const {
+    return
+      (p.row >= 0 && p.row < static_cast<int>(BOARD_HEIGHT + 3)) &&
+      (p.col >= 0 && p.col < static_cast<int>(BOARD_WIDTH));
   }
 
   bool BaseLevel::_isValidBlock(const Block &b) const {
     for (Position p : b) {
-      if (p.row < 0 || p.row >= static_cast<int>(BOARD_HEIGHT)) {
-        return false;
-      }
-      if (p.col < 0 || p.col >= static_cast<int>(BOARD_WIDTH)) {
+      if (!_isCellInBound(p)) {
         return false;
       }
       if (_isCellOccupied(p)) {
@@ -44,6 +47,9 @@ namespace qd {
         case Direction::RIGHT: 
           p.col++;
           break;
+      }
+      if (!_isCellInBound(p)) {
+        return false;
       }
       if (_isCellOccupied(p)) {
         return false;

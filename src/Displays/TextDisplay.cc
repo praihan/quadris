@@ -71,6 +71,7 @@ namespace qd {
         if (p.row < 3) {
           continue;
         }
+        std::cout << p << std::endl;
         const int rowIndex = p.row - 3 + 4; // -3 for the 3 unseen rows, +4 for the text at the top
         _displayBuffer[rowIndex][p.col] = blockTypeToChar.at(block.type());
       }

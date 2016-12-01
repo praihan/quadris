@@ -32,7 +32,8 @@ namespace qd {
       RIGHT
     };
 
-    bool _isCellOccupied(const Position &p) const;
+    bool _isCellOccupied(const Position& p) const;
+    bool _isCellInBound(const Position& p) const;
     bool _isValidBlock(const Block &b) const;
     bool _canMove(const Block &b, Direction d) const;
     void _moveBlock(const Position& dest);
