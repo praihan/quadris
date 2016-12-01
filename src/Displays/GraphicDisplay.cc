@@ -6,11 +6,11 @@ namespace qd {
     
   }
 
-  void GraphicDisplay::onScoreUpdated() {
+  void GraphicDisplay::onScoreUpdated(int score) {
 
   }
 
-  void GraphicDisplay::onHiScoreUpdated() {
+  void GraphicDisplay::onHiScoreUpdated(int hiScore) {
 
   }
 

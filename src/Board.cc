@@ -54,6 +54,8 @@ namespace qd {
         _changeLevelTo(_currentLevelNumber - 1);
         break;
       case Command::Type::RESTART:
+        reset();
+        break;
       case Command::Type::HINT:
         assert(!"Not implemented");
         break;
@@ -65,6 +67,7 @@ namespace qd {
 
   void Board::reset() {
     _score.reset();
+    gameReset().notifyObservers();
     // TODO:
     // Clear board
     // cellsUpdated event
