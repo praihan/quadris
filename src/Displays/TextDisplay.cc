@@ -149,7 +149,8 @@ namespace qd {
   }
 
   void TextDisplay::onLevelChanged(int level) {
-    
+    auto levelString = std::to_string(level);
+    _displayBuffer[0] = "Level: " + levelString;
   }
 
 }

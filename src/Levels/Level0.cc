@@ -38,10 +38,7 @@ namespace qd {
     assert(_sequence.cbegin() != _sequence.cend());
 
     _current = _sequence.begin();
-
-    _nextBlockType = nextBlockType();
-    _ensureActiveBlock();
-    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
+    _defaultInitialization();
   }
 
   int Level0::levelNumber() const {

@@ -22,9 +22,7 @@ namespace qd {
   }
 
   Level4::Level4(Board& b) : BaseLevel{b} {
-    _nextBlockType = nextBlockType();
-    _ensureActiveBlock();
-    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
+    _defaultInitialization();
   }
 
   int Level4::levelNumber() const {

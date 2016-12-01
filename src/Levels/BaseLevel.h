@@ -32,12 +32,19 @@ namespace qd {
       RIGHT
     };
 
+    // this is common initialization that is shared among the levels.
+    // we place this here so that the subclasses can call these
+    // in their constructors. our constructor isn't allowed to do this
+    // by itself because the subclasses' v-tables aren't set up
+    // when our constructor is executed.
+    void _defaultInitialization();
+
     bool _isCellOccupied(const Position& p) const;
     bool _isCellInBound(const Position& p) const;
     bool _isValidBlock(const Block &b) const;
     bool _canMove(const Block &b, Direction d) const;
     void _moveBlock(const Position& dest);
-    void _ensureActiveBlock();
+    void _ensureBlocksGenerated();
 
     Block::Type _nextBlockType;
 

@@ -16,6 +16,15 @@ namespace qd {
   BaseLevel::BaseLevel(Board& b) : Level{b} {
   }
 
+  void BaseLevel::_defaultInitialization() {
+    const auto& nextBlockPtr = _board.nextBlockPtr();
+    // if nextBlockPtr already exists... then our next value will actually
+    // be ignored. So don't poll our 'nextBlockType'
+    _nextBlockType = nextBlockPtr ? Block::Type::EMPTY : nextBlockType();
+    _ensureBlocksGenerated();
+    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
+  }
+
   bool BaseLevel::_isCellOccupied(const Position& p) const {
     return (_board.cells()[p.row][p.col].blockType != Block::Type::EMPTY);
   }
@@ -62,42 +71,44 @@ namespace qd {
     return true;
   }
 
-  void BaseLevel::_ensureActiveBlock() {
+  void BaseLevel::_ensureBlocksGenerated() {
     std::unique_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
+    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
 
-    if (activeBlockPtr == nullptr) {
-      Block::Type nextType = _nextBlockType;
-      _nextBlockType = nextBlockType();
-
-      switch(nextType) {
+    auto createBlockFromType = [](Block::Type type) -> std::unique_ptr<Block> {
+      switch(type) {
         case Block::Type::BLOCK_I:
-          activeBlockPtr = std::make_unique<BlockI>();
-          break;
+          return std::make_unique<BlockI>();
         case Block::Type::BLOCK_J:
-          activeBlockPtr = std::make_unique<BlockJ>();
-          break;
+          return std::make_unique<BlockJ>();
         case Block::Type::BLOCK_L:
-          activeBlockPtr = std::make_unique<BlockL>();
-          break;
+          return std::make_unique<BlockL>();
         case Block::Type::BLOCK_O:
-          activeBlockPtr = std::make_unique<BlockO>();
-          break;
+          return std::make_unique<BlockO>();
         case Block::Type::BLOCK_S:
-          activeBlockPtr = std::make_unique<BlockS>();
-          break;
+          return std::make_unique<BlockS>();
         case Block::Type::BLOCK_T:
-          activeBlockPtr = std::make_unique<BlockT>();
-          break;
+          return std::make_unique<BlockT>();
         case Block::Type::BLOCK_Z:
-          activeBlockPtr = std::make_unique<BlockZ>();
-          break;
+          return std::make_unique<BlockZ>();
         default:
           assert(!"We have accounted for all block types. This should not happen");
       }
+      return nullptr;
+    };
 
-      activeBlockPtr->position = {0, 0};
+    if (activeBlockPtr == nullptr) {
+      if (nextBlockPtr == nullptr) {
+        activeBlockPtr = createBlockFromType(_nextBlockType);
+      } else {
+        activeBlockPtr = std::move(nextBlockPtr);
+      }
 
+      _nextBlockType = nextBlockType();
+      nextBlockPtr = createBlockFromType(_nextBlockType);
       _board.nextBlockGenerated().notifyObservers(_nextBlockType);
+
+      activeBlockPtr->position = { 0, 0 };
     }
   }
 
@@ -199,7 +210,7 @@ namespace qd {
         }
 
         activeBlockPtr = nullptr;
-        _ensureActiveBlock();
+        _ensureBlocksGenerated();
 
         notifyCellsUpdated();
 

@@ -41,36 +41,39 @@ namespace qd {
 
     void registerLevel(int levelNumber, const LevelFactory& factory);
 
-    CellGrid& cells();
-    const CellGrid& cells() const;
+    CellGrid& cells() { return _cells; }
+    const CellGrid& cells() const { return _cells; }
 
-    Score& score();
-    const Score& score() const;
+    Score& score() { return _score; }
+    const Score& score() const { return _score; }
 
-    RandomEngine& randomEngine();
-    const RandomEngine& randomEngine() const;
+    RandomEngine& randomEngine() { return _randomEngine; }
+    const RandomEngine& randomEngine() const { return _randomEngine; }
 
-    std::unique_ptr<Block>& activeBlockPtr();
-    const std::unique_ptr<Block>& activeBlockPtr() const;
+    std::unique_ptr<Block>& activeBlockPtr() { return _activeBlock; }
+    const std::unique_ptr<Block>& activeBlockPtr() const { return _activeBlock; }
+    std::unique_ptr<Block>& nextBlockPtr() { return _nextBlock; }
+    const std::unique_ptr<Block>& nextBlockPtr() const { return _nextBlock; }
 
-    const Event<const CellGrid&, const Block*>& cellsUpdated() const;
-    Event<const CellGrid&, const Block*>& cellsUpdated();
-    const Event<int>& scoreUpdated() const;
-    Event<int>& scoreUpdated();
-    const Event<int>& hiScoreUpdated() const;
-    Event<int>& hiScoreUpdated();
-    const Event<Block::Type>& nextBlockGenerated() const;
-    Event<Block::Type>& nextBlockGenerated();
-    const Event<>& gameStarted() const;
-    Event<>& gameStarted();
-    const Event<>& gameEnded() const;
-    Event<>& gameEnded();
-    const Event<int>& levelChanged() const;
-    Event<int>& levelChanged();
+    const Event<const CellGrid&, const Block*>& cellsUpdated() const { return _cellsUpdated; }
+    Event<const CellGrid&, const Block*>& cellsUpdated() { return _cellsUpdated; }
+    const Event<int>& scoreUpdated() const { return _scoreUpdated; }
+    Event<int>& scoreUpdated() { return _scoreUpdated; }
+    const Event<int>& hiScoreUpdated() const { return _hiScoreUpdated; }
+    Event<int>& hiScoreUpdated() { return _hiScoreUpdated; }
+    const Event<Block::Type>& nextBlockGenerated() const { return _nextBlockGenerated; }
+    Event<Block::Type>& nextBlockGenerated() { return _nextBlockGenerated; }
+    const Event<>& gameStarted() const { return _gameStarted; }
+    Event<>& gameStarted() { return _gameStarted; }
+    const Event<>& gameEnded() const { return _gameEnded; }
+    Event<>& gameEnded() { return _gameEnded; }
+    const Event<int>& levelChanged() const { return _levelChanged; }
+    Event<int>& levelChanged() { return _levelChanged; }
 
   private:
     CellGrid _cells;
     std::unique_ptr<Block> _activeBlock;
+    std::unique_ptr<Block> _nextBlock;
     Score _score;
     std::unique_ptr<Level> _level;
     RandomEngine _randomEngine;

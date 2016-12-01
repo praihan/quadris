@@ -76,6 +76,8 @@ namespace qd {
     // we need to clear the grid before we change levels
     // since changing levels will trigger an cellsUpdated event
     cells() = CellGrid{};
+    activeBlockPtr() = nullptr;
+    nextBlockPtr() = nullptr;
     bool changeSuccessful = _changeLevelTo(_currentLevelNumber);
     assert(changeSuccessful);
     score().reset();
@@ -94,33 +96,6 @@ namespace qd {
     _levelFactories[levelNumber] = factory;
   }
 
-  Board::CellGrid& Board::cells() { return _cells; }
-  const Board::CellGrid& Board::cells() const { return _cells; }
-
-  Score& Board::score() { return _score; }
-  const Score& Board::score() const { return _score; }
-
-  Board::RandomEngine& Board::randomEngine() { return _randomEngine; }
-  const Board::RandomEngine& Board::randomEngine() const { return _randomEngine; }
-
-  std::unique_ptr<Block>& Board::activeBlockPtr() { return _activeBlock; }
-  const std::unique_ptr<Block>& Board::activeBlockPtr() const { return _activeBlock; }
-
-  const Event<const Board::CellGrid&, const Block*>& Board::cellsUpdated() const { return _cellsUpdated; }
-  Event<const Board::CellGrid&, const Block*>& Board::cellsUpdated() { return _cellsUpdated; }
-  const Event<int>& Board::scoreUpdated() const { return _scoreUpdated; }
-  Event<int>& Board::scoreUpdated() { return _scoreUpdated; }
-  const Event<int>& Board::hiScoreUpdated() const { return _hiScoreUpdated; }
-  Event<int>& Board::hiScoreUpdated() { return _hiScoreUpdated; }
-  const Event<Block::Type>& Board::nextBlockGenerated() const { return _nextBlockGenerated; }
-  Event<Block::Type>& Board::nextBlockGenerated() { return _nextBlockGenerated; }
-  const Event<>& Board::gameStarted() const { return _gameStarted; }
-  Event<>& Board::gameStarted() { return _gameStarted; }
-  const Event<>& Board::gameEnded() const { return _gameEnded; }
-  Event<>& Board::gameEnded() { return _gameEnded; }
-  const Event<int>& Board::levelChanged() const { return _levelChanged; }
-  Event<int>& Board::levelChanged() { return _levelChanged; }
-
   bool Board::_changeLevelTo(int levelNumber) {
     auto levelFactory = _levelFactories.find(levelNumber);
     if (levelFactory == _levelFactories.end()) {
@@ -128,6 +103,7 @@ namespace qd {
     }
     _level = (levelFactory->second)(*this);
     _currentLevelNumber = levelFactory->first;
+    levelChanged().notifyObservers(_currentLevelNumber);
     return true;
   }
 
