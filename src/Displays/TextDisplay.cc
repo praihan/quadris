@@ -144,6 +144,8 @@ namespace qd {
       _displayBuffer.end(),
       std::ostream_iterator<std::string>(std::cout, "\n")
     );
+    std::cout << "--------------------------------------------------------------------------------";
+    std::cout << std::endl;
   }
 
   void TextDisplay::onLevelChanged(int level) {

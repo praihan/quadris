@@ -86,11 +86,15 @@ namespace qd {
 
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;
+    ObserverSlot<> _gameEndedSlot;
 
     int _currentLevelNumber;
 
   private:
     bool _changeLevelTo(int levelNumber);
+
+    // Observes itself so it can reset once a game ends
+    void _gameEndedObserver();
 
     // All these do are forward the event from the Score to our own observers
     void _scoreUpdatedObserver(int score);
