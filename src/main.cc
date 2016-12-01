@@ -40,13 +40,19 @@ int main(int argc, char* argv[]) {
 
   try {
     while (true) {
-      qd::Command command = commandInterpreter.nextCommand();
-      if (command.type() == qd::Command::Type::UNKNOWN) {
-        std::cout << "Unknown command: " <<  command.name() << std::endl;
+      try {
+        qd::Command command = commandInterpreter.nextCommand();
+        if (command.type() == qd::Command::Type::UNKNOWN) {
+          std::cerr << "Unknown command '" <<  command.name() << "'" << std::endl;
+          continue;
+        }
+      }
+      catch (const qd::CommandArityError& cmdArityErr) {
+        std::cerr << "Error: " << cmdArityErr.what() << std::endl;
       }
     }
   }
   catch (const qd::CommandError& cmdErr) {
-    std::cerr << cmdErr.what() << std::endl;
+    std::cerr << "Error: " <<  cmdErr.what() << std::endl;
   }
 }
