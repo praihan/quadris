@@ -33,13 +33,16 @@ namespace qd {
       HINT
     };
 
-    Command(Type, const std::vector<std::string>& = {});
+    Command();
+    Command(Type, const std::string& name, const std::vector<std::string>& arguments = { });
 
     Type type() const;
+    const std::string& name() const;
     const std::vector<std::string>& arguments() const;
 
   private:
     Type _type;
+    std::string _name;
     std::vector<std::string> _arguments;
   };
 
@@ -50,5 +53,8 @@ namespace qd {
 
 }
 
-#endif
+#include <type_traits>
 
+static_assert(std::is_move_constructible<qd::Command>::value, "should be move constructible");
+
+#endif

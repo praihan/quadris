@@ -35,21 +35,23 @@ namespace qd {
 
     auto commandTypeMapping = _commandMappings.find(s);
     if (commandTypeMapping == _commandMappings.end()) {
-      return { Command::Type::UNKNOWN };
+      return { Command::Type::UNKNOWN, s };
     }
 
     auto commandType = commandTypeMapping->second;
     switch (commandType) {
       case Command::Type::NORANDOM:
       case Command::Type::SEQUENCE: {
-        if (!(_input >> s)) {
+        std::string arg;
+        if (!(_input >> arg)) {
           throw CommandError("Reached end of command input");
         }
-        return { commandType, { s } };
+        return { commandType, s, { arg } };
       }
-      break;
+        break;
       default:
-        return { commandType };
+        break;
     }
+    return { commandType, s };
   }
 }

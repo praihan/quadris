@@ -2,6 +2,8 @@
 #include <memory>
 
 #include "CommandLineArguments.h"
+#include "CommandInterpreter.h"
+#include "Command.h"
 #include "Board.h"
 #include "Levels/Level0.h"
 #include "Levels/Level1.h"
@@ -22,7 +24,7 @@ int main(int argc, char* argv[]) {
   std::cout << "Seed: " << (cmdLineArgs.seed ? std::to_string(*cmdLineArgs.seed) : "<none>") << std::endl;
   std::cout << "Start Level: " << (cmdLineArgs.startLevel ? std::to_string(*cmdLineArgs.startLevel) : "<none>") << std::endl;
   std::cout << "Text: " << (cmdLineArgs.text ? (*cmdLineArgs.text ? "true" : "false") : "<none>") << std::endl;
-  std::cout << "Start Level: " << (cmdLineArgs.scriptFile ? *cmdLineArgs.scriptFile : "<none>") << std::endl;
+  std::cout << "Script File: " << (cmdLineArgs.scriptFile ? *cmdLineArgs.scriptFile : "<none>") << std::endl;
 
   qd::Board::InitArgs boardInitArgs;
   boardInitArgs.seed = (cmdLineArgs.seed ? *cmdLineArgs.seed : 420);
@@ -33,4 +35,18 @@ int main(int argc, char* argv[]) {
   };
 
   qd::Board b { boardInitArgs };
+
+  qd::CommandInterpreter commandInterpreter { std::cin };
+
+  try {
+    while (true) {
+      qd::Command command = commandInterpreter.nextCommand();
+      if (command.type() == qd::Command::Type::UNKNOWN) {
+        std::cout << "Unknown command: " <<  command.name() << std::endl;
+      }
+    }
+  }
+  catch (const qd::CommandError& cmdErr) {
+    std::cerr << cmdErr.what() << std::endl;
+  }
 }
