@@ -82,7 +82,7 @@ namespace qd {
 
       case Command::Type::DOWN: {
         Block &activeBlock = _board.activeBlock();
-        if (_canMove(activeBlock, gDirection::DOWN)) {
+        if (_canMove(activeBlock, Direction::DOWN)) {
           activeBlock.position.row += 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
         }

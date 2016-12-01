@@ -91,8 +91,6 @@ namespace qd {
   Block& Board::activeBlock() { assert(_activeBlock != nullptr); return *_activeBlock; }
   const Block& Board::activeBlock() const { assert(_activeBlock != nullptr); return *_activeBlock; }
 
-  const Event<>& Board::gameStarted() const { return _gameStarted; }
-  Event<>& Board::gameStarted() { return _gameStarted; }
   const Event<const Board::CellGrid&>& Board::cellsUpdated() const { return _cellsUpdated; }
   Event<const Board::CellGrid&>& Board::cellsUpdated() { return _cellsUpdated; }
   const Event<int>& Board::scoreUpdated() const { return _scoreUpdated; }
@@ -101,8 +99,8 @@ namespace qd {
   Event<int>& Board::hiScoreUpdated() { return _hiScoreUpdated; }
   const Event<>& Board::nextBlockGenerated() const { return _nextBlockGenerated; }
   Event<>& Board::nextBlockGenerated() { return _nextBlockGenerated; }
-  const Event<>& Board::gameEnded() const { return _gameEnded; }
-  Event<>& Board::gameEnded() { return _gameEnded; }
+  const Event<>& Board::gameReset() const { return _gameReset; }
+  Event<>& Board::gameReset() { return _gameReset; }
 
   bool Board::_changeLevelTo(int levelNumber) {
     auto levelFactory = _levelFactories.find(levelNumber);

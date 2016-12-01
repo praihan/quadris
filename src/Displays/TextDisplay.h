@@ -7,12 +7,11 @@ namespace qd {
 
   class TextDisplay : public Display {
   public:
-    virtual void onGameStarted() override;
     virtual void onCellsUpdated(const Board::CellGrid&) override;
     virtual void onScoreUpdated() override;
     virtual void onHiScoreUpdated() override;
     virtual void onNextBlockGenerated() override;
-    virtual void onGameEnded() override;
+    virtual void onGameReset() override;
   };
 
 }
