@@ -146,4 +146,8 @@ namespace qd {
     );
   }
 
+  void TextDisplay::onLevelChanged(int level) {
+    
+  }
+
 }

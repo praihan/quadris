@@ -26,5 +26,8 @@ namespace qd {
     board.gameEnded().addObserver(
       _gameEndedSlot, std::bind(&Display::onGameEnded, this)
     );
+    board.levelChanged().addObserver(
+      _levelChangedSlot, std::bind(&Display::onLevelChanged, this, std::placeholders::_1)
+    );
   }
 }

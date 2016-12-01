@@ -29,4 +29,8 @@ namespace qd {
   void GraphicDisplay::outputDisplay() {
 
   }
+
+  void GraphicDisplay::onLevelChanged(int level) {
+
+  }
 }

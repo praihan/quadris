@@ -113,6 +113,8 @@ namespace qd {
   Event<>& Board::gameStarted() { return _gameStarted; }
   const Event<>& Board::gameEnded() const { return _gameEnded; }
   Event<>& Board::gameEnded() { return _gameEnded; }
+  const Event<int>& Board::levelChanged() const { return _levelChanged; }
+  Event<int>& Board::levelChanged() { return _levelChanged; }
 
   bool Board::_changeLevelTo(int levelNumber) {
     auto levelFactory = _levelFactories.find(levelNumber);

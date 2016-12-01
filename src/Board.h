@@ -65,6 +65,8 @@ namespace qd {
     Event<>& gameStarted();
     const Event<>& gameEnded() const;
     Event<>& gameEnded();
+    const Event<int>& levelChanged() const;
+    Event<int>& levelChanged();
 
   private:
     CellGrid _cells;
@@ -80,6 +82,7 @@ namespace qd {
     Event<Block::Type> _nextBlockGenerated;
     Event<> _gameStarted;
     Event<> _gameEnded;
+    Event<int> _levelChanged;
 
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;

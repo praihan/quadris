@@ -16,6 +16,7 @@ namespace qd {
     virtual void onNextBlockGenerated(Block::Type) override;
     virtual void onGameStarted() override;
     virtual void onGameEnded() override;
+    virtual void onLevelChanged(int level) override;
 
   public:
     virtual void outputDisplay() override;
