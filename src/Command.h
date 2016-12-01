@@ -36,16 +36,22 @@ namespace qd {
     };
 
     Command();
-    Command(Type, const std::string& name, const std::vector<std::string>& arguments = { });
+    Command(
+      Type, const std::string& name,
+      const std::vector<std::string>& arguments = { },
+      unsigned multiplier = 1
+    );
 
-    Type type() const;
-    const std::string& name() const;
-    const std::vector<std::string>& arguments() const;
+    Type type() const noexcept;
+    const std::string& name() const noexcept;
+    const std::vector<std::string>& arguments() const noexcept;
+    unsigned multiplier() const noexcept;
 
   private:
     Type _type;
     std::string _name;
     std::vector<std::string> _arguments;
+    unsigned _multiplier;
   };
 
   class CommandError : public std::runtime_error {

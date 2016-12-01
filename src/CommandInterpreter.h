@@ -15,8 +15,6 @@ namespace qd {
     Command nextCommand();
   private:
     std::istream& _input;
-    std::queue<Command> _commandQueue;
-
     std::unordered_map<std::string, Command::Type> _commandMappings;
   };
 

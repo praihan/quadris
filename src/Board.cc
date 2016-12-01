@@ -1,6 +1,7 @@
 #include "Board.h"
 #include <cassert>
 #include <functional>
+#include <iostream>
 
 namespace qd {
 
@@ -19,6 +20,10 @@ namespace qd {
 
   void Board::executeCommand(const Command& command) {
     // TODO: This shit
+    if (command.multiplier() == 0) {
+      return;
+    }
+    std::cout << "MULTIPLIER: " << command.multiplier() << std::endl;
     auto commandType = command.type();
     switch (commandType) {
       case Command::Type::LEFT:

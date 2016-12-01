@@ -34,12 +34,6 @@ namespace qd {
   }
   
   Command CommandInterpreter::nextCommand() {
-    if (!_commandQueue.empty()) {
-      auto command = _commandQueue.front();
-      _commandQueue.pop();
-      return command;
-    }
-
     auto throwEndOfCommandInput = []() [[noreturn]] {
       throw CommandError("Reached end of command input");
     };
@@ -71,9 +65,6 @@ namespace qd {
     auto commandTypeMapping = _commandMappings.find(commandName);
     if (commandTypeMapping == _commandMappings.end()) {
       // Okay.. time for fuzzy matching
-      auto makeUnknownCommand = [&commandName]() -> Command {
-        return { Command::Type::UNKNOWN, commandName };
-      };
       std::istringstream iss { commandName };
 
       iss >> multiplier;
@@ -100,7 +91,7 @@ namespace qd {
 
       // no matches
       if (matches.size() == 0) {
-        return makeUnknownCommand();
+        return { Command::Type::UNKNOWN, commandName };
       }
 
       if (matches.size() > 1) {
@@ -130,7 +121,7 @@ namespace qd {
           };
         }
         std::string arg = commandLine[1];
-        returnCommand = Command{ commandType, commandName, { arg } };
+        returnCommand = Command{ commandType, commandName, { arg }, multiplier };
       }
         break;
       default: {
@@ -142,20 +133,11 @@ namespace qd {
             0 // expected arity
           };
         }
-        returnCommand = Command{ commandType, commandName };
+        returnCommand = Command{ commandType, commandName, { }, multiplier };
         break;
       }
     }
 
-    if (multiplier > 1) {
-      // we can't use back inserter because queue uses push instead of push_back
-      for (auto i = 1u; i < multiplier; ++i) {
-        _commandQueue.push(returnCommand);
-      }
-    }
-    if (multiplier == 0) {
-      return { Command::Type::IGNORE, commandName };
-    }
     return returnCommand;
   }
 
