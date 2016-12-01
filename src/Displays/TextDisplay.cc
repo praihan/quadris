@@ -6,7 +6,7 @@ namespace qd {
     
   }
 
-  void TextDisplay::onCellUpdated() {
+  void TextDisplay::onCellsUpdated(const Board::CellGrid& cells) {
   
   }
 

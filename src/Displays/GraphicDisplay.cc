@@ -6,8 +6,8 @@ namespace qd {
 
   }
 
-  void GraphicDisplay::onCellUpdated() {
-
+  void GraphicDisplay::onCellsUpdated(const Board::CellGrid& cells) {
+    
   }
 
   void GraphicDisplay::onScoreUpdated() {
