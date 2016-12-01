@@ -27,6 +27,13 @@ namespace qd {
       case Command::Type::CLOCKWISE:
       case Command::Type::COUNTER_CLOCKWISE:
       case Command::Type::DROP:
+      case Command::Type::BLOCK_I:
+      case Command::Type::BLOCK_J:
+      case Command::Type::BLOCK_L:
+      case Command::Type::BLOCK_O:
+      case Command::Type::BLOCK_S:
+      case Command::Type::BLOCK_T:
+      case Command::Type::BLOCK_Z:
         assert(_level != nullptr);
         _level->executeCommand(command);
         break;
@@ -43,13 +50,6 @@ namespace qd {
       case Command::Type::NORANDOM:
       case Command::Type::RANDOM:
       case Command::Type::SEQUENCE:
-      case Command::Type::BLOCK_I:
-      case Command::Type::BLOCK_J:
-      case Command::Type::BLOCK_L:
-      case Command::Type::BLOCK_O:
-      case Command::Type::BLOCK_S:
-      case Command::Type::BLOCK_T:
-      case Command::Type::BLOCK_Z:
       case Command::Type::RESTART:
       case Command::Type::HINT:
         assert(!"Not implemented");
