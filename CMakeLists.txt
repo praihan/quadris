@@ -55,6 +55,7 @@ set (SOURCES
   src/Board.h
   src/Board.cc
   src/Cell.h
+  src/Cell.cc
   src/Position.h
   src/Position.cc
   src/Score.h

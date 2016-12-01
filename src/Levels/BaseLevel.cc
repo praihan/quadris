@@ -39,7 +39,6 @@ namespace qd {
   }
 
   bool BaseLevel::_canMove(const Block &b, Direction d) const {
-    std::cout << "CANMOVE CALLED" << std::endl;
     for (Position p : b) {
       switch (d) {
         case Direction::DOWN:
@@ -53,11 +52,9 @@ namespace qd {
           break;
       }
       if (!_isCellInBound(p)) {
-        std::cout << "Cell" << std::endl;
         return false;
       }
       if (_isCellOccupied(p)) {
-        std::cout << "Cell occupied" << std::endl;
         return false;
       }
     }
@@ -216,7 +213,7 @@ namespace qd {
         _board.activeBlock() = nullptr;
         _ensureActiveBlock();
 
-        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+        _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlock().get());
         return true;
       }
       break;

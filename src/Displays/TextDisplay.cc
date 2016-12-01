@@ -77,7 +77,6 @@ namespace qd {
   }
 
   void TextDisplay::onCellsUpdated(const Board::CellGrid& cells, const Block* b) {
-    std::cout << "CELLS UPDATED" << std::endl;
     std::transform(
       cells.begin() + 3, cells.end(), // we skip the first 3 lines of the CellGrid
       _displayBuffer.begin() + 4, // we also skip outputting to the first 4 lines
@@ -100,7 +99,7 @@ namespace qd {
         if (p.row < 3) {
           continue;
         }
-        const int rowIndex = p.row - 3 + 4; // -3 for the 3 unseen rows, +4 for the text at the top
+        const int rowIndex = p.row - 3 + 4; // -3 for the unseen rows, +4 for the text at the top
         _displayBuffer[rowIndex][p.col] = blockTypeToChar.at(block.type());
       }
     }
@@ -117,10 +116,9 @@ namespace qd {
   }
 
   void TextDisplay::onNextBlockGenerated(Block::Type blockType) {
-    std::cout << "NEXT BLOCK GENERATED" << std::endl;
     const Block* sampleBlock = sampleBlocks.at(blockType);
 
-    const auto nextBlockLineItr = _displayBuffer.begin() + 21;
+    const auto nextBlockLineItr = _displayBuffer.begin() + 21; // we have the nextBlock preview here
     nextBlockLineItr[0] = nextBlockLineItr[1] = "           ";
 
     if (sampleBlock == nullptr) {
@@ -133,11 +131,11 @@ namespace qd {
   }
 
   void TextDisplay::onGameStarted() {
-    std::cout << "GAME STARTED" << std::endl;
+    outputDisplay();
   }
 
   void TextDisplay::onGameEnded() {
-    std::cout << "GAME RESET" << std::endl;
+    std::cout << "GAME ENDED" << std::endl;
   }
 
   void TextDisplay::outputDisplay() {

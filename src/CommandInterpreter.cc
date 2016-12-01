@@ -34,16 +34,12 @@ namespace qd {
   }
   
   Command CommandInterpreter::nextCommand() {
-    auto throwEndOfCommandInput = []() [[noreturn]] {
-      throw CommandError("Reached end of command input");
-    };
-
     std::string line;
     std::vector<std::string> commandLine;
 
     do {
       if (!std::getline(_input, line)) {
-        throwEndOfCommandInput();
+        throw CommandError("Reached end of command input");
       }
       std::istringstream lineParts { line };
       std::copy(
@@ -54,7 +50,7 @@ namespace qd {
     } while (commandLine.size() == 0);
 
     if (commandLine.size() == 0) {
-      throwEndOfCommandInput();
+      throw CommandError("Reached end of command input");
     }
 
     const std::string& commandName = commandLine[0];

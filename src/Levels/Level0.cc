@@ -31,9 +31,7 @@ namespace qd {
     std::string nextBlock;
     while (file >> nextBlock) {
       auto blockIter = blockMap.find(nextBlock);
-      if (blockIter == blockMap.end()) {
-        // could not find error
-      }
+      assert(blockIter != blockMap.end());
       _sequence.emplace_back(blockIter->second);
     }
 
@@ -43,6 +41,7 @@ namespace qd {
 
     _nextBlockType = nextBlockType();
     _ensureActiveBlock();
+    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlock().get());
   }
 
   int Level0::levelNumber() const {

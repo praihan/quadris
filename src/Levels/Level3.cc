@@ -25,6 +25,7 @@ namespace qd {
   Level3::Level3(Board& b) : BaseLevel{b} {
     _nextBlockType = nextBlockType();
     _ensureActiveBlock();
+    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlock().get());
   }
 
   int Level3::levelNumber() const {

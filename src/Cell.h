@@ -6,6 +6,7 @@
 namespace qd {
 
   struct Cell {
+    Cell();
     Block::Type blockType;
   };
 }
