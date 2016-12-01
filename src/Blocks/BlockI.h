@@ -7,6 +7,7 @@
 #include "Position.h"
 #include "Block.h"
 
+#include <iostream>
 namespace qd {
 
   class BlockI : public Block {

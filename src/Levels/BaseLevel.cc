@@ -31,23 +31,35 @@ namespace qd {
     return true;
   }
 
-  bool BaseLevel::_canMove(const Block &b, const Direction d) const {
-    std::unique_ptr<Block> bCopy = b.clone();
+  bool BaseLevel::_canMove(Block &b, const Direction d) const {
+    switch(d) {
+      default:
+      case Direction::DOWN:
+        b.position.row++;
+        break;
+      case Direction::LEFT:
+        b.position.col--;
+        break;
+      case Direction::RIGHT: 
+        b.position.col++;
+        break;
+      }
+
+    bool ok = _isValidBlock(b);
 
     switch(d) {
       default:
       case Direction::DOWN:
-        bCopy->position.row++;
+        b.position.row--;
         break;
       case Direction::LEFT:
-        bCopy->position.col--;
+        b.position.col++;
         break;
       case Direction::RIGHT: 
-        bCopy->position.col++;
+        b.position.col--;
         break;
       }
-
-    return _isValidBlock(*bCopy);
+    return ok;
   }
 
   void BaseLevel::_clearActiveBlockCells() {
@@ -55,6 +67,7 @@ namespace qd {
     Board::CellGrid &cg = _board.cells(); 
 
     for (Position p : activeBlock) {
+      std::cout << __LINE__ << ": " << p.row << ' ' << p.col << '\n';
       cg[p.row][p.col].blockType = Block::Type::EMPTY;
     }
   }
@@ -64,7 +77,8 @@ namespace qd {
     Board::CellGrid &cg = _board.cells(); 
 
     for (Position p : activeBlock) {
-      cg[p.row][p.col].blockType = activeBlock.type();
+      std::cout << __LINE__ << ": " << p.row << ' ' << p.col << ' ' << (int)activeBlock.type() << '\n';
+      cg[p.row][p.col].blockType = (Block::Type)0xb00b;  //activeBlock.type();
     }
   }
 
@@ -208,19 +222,28 @@ namespace qd {
       break;
 
       case Command::Type::DROP: {
+        std::cout << __LINE__ << ": " << _board.activeBlock().get() << '\n';
         Block &activeBlock = *_board.activeBlock();
 
         _clearActiveBlockCells();
+
+        std::cout << __LINE__ << ": " << _board.activeBlock().get() << '\n';
 
         while (_canMove(activeBlock, BaseLevel::Direction::DOWN)) {
           activeBlock.position.row += 1;
         }
 
+        std::cout << __LINE__ << ": " << _board.activeBlock().get() << '\n';
+
         _setActiveBlockCells();
+
+        std::cout << __LINE__ << ": " << _board.activeBlock().get() << '\n';
 
         _board.cellsUpdated().notifyObservers(_board.cells());
 
-        _board.activeBlock().reset();
+        std::cout << __LINE__ << ": " << _board.activeBlock().get() << '\n';
+
+        _board.activeBlock() = nullptr;
         _ensureActiveBlock();
         
         // TODO: account for false
