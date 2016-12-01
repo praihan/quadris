@@ -9,9 +9,12 @@ namespace qd {
 
   bool BaseLevel::_isValidBlock(const Block &b) const {
     for (Position p : b) {
-      if (p.row < 0 || p.row > static_cast<int>(BOARD_HEIGHT)) return false;
-      if (p.col < 0 || p.col > static_cast<int>(BOARD_WIDTH)) return false;
-
+      if (p.row < 0 || p.row >= static_cast<int>(BOARD_HEIGHT)) {
+        return false;
+      }
+      if (p.col < 0 || p.col >= static_cast<int>(BOARD_WIDTH)) {
+        return false;
+      }
       if (_isCellOccupied(p)) {
         return false;
       }
