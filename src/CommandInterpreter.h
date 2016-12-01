@@ -3,6 +3,7 @@
 
 #include "Command.h"
 #include <istream>
+#include <string>
 #include <unordered_map>
 
 namespace qd {
@@ -15,6 +16,27 @@ namespace qd {
     std::istream& _input;
 
     std::unordered_map<std::string, Command::Type> _commandMappings;
+  };
+
+  class CommandArityError : public CommandError {
+  public:
+    CommandArityError(
+      Command::Type,
+      const std::string& name,
+      int givenArity,
+      int expectedArity
+    );
+
+    Command::Type commandType() const noexcept;
+    int givenArity() const noexcept;
+    int expectedArity() const noexcept;
+    const std::string&  commandName() const noexcept;
+
+  private:
+    Command::Type _commandType;
+    std::string _commandName;
+    int _givenArity;
+    int _expectedArity;
   };
 
 }

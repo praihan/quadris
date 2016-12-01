@@ -10,6 +10,8 @@
 namespace qd {
 
   class BlockS : public Block {
+    int state;
+    
   public:
     BlockS();
     virtual void rotate(Rotation) override;

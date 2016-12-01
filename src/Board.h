@@ -94,8 +94,6 @@ namespace qd {
     void _hiScoreUpdatedObserver(int score);
   };
 
-  
-
 }
 
 #endif
