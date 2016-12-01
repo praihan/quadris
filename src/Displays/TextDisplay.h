@@ -8,6 +8,7 @@
 namespace qd {
 
   class TextDisplay : public Display {
+  public:
     static constexpr std::size_t DISPLAY_HEIGHT =
       BOARD_HEIGHT + // the board
       2 + // the two bars for the border

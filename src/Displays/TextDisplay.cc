@@ -3,6 +3,15 @@
 #include <iterator>
 #include <algorithm>
 #include <map>
+#include <memory>
+
+#include "Blocks/BlockI.h"
+#include "Blocks/BlockJ.h"
+#include "Blocks/BlockL.h"
+#include "Blocks/BlockO.h"
+#include "Blocks/BlockS.h"
+#include "Blocks/BlockT.h"
+#include "Blocks/BlockZ.h"
 
 namespace qd {
 
@@ -17,6 +26,25 @@ namespace qd {
       { Block::Type::BLOCK_T, 'T' },
       { Block::Type::BLOCK_Z, 'Z' },
     };
+
+    const BlockI _sampleBlockI;
+    const BlockJ _sampleBlockJ;
+    const BlockL _sampleBlockL;
+    const BlockO _sampleBlockO;
+    const BlockS _sampleBlockS;
+    const BlockT _sampleBlockT;
+    const BlockZ _sampleBlockZ;
+
+    const std::map<Block::Type, const Block*> sampleBlocks = {
+      { Block::Type::EMPTY, nullptr },
+      { Block::Type::BLOCK_I, std::addressof(_sampleBlockI) },
+      { Block::Type::BLOCK_J, std::addressof(_sampleBlockJ) },
+      { Block::Type::BLOCK_L, std::addressof(_sampleBlockL) },
+      { Block::Type::BLOCK_O, std::addressof(_sampleBlockO) },
+      { Block::Type::BLOCK_S, std::addressof(_sampleBlockS) },
+      { Block::Type::BLOCK_T, std::addressof(_sampleBlockT) },
+      { Block::Type::BLOCK_Z, std::addressof(_sampleBlockZ) },
+    };
   }
 
   TextDisplay::TextDisplay(const Board& b) : Display{b} {
@@ -25,21 +53,21 @@ namespace qd {
       "Score:",
       "Hi Score:",
       "-----------",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
+      "           ",
       "-----------",
       "Next:",
       "",
@@ -71,7 +99,6 @@ namespace qd {
         if (p.row < 3) {
           continue;
         }
-        std::cout << p << std::endl;
         const int rowIndex = p.row - 3 + 4; // -3 for the 3 unseen rows, +4 for the text at the top
         _displayBuffer[rowIndex][p.col] = blockTypeToChar.at(block.type());
       }
@@ -79,15 +106,25 @@ namespace qd {
   }
 
   void TextDisplay::onScoreUpdated(int score) {
-    std::cout << "SCORE UPDATED: " << score << std::endl;
+    auto scoreString = std::to_string(score);
+    _displayBuffer[1] = "Score: " + scoreString;
   }
 
   void TextDisplay::onHiScoreUpdated(int hiScore) {
-    std::cout << "HI SCORE UPDATED: " << hiScore << std::endl;
+    auto hiScoreString = std::to_string(hiScore);
+    _displayBuffer[2] = "Hi Score: " + hiScoreString;
   }
 
-  void TextDisplay::onNextBlockGenerated(Block::Type) {
+  void TextDisplay::onNextBlockGenerated(Block::Type blockType) {
     std::cout << "NEXT BLOCK GENERATED" << std::endl;
+    const Block* sampleBlock = sampleBlocks.at(blockType);
+    if (sampleBlock == nullptr) {
+      // clear it
+      return;
+    }
+    for (Position p : *sampleBlock) {
+      std::cout << p << std::endl;
+    }
   }
 
   void TextDisplay::onGameStarted() {
