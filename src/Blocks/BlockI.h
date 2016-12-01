@@ -10,7 +10,7 @@
 namespace qd {
 
   class BlockI : public Block {
-  int state;
+    int state;
 
   public:
     BlockI();
