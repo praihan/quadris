@@ -15,6 +15,10 @@ namespace qd {
       _hiScoreUpdatedSlot,
       std::bind(&Board::_hiScoreUpdatedObserver, this, std::placeholders::_1)
     );
+    gameEnded().addObserver(
+      _gameEndedSlot,
+      std::bind(&Board::_gameEndedObserver, this)
+    );
     _currentLevelNumber = initArgs.levelNumber;
   }
 
@@ -69,15 +73,16 @@ namespace qd {
   }
 
   void Board::start() {
+    // we need to clear the grid before we change levels
+    // since changing levels will trigger an cellsUpdated event
+    cells() = CellGrid{};
     bool changeSuccessful = _changeLevelTo(_currentLevelNumber);
     assert(changeSuccessful);
-    cells() = CellGrid{};
     score().reset();
     gameStarted().notifyObservers();
   }
 
   void Board::reset() {
-    gameEnded().notifyObservers();
     start();
   }
 
@@ -123,6 +128,8 @@ namespace qd {
     _currentLevelNumber = levelFactory->first;
     return true;
   }
+
+  void Board::_gameEndedObserver() { reset(); }
 
   void Board::_scoreUpdatedObserver(int score) { _scoreUpdated.notifyObservers(score); }
   void Board::_hiScoreUpdatedObserver(int score) { _hiScoreUpdated.notifyObservers(score); }
