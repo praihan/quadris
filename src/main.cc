@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
       try {
         qd::Command command = commandInterpreter.nextCommand();
         if (command.type() == qd::Command::Type::UNKNOWN) {
-          std::cerr << "Unknown command '" <<  command.name() << "'" << std::endl;
+          std::cerr << "Error: Unknown command '" <<  command.name() << "'" << std::endl;
           continue;
         }
       }

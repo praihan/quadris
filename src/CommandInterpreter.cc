@@ -49,7 +49,7 @@ namespace qd {
         std::istream_iterator<std::string>{},
         std::back_inserter(commandLine)
       );
-    } while (commandLine.size() == 0);    
+    } while (commandLine.size() == 0);
 
     if (commandLine.size() == 0) {
       throwEndOfCommandInput();
