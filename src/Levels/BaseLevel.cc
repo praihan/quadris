@@ -115,7 +115,7 @@ namespace qd {
       case Command::Type::LEFT:
       case Command::Type::DOWN:
       case Command::Type::RIGHT: {
-        Direction movementDir = iife([&commandType]() -> Direction {
+        const Direction movementDir = iife([&commandType]() -> Direction {
           switch (commandType) {
             case Command::Type::LEFT:
               return Direction::LEFT;
@@ -128,7 +128,7 @@ namespace qd {
               break;
           }
         });
-        auto moveInDirection = [](Position& p, Direction d) {
+        const auto moveInDirection = [](Position& p, Direction d) {
           switch (d) {
             case Direction::LEFT:
               p.col -= 1;
@@ -156,28 +156,31 @@ namespace qd {
       }
       break;
 
-      case Command::Type::CLOCKWISE: {
-        bool success = true;
-        for (unsigned int i = 0; i < command.multiplier(); ++i) {
-          activeBlockPtr->rotate(Block::Rotation::CLOCKWISE);
-
-          if (!_isValidBlock(*activeBlockPtr)) {
-            activeBlockPtr->rotate(Block::Rotation::COUNTER_CLOCKWISE);
-            success = false;
-          }
-        }
-        notifyCellsUpdated();
-        return success;
-      }
-      break;
-
+      case Command::Type::CLOCKWISE:
       case Command::Type::COUNTER_CLOCKWISE: {
+        // determine the rotation direction based on the command type
+        const Block::Rotation rotationDirection = iife([&commandType]() -> Block::Rotation {
+          switch (commandType) {
+            case Command::Type::CLOCKWISE:
+              return Block::Rotation::CLOCKWISE;
+            case Command::Type::COUNTER_CLOCKWISE:
+              return Block::Rotation::COUNTER_CLOCKWISE;
+            default:
+              assert(!"Unreachable");
+              break;
+          }
+        });
+        // opposite of rotationDirection
+        const Block::Rotation antiRotationDirection = iife([&rotationDirection]() {
+          return rotationDirection == Block::Rotation::CLOCKWISE ?
+            Block::Rotation::COUNTER_CLOCKWISE : Block::Rotation::CLOCKWISE;
+        });
         bool success = true;
-        for (unsigned int i = 0; i < command.multiplier(); ++i) {
-          activeBlockPtr->rotate(Block::Rotation::COUNTER_CLOCKWISE);
+        for (unsigned int i = 0; i < command.multiplier() % 4; ++i) {
+          activeBlockPtr->rotate(rotationDirection);
 
           if (!_isValidBlock(*activeBlockPtr)) {
-            activeBlockPtr->rotate(Block::Rotation::CLOCKWISE);
+            activeBlockPtr->rotate(antiRotationDirection);
             success = false;
           }
         }
