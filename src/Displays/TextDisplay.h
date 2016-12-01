@@ -7,6 +7,9 @@ namespace qd {
 
   class TextDisplay : public Display {
   public:
+    using Display::Display;
+
+  protected:
     virtual void onCellsUpdated(const Board::CellGrid&) override;
     virtual void onScoreUpdated(int score) override;
     virtual void onHiScoreUpdated(int hiScore) override;

@@ -5,6 +5,7 @@
 #include "CommandInterpreter.h"
 #include "Command.h"
 #include "Board.h"
+#include "Displays/TextDisplay.h"
 #include "Levels/Level0.h"
 #include "Levels/Level1.h"
 #include "Levels/Level2.h"
@@ -35,6 +36,7 @@ int main(int argc, char* argv[]) {
   };
 
   qd::Board board { boardInitArgs };
+  qd::TextDisplay textDisplay { board };
 
   qd::CommandInterpreter commandInterpreter { std::cin };
 

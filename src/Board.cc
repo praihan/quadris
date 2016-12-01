@@ -66,12 +66,9 @@ namespace qd {
   }
 
   void Board::reset() {
-    _score.reset();
+    cellsUpdated().notifyObservers(cells() = CellGrid{});
+    score().reset();
     gameReset().notifyObservers();
-    // TODO:
-    // Clear board
-    // cellsUpdated event
-    // gameEnded event
   }
 
   void Board::registerLevel(

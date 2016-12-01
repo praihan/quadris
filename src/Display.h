@@ -7,9 +7,10 @@
 namespace qd {
 
   class Display {
-  protected:
+  public:
     Display(const Board&);
 
+  protected:
     virtual void onCellsUpdated(const Board::CellGrid&) = 0;
     virtual void onScoreUpdated(int score) = 0;
     virtual void onHiScoreUpdated(int hiScore) = 0;
