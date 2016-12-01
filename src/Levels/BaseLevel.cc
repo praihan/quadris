@@ -202,6 +202,13 @@ namespace qd {
         _ensureActiveBlock();
 
         notifyCellsUpdated();
+
+        // Game is lst
+        if (!_isValidBlock(*activeBlockPtr)) {
+          _board.gameEnded().notifyObservers();
+          return false;
+        }
+
         return true;
       }
       break;
