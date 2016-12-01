@@ -13,7 +13,7 @@
 
 namespace qd {
   bool BaseLevel::_isCellOccupied(const Position& p) const {
-    return _board.cells()[p.col][p.row].blockType != Block::Type::EMPTY;
+    return (_board.cells()[p.row][p.col].blockType != Block::Type::EMPTY);
   }
 
   bool BaseLevel::_isCellInBound(const Position& p) const {
@@ -36,6 +36,7 @@ namespace qd {
   }
 
   bool BaseLevel::_canMove(const Block &b, Direction d) const {
+    std::cout << "CANMOVE CALLED" << std::endl;
     for (Position p : b) {
       switch (d) {
         case Direction::DOWN:
@@ -49,9 +50,11 @@ namespace qd {
           break;
       }
       if (!_isCellInBound(p)) {
+        std::cout << "Cell" << std::endl;
         return false;
       }
       if (_isCellOccupied(p)) {
+        std::cout << "Cell occupied" << std::endl;
         return false;
       }
     }
@@ -90,13 +93,13 @@ namespace qd {
           assert(!"We have accounted for all block types. This should not happen");
       }
 
+      activeBlock->position = {0, 0};
+
       _board.nextBlockGenerated().notifyObservers(nextType);
     }
   }
 
   bool BaseLevel::executeCommand(const Command& command) {
-    _ensureActiveBlock();
-
     switch (command.type()) {
 
       case Command::Type::LEFT: {
@@ -202,12 +205,14 @@ namespace qd {
           activeBlock.position.row += 1;
         }
 
-        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+        for (Position p : activeBlock) {
+          _board.cells()[p.row][p.col].blockType = activeBlock.type();
+        }
 
         _board.activeBlock() = nullptr;
         _ensureActiveBlock();
-        
-        // TODO: account for false
+
+        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
         return true;
       }
       break;
