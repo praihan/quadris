@@ -6,17 +6,9 @@
 #include <functional>
 #include <cassert>
 
-namespace {
-  bool tryParseInt(int& outVal, const std::string& str) {
-    try {
-      outVal = std::stoi(str);
-      return true;
-    } catch (const std::invalid_argument&) {
-    } catch (const std::out_of_range&) {
-    }
-    return false;
-  }
+#include "Utility.h"
 
+namespace {
   constexpr char ARG_TEXT[] = "-text";
   constexpr char ARG_SEED[] = "-seed";
   constexpr char ARG_SCRIPTFILE[] = "-scriptfile";

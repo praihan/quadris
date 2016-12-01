@@ -4,6 +4,7 @@
 #include "Command.h"
 #include <istream>
 #include <string>
+#include <queue>
 #include <unordered_map>
 
 namespace qd {
@@ -14,6 +15,7 @@ namespace qd {
     Command nextCommand();
   private:
     std::istream& _input;
+    std::queue<Command> _commandQueue;
 
     std::unordered_map<std::string, Command::Type> _commandMappings;
   };
@@ -37,6 +39,21 @@ namespace qd {
     std::string _commandName;
     int _givenArity;
     int _expectedArity;
+  };
+
+  class CommandAmbiguousError : public CommandError {
+  public:
+    CommandAmbiguousError(
+      const std::string& query,
+      const std::vector<std::pair<std::string, Command::Type>>& commandMatches
+    );
+
+    const std::string& query() const noexcept;
+    const std::vector<std::pair<std::string, Command::Type>>& commandMatches() const noexcept;
+
+  private:
+    std::string _query;
+    std::vector<std::pair<std::string, Command::Type>> _commandMatches;
   };
 
 }

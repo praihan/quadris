@@ -8,6 +8,16 @@ namespace qd {
   decltype(auto) iife(F&& f) noexcept(noexcept(std::forward<F>(f)())) {
     return std::forward<F>(f)();
   }
+
+  bool tryParseInt(int& outVal, const std::string& str) {
+    try {
+      outVal = std::stoi(str);
+      return true;
+    } catch (const std::invalid_argument&) {
+    } catch (const std::out_of_range&) {
+    }
+    return false;
+  }
 }
 
 #endif // QDUTILITY_H_

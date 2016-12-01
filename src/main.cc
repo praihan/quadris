@@ -1,5 +1,7 @@
 #include <iostream>
 #include <memory>
+#include <iterator>
+#include <algorithm>
 
 #include "CommandLineArguments.h"
 #include "CommandInterpreter.h"
@@ -27,6 +29,10 @@ int main(int argc, char* argv[]) {
   std::cout << "Text: " << (cmdLineArgs.text ? (*cmdLineArgs.text ? "true" : "false") : "<none>") << std::endl;
   std::cout << "Script File: " << (cmdLineArgs.scriptFile ? *cmdLineArgs.scriptFile : "<none>") << std::endl;
 
+  if (cmdLineArgs.scriptFile) {
+    qd::Level0::sequenceFileName = *cmdLineArgs.scriptFile;
+  }
+
   qd::Board::InitArgs boardInitArgs;
   boardInitArgs.seed = (cmdLineArgs.seed ? *cmdLineArgs.seed : 420);
   boardInitArgs.levelNumber = (cmdLineArgs.startLevel ? *cmdLineArgs.startLevel : 0);
@@ -44,6 +50,9 @@ int main(int argc, char* argv[]) {
     while (true) {
       try {
         qd::Command command = commandInterpreter.nextCommand();
+        if (command.type() == qd::Command::Type::IGNORE) {
+          continue;
+        }
         if (command.type() == qd::Command::Type::UNKNOWN) {
           std::cerr << "Error: Unknown command '" <<  command.name() << "'" << std::endl;
           continue;
@@ -52,6 +61,15 @@ int main(int argc, char* argv[]) {
       }
       catch (const qd::CommandArityError& cmdArityErr) {
         std::cerr << "Error: " << cmdArityErr.what() << std::endl;
+      }
+      catch (const qd::CommandAmbiguousError& cmdAmbiguousErr) {
+        std::cerr << "Error: " << "'" << cmdAmbiguousErr.query() << "'";
+        std::cerr << " is ambiguous. It matched commands:\n";
+        std::cerr << "[ ";
+        for (const auto& cmdPair : cmdAmbiguousErr.commandMatches()) {
+          std::cerr << cmdPair.first << " ";
+        }
+        std::cerr << "]" << std::endl;
       }
     }
   }

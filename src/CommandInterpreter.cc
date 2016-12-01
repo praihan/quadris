@@ -4,8 +4,10 @@
 #include <algorithm>
 #include <vector>
 #include <iterator>
+#include <iostream>
 
 namespace qd {
+
   CommandInterpreter::CommandInterpreter(std::istream& in) : _input(in) {
     _commandMappings = {
       { "left", Command::Type::LEFT },
@@ -32,6 +34,12 @@ namespace qd {
   }
   
   Command CommandInterpreter::nextCommand() {
+    if (!_commandQueue.empty()) {
+      auto command = _commandQueue.front();
+      _commandQueue.pop();
+      return command;
+    }
+
     auto throwEndOfCommandInput = []() [[noreturn]] {
       throw CommandError("Reached end of command input");
     };
@@ -45,7 +53,7 @@ namespace qd {
       }
       std::istringstream lineParts { line };
       std::copy(
-        std::istream_iterator<std::string>{lineParts},
+        std::istream_iterator<std::string>{ lineParts },
         std::istream_iterator<std::string>{},
         std::back_inserter(commandLine)
       );
@@ -57,12 +65,59 @@ namespace qd {
 
     const std::string& commandName = commandLine[0];
 
+    Command::Type commandType;
+    unsigned multiplier = 1;
+
     auto commandTypeMapping = _commandMappings.find(commandName);
     if (commandTypeMapping == _commandMappings.end()) {
-      return { Command::Type::UNKNOWN, commandName };
+      // Okay.. time for fuzzy matching
+      auto makeUnknownCommand = [&commandName]() -> Command {
+        return { Command::Type::UNKNOWN, commandName };
+      };
+      std::istringstream iss { commandName };
+
+      iss >> multiplier;
+      if (!iss) {
+        multiplier = 1;
+      }
+      iss.clear();
+
+      std::string fuzzyCommandName;
+      iss >> fuzzyCommandName;
+
+      std::vector<std::pair<std::string, Command::Type>> matches;
+      std::copy_if(_commandMappings.begin(), _commandMappings.end(),
+        std::back_inserter(matches),
+        [&fuzzyCommandName](const auto& mapping) {
+          const std::string& name = mapping.first;
+          // check if fuzzyCommandName is a prefix of the mapping name;
+          return std::mismatch(
+            name.begin(), name.end(),
+            fuzzyCommandName.begin(), fuzzyCommandName.end()
+          ).second == fuzzyCommandName.end();
+        }
+      );
+
+      // no matches
+      if (matches.size() == 0) {
+        return makeUnknownCommand();
+      }
+
+      if (matches.size() > 1) {
+        throw CommandAmbiguousError{
+          fuzzyCommandName,
+          matches
+        };
+      }
+
+      commandType = matches[0].second;
+
+    } else {
+      commandType = commandTypeMapping->second;
     }
 
-    auto commandType = commandTypeMapping->second;
+    Command returnCommand = { Command::Type::UNKNOWN, "" };
+
     switch (commandType) {
       case Command::Type::NORANDOM:
       case Command::Type::SEQUENCE: {
@@ -75,10 +130,10 @@ namespace qd {
           };
         }
         std::string arg = commandLine[1];
-        return { commandType, commandName, { arg } };
+        returnCommand = Command{ commandType, commandName, { arg } };
       }
         break;
-      default:
+      default: {
         if (commandLine.size() != 1) {
           throw CommandArityError{
             commandType,
@@ -87,9 +142,21 @@ namespace qd {
             0 // expected arity
           };
         }
+        returnCommand = Command{ commandType, commandName };
         break;
+      }
     }
-    return { commandType, commandName };
+
+    if (multiplier > 1) {
+      // we can't use back inserter because queue uses push instead of push_back
+      for (auto i = 1u; i < multiplier; ++i) {
+        _commandQueue.push(returnCommand);
+      }
+    }
+    if (multiplier == 0) {
+      return { Command::Type::IGNORE, commandName };
+    }
+    return returnCommand;
   }
 
   CommandArityError::CommandArityError(
@@ -114,6 +181,21 @@ namespace qd {
   }
   const std::string& CommandArityError::commandName() const noexcept {
     return _commandName;
+  }
+
+  CommandAmbiguousError::CommandAmbiguousError(
+    const std::string& query,
+    const std::vector<std::pair<std::string, Command::Type>>& commandMatches
+  ) : CommandError{""}, _query{query}, _commandMatches{commandMatches} {
+  }
+
+  const std::vector<std::pair<std::string, Command::Type>>&
+    CommandAmbiguousError::commandMatches() const noexcept {
+    return _commandMatches;
+  }
+
+  const std::string& CommandAmbiguousError::query() const noexcept {
+    return _query;
   }
 
 }

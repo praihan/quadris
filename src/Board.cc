@@ -17,7 +17,8 @@ namespace qd {
     for (const auto& levelFactoryPair : initArgs.levelFactories) {
       registerLevel(levelFactoryPair.first, levelFactoryPair.second);
     }
-    assert(_changeLevelTo(initArgs.levelNumber));
+    bool changeSuccessful = _changeLevelTo(initArgs.levelNumber);
+    assert(changeSuccessful);
   }
 
   void Board::executeCommand(const Command& command) {
@@ -60,7 +61,8 @@ namespace qd {
         assert(!"Not implemented");
         break;
       case Command::Type::UNKNOWN:
-        assert(!"Command with type UNKNOWN should never get here");
+      case Command::Type::IGNORE:
+        assert(!"Command with type UNKNOWN/IGNORE should never get here");
         break;
     }
   }

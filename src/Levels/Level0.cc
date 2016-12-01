@@ -2,6 +2,8 @@
 #include "Level0.h"
 #include <fstream>
 #include <map>
+#include <iostream>
+#include <stdexcept>
 
 namespace qd {
 
@@ -17,12 +19,15 @@ namespace qd {
     };
   }
 
+  std::string Level0::sequenceFileName = "sequence.txt";
+
   Level0::Level0(Board& b) : BaseLevel(b) {
-    std::ifstream file;
-    file.open("sequence.txt");
+    std::ifstream file{ sequenceFileName };
+    if (file.fail()) {
+      throw std::runtime_error{ "Could not open file: '" + sequenceFileName + "'" };
+    }
 
     std::string nextBlock;
-    
     while (file >> nextBlock) {
       auto blockIter = blockMap.find(nextBlock);
       if (blockIter == blockMap.end()) {
