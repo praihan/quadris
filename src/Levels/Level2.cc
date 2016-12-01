@@ -22,7 +22,7 @@ namespace qd {
   Level2::Level2(Board& b) : BaseLevel{b} {
     _nextBlockType = nextBlockType();
     _ensureActiveBlock();
-    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlock().get());
+    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
   }
 
   int Level2::levelNumber() const {

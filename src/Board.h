@@ -50,8 +50,8 @@ namespace qd {
     RandomEngine& randomEngine();
     const RandomEngine& randomEngine() const;
 
-    std::unique_ptr<Block>& activeBlock();
-    const std::unique_ptr<Block>& activeBlock() const;
+    std::unique_ptr<Block>& activeBlockPtr();
+    const std::unique_ptr<Block>& activeBlockPtr() const;
 
     const Event<const CellGrid&, const Block*>& cellsUpdated() const;
     Event<const CellGrid&, const Block*>& cellsUpdated();

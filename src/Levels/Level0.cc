@@ -41,7 +41,7 @@ namespace qd {
 
     _nextBlockType = nextBlockType();
     _ensureActiveBlock();
-    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlock().get());
+    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
   }
 
   int Level0::levelNumber() const {

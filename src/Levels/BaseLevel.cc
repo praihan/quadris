@@ -1,5 +1,6 @@
 #include <cassert>
 #include <memory>
+#include "Utility.h"
 #include "BaseLevel.h"
 #include "Command.h"
 #include "Block.h"
@@ -62,158 +63,142 @@ namespace qd {
   }
 
   void BaseLevel::_ensureActiveBlock() {
-    std::unique_ptr<Block>& activeBlock = _board.activeBlock();
+    std::unique_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
 
-    if (activeBlock == nullptr) {
+    if (activeBlockPtr == nullptr) {
       Block::Type nextType = _nextBlockType;
       _nextBlockType = nextBlockType();
 
       switch(nextType) {
         case Block::Type::BLOCK_I:
-          activeBlock = std::make_unique<BlockI>();
+          activeBlockPtr = std::make_unique<BlockI>();
           break;
         case Block::Type::BLOCK_J:
-          activeBlock = std::make_unique<BlockJ>();
+          activeBlockPtr = std::make_unique<BlockJ>();
           break;
         case Block::Type::BLOCK_L:
-          activeBlock = std::make_unique<BlockL>();
+          activeBlockPtr = std::make_unique<BlockL>();
           break;
         case Block::Type::BLOCK_O:
-          activeBlock = std::make_unique<BlockO>();
+          activeBlockPtr = std::make_unique<BlockO>();
           break;
         case Block::Type::BLOCK_S:
-          activeBlock = std::make_unique<BlockS>();
+          activeBlockPtr = std::make_unique<BlockS>();
           break;
         case Block::Type::BLOCK_T:
-          activeBlock = std::make_unique<BlockT>();
+          activeBlockPtr = std::make_unique<BlockT>();
           break;
         case Block::Type::BLOCK_Z:
-          activeBlock = std::make_unique<BlockZ>();
+          activeBlockPtr = std::make_unique<BlockZ>();
           break;
         default:
           assert(!"We have accounted for all block types. This should not happen");
       }
 
-      activeBlock->position = {0, 0};
+      activeBlockPtr->position = {0, 0};
 
       _board.nextBlockGenerated().notifyObservers(_nextBlockType);
     }
   }
 
   bool BaseLevel::executeCommand(const Command& command) {
-    switch (command.type()) {
+    auto& activeBlockPtr = _board.activeBlockPtr();
+    auto notifyCellsUpdated = [this, &activeBlockPtr]() {
+      _board.cellsUpdated().notifyObservers(
+        _board.cells(),
+        activeBlockPtr.get()
+      );
+    };
 
-      case Command::Type::LEFT: {
-        Block &activeBlock = *_board.activeBlock();
-        for (unsigned int i = 0; i < command.multiplier(); i++) {
-          if (_canMove(activeBlock, Direction::LEFT)) {
-            activeBlock.position.col -= 1;
-            continue;
-          }
-          else {
-            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-            return false;
-          }
-        }
-
-        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-        return true; 
-      }
-      break;
-
+    Command::Type commandType = command.type();
+    switch (commandType) {
+      case Command::Type::LEFT:
+      case Command::Type::DOWN:
       case Command::Type::RIGHT: {
-        Block &activeBlock = *_board.activeBlock();
-        for (unsigned int i = 0; i < command.multiplier(); i++) {
-          if (_canMove(activeBlock, Direction::RIGHT)) {
-            activeBlock.position.col += 1;
-            continue;
+        Direction movementDir = iife([&commandType]() -> Direction {
+          switch (commandType) {
+            case Command::Type::LEFT:
+              return Direction::LEFT;
+            case Command::Type::DOWN:
+              return Direction::DOWN;
+            case Command::Type::RIGHT:
+              return Direction::RIGHT;
+            default:
+              assert(!"Unreachable");
+              break;
+          }
+        });
+        auto moveInDirection = [](Position& p, Direction d) {
+          switch (d) {
+            case Direction::LEFT:
+              p.col -= 1;
+              break;
+            case Direction::RIGHT:
+              p.col += 1;
+              break;
+            case Direction::DOWN:
+              p.row += 1;
+              break;
+          }
+        };
+        bool success = true;
+        for (unsigned int i = 0; i < command.multiplier(); ++i) {
+          if (_canMove(*activeBlockPtr, movementDir)) {
+            moveInDirection(activeBlockPtr->position, movementDir);
           }
           else {
-            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-            return false;
+            success = false;
+            break;
           }
         }
-
-        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-        return true; 
-      }
-      break;
-
-      case Command::Type::DOWN: {
-        Block &activeBlock = *_board.activeBlock();
-        for (unsigned int i = 0; i < command.multiplier(); i++) {
-          if (_canMove(activeBlock, Direction::DOWN)) {
-            activeBlock.position.row += 1;
-            continue;
-          }
-          else {
-            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-            return false;
-          }
-        }
-
-        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-        return true; 
+        notifyCellsUpdated();
+        return success;
       }
       break;
 
       case Command::Type::CLOCKWISE: {
-        Block &activeBlock = *_board.activeBlock();
-        
-        for (unsigned int i = 0; i < command.multiplier(); i++) {
-          activeBlock.rotate(Block::Rotation::CLOCKWISE);
+        bool success = true;
+        for (unsigned int i = 0; i < command.multiplier(); ++i) {
+          activeBlockPtr->rotate(Block::Rotation::CLOCKWISE);
 
-          if (_isValidBlock(activeBlock)) {
-            continue;
-          }
-          else {
-            activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
-            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-            return false;
+          if (!_isValidBlock(*activeBlockPtr)) {
+            activeBlockPtr->rotate(Block::Rotation::COUNTER_CLOCKWISE);
+            success = false;
           }
         }
-
-        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-        return true;
+        notifyCellsUpdated();
+        return success;
       }
       break;
 
       case Command::Type::COUNTER_CLOCKWISE: {
-        Block &activeBlock = *_board.activeBlock();
+        bool success = true;
+        for (unsigned int i = 0; i < command.multiplier(); ++i) {
+          activeBlockPtr->rotate(Block::Rotation::COUNTER_CLOCKWISE);
 
-        for (unsigned int i = 0; i < command.multiplier(); i++) {
-          activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
-
-          if (_isValidBlock(activeBlock)) {
-            continue;
-          }
-          else {
-            activeBlock.rotate(Block::Rotation::CLOCKWISE);
-            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-            return false;
+          if (!_isValidBlock(*activeBlockPtr)) {
+            activeBlockPtr->rotate(Block::Rotation::CLOCKWISE);
+            success = false;
           }
         }
-
-        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-        return true;
+        notifyCellsUpdated();
+        return success;
       }
       break;
 
       case Command::Type::DROP: {
-        Block &activeBlock = *_board.activeBlock();
-
-        while (_canMove(activeBlock, BaseLevel::Direction::DOWN)) {
-          activeBlock.position.row += 1;
+        while (_canMove(*activeBlockPtr, BaseLevel::Direction::DOWN)) {
+          activeBlockPtr->position.row += 1;
         }
 
-        for (Position p : activeBlock) {
-          _board.cells()[p.row][p.col].blockType = activeBlock.type();
+        for (Position p : *activeBlockPtr) {
+          _board.cells()[p.row][p.col].blockType = activeBlockPtr->type();
         }
 
-        _board.activeBlock() = nullptr;
+        activeBlockPtr = nullptr;
         _ensureActiveBlock();
 
-        _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlock().get());
+        notifyCellsUpdated();
         return true;
       }
       break;

@@ -98,8 +98,8 @@ namespace qd {
   Board::RandomEngine& Board::randomEngine() { return _randomEngine; }
   const Board::RandomEngine& Board::randomEngine() const { return _randomEngine; }
 
-  std::unique_ptr<Block>& Board::activeBlock() { return _activeBlock; }
-  const std::unique_ptr<Block>& Board::activeBlock() const { return _activeBlock; }
+  std::unique_ptr<Block>& Board::activeBlockPtr() { return _activeBlock; }
+  const std::unique_ptr<Block>& Board::activeBlockPtr() const { return _activeBlock; }
 
   const Event<const Board::CellGrid&, const Block*>& Board::cellsUpdated() const { return _cellsUpdated; }
   Event<const Board::CellGrid&, const Block*>& Board::cellsUpdated() { return _cellsUpdated; }

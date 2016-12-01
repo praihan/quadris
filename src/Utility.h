@@ -2,6 +2,8 @@
 #define QDUTILITY_H_
 
 #include <utility>
+#include <stdexcept>
+#include <string>
 
 namespace qd {
   template <class F>
