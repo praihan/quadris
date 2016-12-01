@@ -6,6 +6,7 @@
 namespace qd {
   class Level2 : public BaseLevel {
   public:
+    Level2(Board &b);
     virtual int levelNumber() const override;
     virtual Block::Type nextBlockType() override;
     virtual bool executeCommand(const Command& command) override;

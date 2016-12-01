@@ -24,7 +24,9 @@ namespace qd {
     };
   }
 
-  Level1::Level1(Board& b) : BaseLevel{b} { }
+  Level1::Level1(Board& b) : BaseLevel{b} { 
+    _ensureActiveBlock();
+  }
 
   int Level1::levelNumber() const {
     return 1;

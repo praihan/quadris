@@ -37,6 +37,8 @@ namespace qd {
     }
 
     _current = _sequence.cend();
+
+    _ensureActiveBlock();
   }
 
   int Level0::levelNumber() const {

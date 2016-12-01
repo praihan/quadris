@@ -92,76 +92,100 @@ namespace qd {
     _ensureActiveBlock();
 
     switch (command.type()) {
+
       case Command::Type::LEFT: {
         Block &activeBlock = *_board.activeBlock();
-        
-        if (_canMove(activeBlock, Direction::LEFT)) {
-          activeBlock.position.col -= 1;
-          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-
-          return true;
+        for (unsigned int i = 0; i < command.multiplier(); i++) {
+          if (_canMove(activeBlock, Direction::LEFT)) {
+            activeBlock.position.col -= 1;
+            continue;
+          }
+          else {
+            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+            return false;
+          }
         }
 
-        return false;
+        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+        return true; 
       }
       break;
 
       case Command::Type::RIGHT: {
         Block &activeBlock = *_board.activeBlock();
-        if (_canMove(activeBlock, Direction::RIGHT)) {
-          activeBlock.position.col += 1;
-          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-
-          return true;
+        for (unsigned int i = 0; i < command.multiplier(); i++) {
+          if (_canMove(activeBlock, Direction::RIGHT)) {
+            activeBlock.position.col += 1;
+            continue;
+          }
+          else {
+            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+            return false;
+          }
         }
 
-        return false; 
+        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+        return true; 
       }
       break;
 
       case Command::Type::DOWN: {
         Block &activeBlock = *_board.activeBlock();
-        if (_canMove(activeBlock, Direction::DOWN)) {
-          activeBlock.position.row += 1;
-          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-
-          return true;
+        for (unsigned int i = 0; i < command.multiplier(); i++) {
+          if (_canMove(activeBlock, Direction::DOWN)) {
+            activeBlock.position.row += 1;
+            continue;
+          }
+          else {
+            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+            return false;
+          }
         }
 
-        return false;
+        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+        return true; 
       }
       break;
 
       case Command::Type::CLOCKWISE: {
         Block &activeBlock = *_board.activeBlock();
         
-        activeBlock.rotate(Block::Rotation::CLOCKWISE);
-        
-        if (_isValidBlock(activeBlock)) {
-          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-          return true;
+        for (unsigned int i = 0; i < command.multiplier(); i++) {
+          activeBlock.rotate(Block::Rotation::CLOCKWISE);
+
+          if (_isValidBlock(activeBlock)) {
+            continue;
+          }
+          else {
+            activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
+            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+            return false;
+          }
         }
-        else {
-          activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
-          return false;
-        }
+
+        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+        return true;
       }
       break;
 
       case Command::Type::COUNTER_CLOCKWISE: {
         Block &activeBlock = *_board.activeBlock();
 
-        activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
-        
-        if (_isValidBlock(activeBlock)) {
-          _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
-          return true;
-        }
-        else {
-          activeBlock.rotate(Block::Rotation::CLOCKWISE);
-          return false;
+        for (unsigned int i = 0; i < command.multiplier(); i++) {
+          activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
 
+          if (_isValidBlock(activeBlock)) {
+            continue;
+          }
+          else {
+            activeBlock.rotate(Block::Rotation::CLOCKWISE);
+            _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+            return false;
+          }
         }
+
+        _board.cellsUpdated().notifyObservers(_board.cells(), std::addressof(activeBlock));
+        return true;
       }
       break;
 

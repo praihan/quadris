@@ -19,6 +19,10 @@ namespace qd {
     };
   }
 
+  Level2::Level2(Board& b) : BaseLevel{b} { 
+    _ensureActiveBlock();
+  }
+
   int Level2::levelNumber() const {
     return 2;
   }

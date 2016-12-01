@@ -22,6 +22,10 @@ namespace qd {
     };
   }
 
+  Level3::Level3(Board& b) : BaseLevel{b} { 
+    _ensureActiveBlock();
+  }
+
   int Level3::levelNumber() const {
     return 3;
   }
