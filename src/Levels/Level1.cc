@@ -6,7 +6,7 @@
 namespace qd {
 
   namespace {
-    std::array<Block::Type, 12> weightedBlockTypes {
+    const std::array<Block::Type, 12> weightedBlockTypes {
       {
         Block::Type::BLOCK_I,
         Block::Type::BLOCK_I,
@@ -23,6 +23,8 @@ namespace qd {
       }
     };
   }
+
+  Level1::Level1(Board& b) : BaseLevel{b} { }
 
   int Level1::levelNumber() const {
     return 1;
