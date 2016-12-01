@@ -76,16 +76,16 @@ namespace qd {
         if (_canMove(activeBlock, Direction::RIGHT)) {
           activeBlock.position.col += 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
-        }  
+        }
       }
       break;
 
       case Command::Type::DOWN: {
         Block &activeBlock = _board.activeBlock();
-        if (_canMove(activeBlock, Direction::DOWN)) {
+        if (_canMove(activeBlock, gDirection::DOWN)) {
           activeBlock.position.row += 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
-        }  
+        }
       }
       break;
 
@@ -169,7 +169,7 @@ namespace qd {
       }
       break;
 
-      default: 
+      default:
       break;
     }
   }
