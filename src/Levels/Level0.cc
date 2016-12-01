@@ -4,6 +4,7 @@
 #include <map>
 #include <iostream>
 #include <stdexcept>
+#include <cassert>
 
 namespace qd {
 
@@ -36,7 +37,9 @@ namespace qd {
       _sequence.emplace_back(blockIter->second);
     }
 
-    _current = _sequence.cend();
+    assert(_sequence.cbegin() != _sequence.cend());
+
+    _current = _sequence.begin();
 
     _nextBlockType = nextBlockType();
     _ensureActiveBlock();
@@ -47,15 +50,10 @@ namespace qd {
   }
 
   Block::Type Level0::nextBlockType() {
-    
-    if (_current == this->_sequence.cend()) {
-      this->_current = this->_sequence.cbegin();
+    if (_current == _sequence.cend()) {
+      _current = _sequence.begin();
     }
-    else {
-      this->_current++;
-    }
-    
-    return *this->_current;
+    return *_current++;
   }
 
   bool Level0::executeCommand(const Command& command) {
