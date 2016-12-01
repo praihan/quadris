@@ -3,7 +3,6 @@
 #include "Block.h"
 
 namespace qd {
-
   bool BaseLevel::_isCellOccupied(const Position &p) const {
     if (_board.cells()[p.col][p.row].blockType == Block::Type::EMPTY) {
       return false;
@@ -12,13 +11,10 @@ namespace qd {
     return true;
   }
 
-  bool BaseLevel::_canMoveLeft(const Block &b) const {
+  bool BaseLevel::_isValidBlock(const Block &b) const {
     for (Position p : b) {
-      if (p.col <= 0) {
-        return false;
-      }
-
-      p.col--;
+      if (p.row < 0 || p.row > static_cast<int>(BOARD_HEIGHT)) return false;
+      if (p.col < 0 || p.col > static_cast<int>(BOARD_WIDTH)) return false;
 
       if (_isCellOccupied(p)) {
         return false;
@@ -28,43 +24,48 @@ namespace qd {
     return true;
   }
 
-  bool BaseLevel::_canMoveRight(const Block &b) const {
-    for (Position p : b) {
-      if (p.col >= 11) {
-        return false;
-      }
-
-      p.col++;
-
-      if (_isCellOccupied(p)) {
-        return false;
+  bool BaseLevel::_canMove(const Block &b, const Direction d) const {
+    for (Position p : b) {  
+      switch(d) {
+      default:
+      case Direction::DOWN:
+        p.row++;
+        break;
+      case Direction::LEFT:
+        p.col--;
+        break;
+      case Direction::RIGHT: 
+        p.col++;
+        break;
       }
     }
 
-    return true;
+    return _isValidBlock(b);
   }
 
-  bool BaseLevel::_canMoveDown(const Block &b) const {
-    for (Position p : b) {
-      if (p.row >= 15) {
-        return false;
-      }
+  void BaseLevel::_clearActiveBlockCells() {
+    Block &activeBlock = _board.activeBlock();
+    Board::CellGrid &cg = _board.cells(); 
 
-      p.row++;
-
-      if (_isCellOccupied(p)) {
-        return false;
-      }
+    for (Position p : activeBlock) {
+      cg[p.row][p.col].blockType = Block::Type::EMPTY;
     }
+  }
 
-    return true;
+  void BaseLevel::_setActiveBlockCells() {
+    Block &activeBlock = _board.activeBlock();
+    Board::CellGrid &cg = _board.cells(); 
+
+    for (Position p : activeBlock) {
+      cg[p.row][p.col].blockType = activeBlock.type();
+    }
   }
 
   void BaseLevel::executeCommand(const Command& command) {
     switch (command.type()) { 
       case Command::Type::LEFT: {
         Block &activeBlock = _board.activeBlock();
-        if (_canMoveLeft(activeBlock)) {
+        if (_canMove(activeBlock, BaseLevel::Direction::LEFT)) {
           activeBlock.position.col -= 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
         }
@@ -72,7 +73,7 @@ namespace qd {
       break;
       case Command::Type::RIGHT: {
         Block &activeBlock = _board.activeBlock();
-        if (_canMoveRight(activeBlock)) {
+        if (_canMove(activeBlock, BaseLevel::Direction::RIGHT)) {
           activeBlock.position.col += 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
         }  
@@ -80,30 +81,58 @@ namespace qd {
       break;
       case Command::Type::DOWN: {
         Block &activeBlock = _board.activeBlock();
-        if (_canMoveDown(activeBlock)) {
+        if (_canMove(activeBlock, BaseLevel::Direction::DOWN)) {
           activeBlock.position.row += 1;
           _board.cellsUpdated().notifyObservers(_board.cells());
         }  
       }
       break;
       case Command::Type::CLOCKWISE: {
-      
+        Block &activeBlock = _board.activeBlock();
+
+        _clearActiveBlockCells();
+        
+        activeBlock.rotate(Block::Rotation::CLOCKWISE);
+        
+        if (_isValidBlock(activeBlock)) {
+          _board.cellsUpdated().notifyObservers(_board.cells());
+        }
+        else {
+          activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
+        }
+
+        _setActiveBlockCells();
       }
       break;
       case Command::Type::COUNTER_CLOCKWISE: {
+        Block &activeBlock = _board.activeBlock();
+
+        _clearActiveBlockCells();
+
+        activeBlock.rotate(Block::Rotation::COUNTER_CLOCKWISE);
         
+        if (_isValidBlock(activeBlock)) {
+          _board.cellsUpdated().notifyObservers(_board.cells());
+        }
+        else {
+          activeBlock.rotate(Block::Rotation::CLOCKWISE);
+        }
+
+        _setActiveBlockCells();
       }
       break;
       case Command::Type::DROP: {
         Block &activeBlock = _board.activeBlock();
-        while (_canMoveDown(activeBlock)) {
+
+        _clearActiveBlockCells();
+
+        while (_canMove(activeBlock, BaseLevel::Direction::DOWN)) {
           activeBlock.position.row += 1;
         }
-        
-        //update array
-        _board.cells();
 
-        //replace block
+        _setActiveBlockCells();
+
+        _board.cellsUpdated().notifyObservers(_board.cells());
       }
       break;
       default: 
