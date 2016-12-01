@@ -6,7 +6,7 @@ namespace qd {
 
   Board::Board(const Board::InitArgs& initArgs) :
   _randomEngine{static_cast<RandomEngine::result_type>(initArgs.seed)} {
-    _changeLevelTo(initArgs.levelNumber);
+    assert(_changeLevelTo(initArgs.levelNumber));
     _score.scoreUpdated().addObserver(
       _scoreUpdatedSlot,
       std::bind(&Board::_scoreUpdatedObserver, this, std::placeholders::_1)
@@ -19,6 +19,45 @@ namespace qd {
 
   void Board::executeCommand(const Command& command) {
     // TODO: This shit
+    auto commandType = command.type();
+    switch (commandType) {
+      case Command::Type::LEFT:
+      case Command::Type::RIGHT:
+      case Command::Type::DOWN:
+      case Command::Type::CLOCKWISE:
+      case Command::Type::COUNTER_CLOCKWISE:
+      case Command::Type::DROP:
+        assert(_level != nullptr);
+        _level->executeCommand(command);
+        break;
+      case Command::Type::LEVELUP:
+        assert(_level != nullptr);
+        // failure is okay
+        _changeLevelTo(_level->levelNumber() + 1);
+        break;
+      case Command::Type::LEVELDOWN:
+        assert(_level != nullptr);
+        // failure is okay
+        _changeLevelTo(_level->levelNumber() - 1);
+        break;
+      case Command::Type::NORANDOM:
+      case Command::Type::RANDOM:
+      case Command::Type::SEQUENCE:
+      case Command::Type::BLOCK_I:
+      case Command::Type::BLOCK_J:
+      case Command::Type::BLOCK_L:
+      case Command::Type::BLOCK_O:
+      case Command::Type::BLOCK_S:
+      case Command::Type::BLOCK_T:
+      case Command::Type::BLOCK_Z:
+      case Command::Type::RESTART:
+      case Command::Type::HINT:
+        assert(!"Not implemented");
+        break;
+      case Command::Type::UNKNOWN:
+        assert(!"Command with type UNKNOWN should never get here");
+        break;
+    }
   }
 
   void Board::reset() {
@@ -51,8 +90,8 @@ namespace qd {
 
   const Event<>& Board::gameStarted() const { return _gameStarted; }
   Event<>& Board::gameStarted() { return _gameStarted; }
-  const Event<const CellGrid&>& Board::cellsUpdated() const { return _cellsUpdated; }
-  Event<const CellGrid&>& Board::cellsUpdated() { return _cellsUpdated; }
+  const Event<const Board::CellGrid&>& Board::cellsUpdated() const { return _cellsUpdated; }
+  Event<const Board::CellGrid&>& Board::cellsUpdated() { return _cellsUpdated; }
   const Event<int>& Board::scoreUpdated() const { return _scoreUpdated; }
   Event<int>& Board::scoreUpdated() { return _scoreUpdated; }
   const Event<int>& Board::hiScoreUpdated() const { return _hiScoreUpdated; }
@@ -62,10 +101,13 @@ namespace qd {
   const Event<>& Board::gameEnded() const { return _gameEnded; }
   Event<>& Board::gameEnded() { return _gameEnded; }
 
-  void Board::_changeLevelTo(int levelNumber) {
+  bool Board::_changeLevelTo(int levelNumber) {
     auto levelFactory = _levelFactories.find(levelNumber);
-    assert(levelFactory != _levelFactories.end());
+    if (levelFactory == _levelFactories.end()) {
+      return false;
+    }
     _level = (levelFactory->second)(*this);
+    return true;
   }
 
   void Board::_scoreUpdatedObserver(int score) { _scoreUpdated.notifyObservers(score); }

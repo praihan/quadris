@@ -73,7 +73,7 @@ namespace qd {
     std::map<int, LevelFactory> _levelFactories;
 
     Event<> _gameStarted;
-    Event<CellGrid&> _cellsUpdated;
+    Event<const CellGrid&> _cellsUpdated;
     Event<int> _scoreUpdated;
     Event<int> _hiScoreUpdated;
     Event<> _nextBlockGenerated;
@@ -83,12 +83,14 @@ namespace qd {
     ObserverSlot<int> _hiScoreUpdatedSlot;
 
   private:
-    void _changeLevelTo(int levelNumber);
+    bool _changeLevelTo(int levelNumber);
 
     // All these do are forward the event from the Score to our own observers
     void _scoreUpdatedObserver(int score);
     void _hiScoreUpdatedObserver(int score);
   };
+
+  
 
 }
 

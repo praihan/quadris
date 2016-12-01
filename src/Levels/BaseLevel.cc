@@ -101,7 +101,7 @@ namespace qd {
         }
         
         //update array
-        _board.cells()
+        _board.cells();
 
         //replace block
       }
