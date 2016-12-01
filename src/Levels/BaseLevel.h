@@ -22,6 +22,7 @@ namespace qd {
   public:
     using Level::Level;
 
+    virtual int levelNumber() const = 0;
     virtual Block::Type nextBlockType() = 0;
     virtual void executeCommand(const Command& command) override;
   protected:

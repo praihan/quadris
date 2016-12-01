@@ -24,7 +24,13 @@ int main(int argc, char* argv[]) {
   std::cout << "Text: " << (cmdLineArgs.text ? (*cmdLineArgs.text ? "true" : "false") : "<none>") << std::endl;
   std::cout << "Start Level: " << (cmdLineArgs.scriptFile ? *cmdLineArgs.scriptFile : "<none>") << std::endl;
 
-  qd::Board b{{ 420, 2 }};
-  b.registerLevel(0, makeLevelFactory<qd::Level0>());
-  b.registerLevel(1, makeLevelFactory<qd::Level1>());
+  qd::Board::InitArgs boardInitArgs;
+  boardInitArgs.seed = (cmdLineArgs.seed ? *cmdLineArgs.seed : 420);
+  boardInitArgs.levelNumber = (cmdLineArgs.startLevel ? *cmdLineArgs.startLevel : 0);
+  boardInitArgs.levelFactories = {
+    { 0, makeLevelFactory<qd::Level0>() },
+    { 1, makeLevelFactory<qd::Level1>() },
+  };
+
+  qd::Board b { boardInitArgs };
 }

@@ -6,7 +6,6 @@ namespace qd {
 
   Board::Board(const Board::InitArgs& initArgs) :
   _randomEngine{static_cast<RandomEngine::result_type>(initArgs.seed)} {
-    assert(_changeLevelTo(initArgs.levelNumber));
     _score.scoreUpdated().addObserver(
       _scoreUpdatedSlot,
       std::bind(&Board::_scoreUpdatedObserver, this, std::placeholders::_1)
@@ -15,6 +14,10 @@ namespace qd {
       _hiScoreUpdatedSlot,
       std::bind(&Board::_hiScoreUpdatedObserver, this, std::placeholders::_1)
     );
+    for (const auto& levelFactoryPair : initArgs.levelFactories) {
+      registerLevel(levelFactoryPair.first, levelFactoryPair.second);
+    }
+    assert(_changeLevelTo(initArgs.levelNumber));
   }
 
   void Board::executeCommand(const Command& command) {
@@ -34,22 +37,22 @@ namespace qd {
       case Command::Type::BLOCK_S:
       case Command::Type::BLOCK_T:
       case Command::Type::BLOCK_Z:
+      case Command::Type::NORANDOM:
+      case Command::Type::RANDOM:
+      case Command::Type::SEQUENCE:
         assert(_level != nullptr);
         _level->executeCommand(command);
         break;
       case Command::Type::LEVELUP:
         assert(_level != nullptr);
         // failure is okay
-        _changeLevelTo(_level->levelNumber() + 1);
+        _changeLevelTo(_currentLevelNumber + 1);
         break;
       case Command::Type::LEVELDOWN:
         assert(_level != nullptr);
         // failure is okay
-        _changeLevelTo(_level->levelNumber() - 1);
+        _changeLevelTo(_currentLevelNumber - 1);
         break;
-      case Command::Type::NORANDOM:
-      case Command::Type::RANDOM:
-      case Command::Type::SEQUENCE:
       case Command::Type::RESTART:
       case Command::Type::HINT:
         assert(!"Not implemented");
@@ -64,7 +67,7 @@ namespace qd {
     _score.reset();
     // TODO:
     // Clear board
-    // cellUpdated event
+    // cellsUpdated event
     // gameEnded event
   }
 
@@ -107,6 +110,7 @@ namespace qd {
       return false;
     }
     _level = (levelFactory->second)(*this);
+    _currentLevelNumber = levelFactory->first;
     return true;
   }
 

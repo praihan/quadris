@@ -24,13 +24,15 @@ namespace qd {
 
   class Board {
   public:
-    struct InitArgs {
-      int seed;
-      int levelNumber;
-    };
     using LevelFactory = std::function<std::unique_ptr<Level>(Board&)>;
     using CellGrid = std::array<std::array<Cell, BOARD_HEIGHT>, BOARD_WIDTH + 3>;
     using RandomEngine = std::mt19937;
+
+    struct InitArgs {
+      int seed;
+      int levelNumber;
+      std::map<int, const LevelFactory> levelFactories;
+    };
 
     Board(const InitArgs&);
 
@@ -81,6 +83,8 @@ namespace qd {
 
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;
+
+    int _currentLevelNumber;
 
   private:
     bool _changeLevelTo(int levelNumber);

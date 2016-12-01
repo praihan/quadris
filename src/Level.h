@@ -9,7 +9,6 @@ namespace qd {
   class Level {
   public:
     Level(Board&);
-    virtual int levelNumber() const = 0;
     virtual void executeCommand(const Command& command) = 0;
   protected:
     Board& _board;
