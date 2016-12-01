@@ -30,6 +30,6 @@ namespace qd {
   }
 
   void Level2::executeCommand(const Command& command) {
-
+    BaseLevel::executeCommand(command);
   }
 }
