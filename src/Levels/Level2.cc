@@ -19,7 +19,8 @@ namespace qd {
     };
   }
 
-  Level2::Level2(Board& b) : BaseLevel{b} { 
+  Level2::Level2(Board& b) : BaseLevel{b} {
+    _nextBlockType = nextBlockType();
     _ensureActiveBlock();
   }
 

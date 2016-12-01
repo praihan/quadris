@@ -20,7 +20,7 @@
 namespace qd {
   class BaseLevel : public Level {
   public:
-    using Level::Level;
+    BaseLevel(Board& b);
 
     virtual int levelNumber() const = 0;
     virtual Block::Type nextBlockType() = 0;
@@ -38,6 +38,8 @@ namespace qd {
     bool _canMove(const Block &b, Direction d) const;
     void _moveBlock(const Position& dest);
     void _ensureActiveBlock();
+
+    Block::Type _nextBlockType;
 
   };
 }

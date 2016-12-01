@@ -12,6 +12,9 @@
 #include "Blocks/BlockZ.h"
 
 namespace qd {
+  BaseLevel::BaseLevel(Board& b) : Level{b} {
+  }
+
   bool BaseLevel::_isCellOccupied(const Position& p) const {
     return _board.cells()[p.col][p.row].blockType != Block::Type::EMPTY;
   }
@@ -62,7 +65,8 @@ namespace qd {
     std::unique_ptr<Block>& activeBlock = _board.activeBlock();
 
     if (activeBlock == nullptr) {
-      Block::Type nextType = nextBlockType();
+      Block::Type nextType = _nextBlockType;
+      _nextBlockType = nextBlockType();
 
       switch(nextType) {
         case Block::Type::BLOCK_I:
@@ -89,8 +93,7 @@ namespace qd {
         default:
           assert(!"We have accounted for all block types. This should not happen");
       }
-
-      _board.nextBlockGenerated().notifyObservers(nextType);
+      _board.nextBlockGenerated().notifyObservers(_nextBlockType);
     }
   }
 

@@ -21,7 +21,8 @@ namespace qd {
     };
   }
 
-  Level4::Level4(Board& b) : BaseLevel{b} { 
+  Level4::Level4(Board& b) : BaseLevel{b} {
+    _nextBlockType = nextBlockType();
     _ensureActiveBlock();
   }
 

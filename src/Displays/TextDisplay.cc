@@ -5,6 +5,7 @@
 #include <map>
 #include <memory>
 
+#include "Utility.h"
 #include "Blocks/BlockI.h"
 #include "Blocks/BlockJ.h"
 #include "Blocks/BlockL.h"
@@ -27,13 +28,13 @@ namespace qd {
       { Block::Type::BLOCK_Z, 'Z' },
     };
 
-    const BlockI _sampleBlockI;
-    const BlockJ _sampleBlockJ;
-    const BlockL _sampleBlockL;
-    const BlockO _sampleBlockO;
-    const BlockS _sampleBlockS;
-    const BlockT _sampleBlockT;
-    const BlockZ _sampleBlockZ;
+    const BlockI _sampleBlockI = iife([]() { BlockI b; b.position = { -2, 0 }; return b; });
+    const BlockJ _sampleBlockJ = iife([]() { BlockJ b; b.position = { -2, 0 }; return b; });
+    const BlockL _sampleBlockL = iife([]() { BlockL b; b.position = { -2, 0 }; return b; });
+    const BlockO _sampleBlockO = iife([]() { BlockO b; b.position = { -2, 0 }; return b; });
+    const BlockS _sampleBlockS = iife([]() { BlockS b; b.position = { -2, 0 }; return b; });
+    const BlockT _sampleBlockT = iife([]() { BlockT b; b.position = { -2, 0 }; return b; });
+    const BlockZ _sampleBlockZ = iife([]() { BlockZ b; b.position = { -2, 0 }; return b; });
 
     const std::map<Block::Type, const Block*> sampleBlocks = {
       { Block::Type::EMPTY, nullptr },
@@ -118,12 +119,17 @@ namespace qd {
   void TextDisplay::onNextBlockGenerated(Block::Type blockType) {
     std::cout << "NEXT BLOCK GENERATED" << std::endl;
     const Block* sampleBlock = sampleBlocks.at(blockType);
+
+    const auto nextBlockLineItr = _displayBuffer.begin() + 21;
+    nextBlockLineItr[0] = nextBlockLineItr[1] = "           ";
+
     if (sampleBlock == nullptr) {
-      // clear it
+      // we've already cleared it
       return;
     }
     for (Position p : *sampleBlock) {
       std::cout << p << std::endl;
+      nextBlockLineItr[p.row][p.col] = blockTypeToChar.at(sampleBlock->type());
     }
   }
 
