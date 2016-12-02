@@ -32,6 +32,7 @@ namespace qd {
     void _defaultInitialization();
 
     virtual void _checkScoring();
+    virtual bool _checkGameEnd();
 
     /// Determines if a Cell denoted by the given Position is not empty.
     bool _isCellOccupied(const Position& p) const;

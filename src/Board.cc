@@ -10,7 +10,7 @@ namespace qd {
     void resetCellGrid(Board::CellGrid& cells) {
       for (auto& row : cells) {
         for (Cell& cell : row) {
-          cell.blockType = Block::Type::EMPTY;
+          cell.clear();
         }
       }
     }

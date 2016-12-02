@@ -7,6 +7,7 @@ namespace qd {
 
   struct Cell {
     Cell();
+    void clear();
     Block::Type blockType;
   };
 }

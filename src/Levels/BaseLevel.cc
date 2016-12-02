@@ -159,12 +159,8 @@ namespace qd {
 
         notifyCellsUpdated();
 
-        // Game is lst
-        if (!_isValidBlock(*activeBlockPtr)) {
-          _board.gameEnded().notifyObservers();
-          return false;
-        }
-
+        _checkScoring();
+        _checkGameEnd();
         return true;
       }
         break;
@@ -219,6 +215,14 @@ namespace qd {
 
     _ensureBlocksGenerated();
     _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
+  }
+
+  bool BaseLevel::_checkGameEnd() {
+    if (!_isValidBlock(*_board.activeBlockPtr())) {
+      _board.gameEnded().notifyObservers();
+      return true;
+    }
+    return false;
   }
 
   void BaseLevel::_checkScoring() {
