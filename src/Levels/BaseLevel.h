@@ -40,8 +40,6 @@ namespace qd {
     virtual bool _shouldGenerateHeavyBlocks() const;
 
     Block::Type _nextBlockType;
-
-    bool _heavy;
   };
 }
 

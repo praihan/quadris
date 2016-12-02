@@ -100,15 +100,17 @@ namespace qd {
     std::unique_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
     std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
 
+    bool heavy = _shouldGenerateHeavyBlocks();
+
     if (activeBlockPtr == nullptr) {
       if (nextBlockPtr == nullptr) {
-        activeBlockPtr = createBlockFromType(_nextBlockType);
+        activeBlockPtr = createBlockFromType(_nextBlockType, heavy);
       } else {
         activeBlockPtr = std::move(nextBlockPtr);
       }
 
       _nextBlockType = nextBlockType();
-      nextBlockPtr = createBlockFromType(_nextBlockType);
+      nextBlockPtr = createBlockFromType(_nextBlockType, heavy);
       _board.nextBlockGenerated().notifyObservers(_nextBlockType);
 
       activeBlockPtr->position = { 0, 0 };
