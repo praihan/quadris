@@ -176,7 +176,7 @@ namespace qd {
           }
         }
 
-        if (this->_shouldGenerateHeavyBlocks() && movementDir != Direction::DOWN &&
+        if (activeBlockPtr->heavy() && movementDir != Direction::DOWN &&
           _canMove(*activeBlockPtr, Direction::DOWN)) { 
           moveInDirection(activeBlockPtr->position, Direction::DOWN);
         }
@@ -215,7 +215,7 @@ namespace qd {
           }
         }
 
-        if (this->_shouldGenerateHeavyBlocks() && _canMove(*activeBlockPtr, Direction::DOWN)) { 
+        if (activeBlockPtr->heavy() && _canMove(*activeBlockPtr, Direction::DOWN)) { 
           activeBlockPtr->position.row += 1;
         }
 
