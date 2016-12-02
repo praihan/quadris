@@ -5,7 +5,7 @@
 #include "Position.h"
 
 namespace qd {
-  BlockL::BlockL() : state(0) {
+  BlockL::BlockL(const bool heavy) : Block(heavy), state(0) {
     occupiedPositions.emplace_back(2, 2);
     occupiedPositions.emplace_back(3, 2);
     occupiedPositions.emplace_back(3, 1);

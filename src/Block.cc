@@ -1,6 +1,10 @@
 #include "Block.h"
 
 namespace qd {
+  Block::Block(const bool heavy) : _heavy(heavy) {
+    
+  }
+
   Block::PositionIterator Block::begin() const {
     return { *this, this->occupiedPositions.cbegin() };
   }
@@ -100,6 +104,7 @@ namespace qd {
   ) const {
     return this->_iter == other._iter;
   }
+
   bool Block::PositionIterator::operator!=(
     const PositionIterator& other
   ) const {

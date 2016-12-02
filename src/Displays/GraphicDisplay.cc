@@ -1,4 +1,6 @@
 #include "GraphicDisplay.h"
+#include "window.h"
+#include <string>
 
 namespace qd {
   
@@ -7,7 +9,9 @@ namespace qd {
   }
 
   void GraphicDisplay::onScoreUpdated(int score) {
+    //std::string scoreStr = "Score: " + std::to_string(score);
 
+    //drawString(x, y, scoreStr)
   }
 
   void GraphicDisplay::onHiScoreUpdated(int hiScore) {
