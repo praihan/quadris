@@ -45,6 +45,9 @@ namespace qd {
   void BaseLevel::_defaultInitialization() {
     std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
     if (nextBlockPtr) {
+      // if we switch levels, since we have already generated the next Block
+      // we have to apply our own heaviness rules before it becomes our active
+      // block. In essence, we take ownership of it.
       nextBlockPtr->heavy(_shouldGenerateHeavyBlocks());
     }
 
