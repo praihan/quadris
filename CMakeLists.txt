@@ -60,6 +60,8 @@ set (SOURCES
   src/Position.cc
   src/Score.h
   src/Score.cc
+  src/window.h
+  src/window.cc
 
   src/Command.h
   src/Command.cc

@@ -41,6 +41,7 @@ namespace qd {
 
     Block::Type _nextBlockType;
 
+    bool _heavy;
   };
 }
 

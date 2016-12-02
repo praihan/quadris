@@ -14,8 +14,10 @@ namespace qd {
   class Block {
   protected:
     std::vector<Position> occupiedPositions;
+    bool _heavy;
 
   public:
+    Block(const bool heavy = false);
     virtual ~Block() = default;
 
     enum class Type {
