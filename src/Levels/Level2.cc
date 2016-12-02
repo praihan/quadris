@@ -6,7 +6,7 @@
 namespace qd {
 
   namespace {
-    std::array<Block::Type, 7> weightedBlockTypes {
+    const std::array<Block::Type, 7> weightedBlockTypes {
       {
         Block::Type::BLOCK_I,
         Block::Type::BLOCK_J,

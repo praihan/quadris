@@ -7,7 +7,7 @@
 namespace qd {
 
   namespace {
-    std::array<Block::Type,9> weightedBlockTypes {
+    const std::array<Block::Type,9> weightedBlockTypes {
       {
         Block::Type::BLOCK_I,
         Block::Type::BLOCK_J,
@@ -38,5 +38,9 @@ namespace qd {
 
   bool Level3::executeCommand(const Command& command) {
     return BaseLevel::executeCommand(command);
+  }
+
+  bool Level3::_shouldGenerateHeavyBlocks() const {
+    return true;
   }
 }

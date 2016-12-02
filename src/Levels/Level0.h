@@ -10,6 +10,7 @@ namespace qd {
     std::vector<Block::Type>::const_iterator _current;
   public:
     Level0(Board&);
+  protected:
     virtual int levelNumber() const override;
     virtual Block::Type nextBlockType() override;
     virtual bool executeCommand(const Command& command) override;
