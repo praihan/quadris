@@ -2,11 +2,23 @@
 #include <cassert>
 #include <functional>
 #include <iostream>
+#include <stdexcept>
 
 namespace qd {
 
+  namespace {
+    void resetCellGrid(Board::CellGrid& cells) {
+      for (auto& row : cells) {
+        for (Cell& cell : row) {
+          cell.blockType = Block::Type::EMPTY;
+        }
+      }
+    }
+  }
+
   Board::Board(const Board::InitArgs& initArgs) :
-  _randomEngine{static_cast<RandomEngine::result_type>(initArgs.seed)} {
+    _randomEngine{static_cast<RandomEngine::result_type>(initArgs.seed)},
+    _started{false} {
     _score.scoreUpdated().addObserver(
       _scoreUpdatedSlot,
       std::bind(&Board::_scoreUpdatedObserver, this, std::placeholders::_1)
@@ -23,7 +35,9 @@ namespace qd {
   }
 
   void Board::executeCommand(const Command& command) {
-    // TODO: This shit
+    if (!_started) {
+      throw std::runtime_error{ "Cannot execute commands without calling start()" };
+    }
     if (command.multiplier() == 0) {
       return;
     }
@@ -75,7 +89,11 @@ namespace qd {
   void Board::start() {
     // we need to clear the grid before we change levels
     // since changing levels will trigger an cellsUpdated event
-    cells() = CellGrid{};
+    if (_started) {
+      throw std::runtime_error{ "Already started!" };
+    }
+    _started = true;
+    resetCellGrid(cells());
     activeBlockPtr() = nullptr;
     nextBlockPtr() = nullptr;
     bool changeSuccessful = _changeLevelTo(_currentLevelNumber);
@@ -85,6 +103,7 @@ namespace qd {
   }
 
   void Board::reset() {
+    _started = false;
     start();
   }
 

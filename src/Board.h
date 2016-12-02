@@ -92,6 +92,7 @@ namespace qd {
     ObserverSlot<> _gameEndedSlot;
 
     int _currentLevelNumber;
+    bool _started;
 
   private:
     bool _changeLevelTo(int levelNumber);
