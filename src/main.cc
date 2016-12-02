@@ -40,6 +40,9 @@ int main(int argc, char* argv[]) {
   qd::Board board { boardInitArgs };
   board.registerLevel(0, makeLevelFactory<qd::Level0>());
   board.registerLevel(1, makeLevelFactory<qd::Level1>());
+  board.registerLevel(2, makeLevelFactory<qd::Level2>());
+  board.registerLevel(3, makeLevelFactory<qd::Level3>());
+  board.registerLevel(4, makeLevelFactory<qd::Level4>());
 
   qd::TextDisplay textDisplay { board };
 
