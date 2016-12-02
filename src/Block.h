@@ -74,7 +74,10 @@ namespace qd {
     };
 
     Position position;
-   
+
+    virtual bool heavy() const;
+    virtual bool heavy(bool value);
+
     virtual void rotate(Rotation) = 0;
     virtual PositionIterator begin() const;
     virtual PositionIterator end() const;

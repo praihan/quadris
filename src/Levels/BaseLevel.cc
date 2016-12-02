@@ -43,6 +43,11 @@ namespace qd {
   }
 
   void BaseLevel::_defaultInitialization() {
+    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
+    if (nextBlockPtr) {
+      nextBlockPtr->heavy(_shouldGenerateHeavyBlocks());
+    }
+
     _ensureBlocksGenerated();
     _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
   }
