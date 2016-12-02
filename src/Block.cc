@@ -2,7 +2,13 @@
 
 namespace qd {
   Block::Block(const bool heavy) : _heavy(heavy) {
-    
+  }
+
+  bool Block::heavy() const {
+    return _heavy;
+  }
+  bool Block::heavy(bool value) {
+    return _heavy = value;
   }
 
   Block::PositionIterator Block::begin() const {
