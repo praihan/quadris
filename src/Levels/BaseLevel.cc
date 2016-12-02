@@ -117,6 +117,10 @@ namespace qd {
   }
 
   bool BaseLevel::executeCommand(const Command& command) {
+    if (command.multiplier() == 0) {
+      return true;
+    }
+
     auto& activeBlockPtr = _board.activeBlockPtr();
     auto notifyCellsUpdated = [this, &activeBlockPtr]() {
       _board.cellsUpdated().notifyObservers(
@@ -160,17 +164,18 @@ namespace qd {
         for (unsigned int i = 0; i < command.multiplier(); ++i) {
           if (_canMove(*activeBlockPtr, movementDir)) {
             moveInDirection(activeBlockPtr->position, movementDir);
-
-            if (this->_shouldGenerateHeavyBlocks() && movementDir != Direction::DOWN &&
-                _canMove(*activeBlockPtr, Direction::DOWN)) { 
-              moveInDirection(activeBlockPtr->position, Direction::DOWN);
-            }
           }
           else {
             success = false;
             break;
           }
         }
+
+        if (this->_shouldGenerateHeavyBlocks() && movementDir != Direction::DOWN &&
+          _canMove(*activeBlockPtr, Direction::DOWN)) { 
+          moveInDirection(activeBlockPtr->position, Direction::DOWN);
+        }
+
         notifyCellsUpdated();
         return success;
       }
@@ -203,11 +208,12 @@ namespace qd {
             activeBlockPtr->rotate(antiRotationDirection);
             success = false;
           }
-
-          if (this->_shouldGenerateHeavyBlocks() && _canMove(*activeBlockPtr, Direction::DOWN)) { 
-            activeBlockPtr->position.row += 1;
-          }
         }
+
+        if (this->_shouldGenerateHeavyBlocks() && _canMove(*activeBlockPtr, Direction::DOWN)) { 
+          activeBlockPtr->position.row += 1;
+        }
+
         notifyCellsUpdated();
         return success;
       }
