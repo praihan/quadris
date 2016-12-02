@@ -31,6 +31,8 @@ namespace qd {
     /// when our constructor is executed.
     void _defaultInitialization();
 
+    virtual void _checkScoring();
+
     /// Determines if a Cell denoted by the given Position is not empty.
     bool _isCellOccupied(const Position& p) const;
     /// Determines if the given Position corresponds to a valid Cell

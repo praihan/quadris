@@ -42,88 +42,6 @@ namespace qd {
   BaseLevel::BaseLevel(Board& b) : Level{b} {
   }
 
-  void BaseLevel::_defaultInitialization() {
-    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
-    if (nextBlockPtr) {
-      // if we switch levels, since we have already generated the next Block
-      // we have to apply our own heaviness rules before it becomes our active
-      // block. In essence, we take ownership of it.
-      nextBlockPtr->heavy(_shouldGenerateHeavyBlocks());
-    }
-
-    _ensureBlocksGenerated();
-    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
-  }
-
-  bool BaseLevel::_isCellOccupied(const Position& p) const {
-    return (_board.cells()[p.row][p.col].blockType != Block::Type::EMPTY);
-  }
-
-  bool BaseLevel::_isCellInBound(const Position& p) const {
-    return
-      (p.row >= 0 && p.row < static_cast<int>(BOARD_HEIGHT + 3)) &&
-      (p.col >= 0 && p.col < static_cast<int>(BOARD_WIDTH));
-  }
-
-  bool BaseLevel::_isValidBlock(const Block &b) const {
-    for (Position p : b) {
-      if (!_isCellInBound(p)) {
-        return false;
-      }
-      if (_isCellOccupied(p)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  bool BaseLevel::_canMove(const Block &b, Direction d) const {
-    for (Position p : b) {
-      switch (d) {
-        case Direction::DOWN:
-          p.row++;
-          break;
-        case Direction::LEFT:
-          p.col--;
-          break;
-        case Direction::RIGHT: 
-          p.col++;
-          break;
-      }
-      if (!_isCellInBound(p)) {
-        return false;
-      }
-      if (_isCellOccupied(p)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  void BaseLevel::_ensureBlocksGenerated() {
-    std::unique_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
-    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
-
-    bool heavy = _shouldGenerateHeavyBlocks();
-
-    if (activeBlockPtr == nullptr) {
-      auto blockType = nextBlockType();
-      if (nextBlockPtr == nullptr) {
-        // this should only happen when we first start a game
-        activeBlockPtr = createBlockFromType(blockType, heavy);
-        blockType = nextBlockType();
-      } else {
-        activeBlockPtr = std::move(nextBlockPtr);
-      }
-
-      nextBlockPtr = createBlockFromType(blockType, heavy);
-      _board.nextBlockGenerated().notifyObservers(blockType);
-
-      activeBlockPtr->position = { 0, 0 };
-    }
-  }
-
   bool BaseLevel::executeCommand(const Command& command) {
     if (command.multiplier() == 0) {
       return true;
@@ -287,6 +205,92 @@ namespace qd {
       default:
         return false;
         break;
+    }
+  }
+
+  void BaseLevel::_defaultInitialization() {
+    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
+    if (nextBlockPtr) {
+      // if we switch levels, since we have already generated the next Block
+      // we have to apply our own heaviness rules before it becomes our active
+      // block. In essence, we take ownership of it.
+      nextBlockPtr->heavy(_shouldGenerateHeavyBlocks());
+    }
+
+    _ensureBlocksGenerated();
+    _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
+  }
+
+  void BaseLevel::_checkScoring() {
+    
+  }
+
+  bool BaseLevel::_isCellOccupied(const Position& p) const {
+    return (_board.cells()[p.row][p.col].blockType != Block::Type::EMPTY);
+  }
+
+  bool BaseLevel::_isCellInBound(const Position& p) const {
+    return
+      (p.row >= 0 && p.row < static_cast<int>(BOARD_HEIGHT + 3)) &&
+      (p.col >= 0 && p.col < static_cast<int>(BOARD_WIDTH));
+  }
+
+  bool BaseLevel::_isValidBlock(const Block &b) const {
+    for (Position p : b) {
+      if (!_isCellInBound(p)) {
+        return false;
+      }
+      if (_isCellOccupied(p)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool BaseLevel::_canMove(const Block &b, Direction d) const {
+    for (Position p : b) {
+      switch (d) {
+        case Direction::DOWN:
+          p.row++;
+          break;
+        case Direction::LEFT:
+          p.col--;
+          break;
+        case Direction::RIGHT: 
+          p.col++;
+          break;
+      }
+      if (!_isCellInBound(p)) {
+        return false;
+      }
+      if (_isCellOccupied(p)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void BaseLevel::_ensureBlocksGenerated() {
+    std::unique_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
+    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
+
+    bool heavy = _shouldGenerateHeavyBlocks();
+
+    if (activeBlockPtr == nullptr) {
+      auto blockType = nextBlockType();
+      if (nextBlockPtr == nullptr) {
+        // this should only happen when we first start a game
+        activeBlockPtr = createBlockFromType(blockType, heavy);
+        blockType = nextBlockType();
+      } else {
+        activeBlockPtr = std::move(nextBlockPtr);
+      }
+
+      nextBlockPtr = createBlockFromType(blockType, heavy);
+      _board.nextBlockGenerated().notifyObservers(blockType);
+
+      activeBlockPtr->position = { 0, 0 };
     }
   }
 
