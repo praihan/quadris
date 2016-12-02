@@ -15,22 +15,22 @@
 namespace qd {
 
   namespace {
-    auto createBlockFromType = [](Block::Type type) -> std::unique_ptr<Block> {
+    auto createBlockFromType = [](Block::Type type, bool heavy) -> std::unique_ptr<Block> {
       switch(type) {
         case Block::Type::BLOCK_I:
-          return std::make_unique<BlockI>();
+          return std::make_unique<BlockI>(heavy);
         case Block::Type::BLOCK_J:
-          return std::make_unique<BlockJ>();
+          return std::make_unique<BlockJ>(heavy);
         case Block::Type::BLOCK_L:
-          return std::make_unique<BlockL>();
+          return std::make_unique<BlockL>(heavy);
         case Block::Type::BLOCK_O:
-          return std::make_unique<BlockO>();
+          return std::make_unique<BlockO>(heavy);
         case Block::Type::BLOCK_S:
-          return std::make_unique<BlockS>();
+          return std::make_unique<BlockS>(heavy);
         case Block::Type::BLOCK_T:
-          return std::make_unique<BlockT>();
+          return std::make_unique<BlockT>(heavy);
         case Block::Type::BLOCK_Z:
-          return std::make_unique<BlockZ>();
+          return std::make_unique<BlockZ>(heavy);
         default:
           assert(!"We have accounted for all block types. This should not happen");
       }
@@ -255,7 +255,7 @@ namespace qd {
               break;
           }
         });
-        _board.nextBlockPtr() = createBlockFromType(blockType);
+        _board.nextBlockPtr() = createBlockFromType(blockType, _shouldGenerateHeavyBlocks());
         _board.nextBlockGenerated().notifyObservers(blockType);
         return true;
       }
@@ -264,6 +264,10 @@ namespace qd {
         return false;
         break;
     }
+  }
+
+  bool BaseLevel::_shouldGenerateHeavyBlocks() const {
+    return false;
   }
 
 }

@@ -7,16 +7,6 @@
 #include "Position.h"
 #include "Block.h"
 
-/*
-      UNKNOWN,
-      LEFT,
-      RIGHT,
-      DOWN,
-      CLOCKWISE,
-      COUNTER_CLOCKWISE,
-      DROP,
-*/
-
 namespace qd {
   class BaseLevel : public Level {
   public:
@@ -25,6 +15,7 @@ namespace qd {
     virtual int levelNumber() const = 0;
     virtual Block::Type nextBlockType() = 0;
     virtual bool executeCommand(const Command& command) override;
+
   protected:
     enum class Direction {
       DOWN,
@@ -45,6 +36,8 @@ namespace qd {
     bool _canMove(const Block &b, Direction d) const;
     void _moveBlock(const Position& dest);
     void _ensureBlocksGenerated();
+
+    virtual bool _shouldGenerateHeavyBlocks() const;
 
     Block::Type _nextBlockType;
 
