@@ -15,37 +15,34 @@
 namespace qd {
 
   namespace {
-    auto createBlockFromType = [](Block::Type type, bool heavy) -> std::unique_ptr<Block> {
+    template <class... Args>
+    std::unique_ptr<Block> createBlockFromType(Block::Type type, Args&&... args) {
       switch(type) {
         case Block::Type::BLOCK_I:
-          return std::make_unique<BlockI>(heavy);
+          return std::make_unique<BlockI>(std::forward<Args>(args)...);
         case Block::Type::BLOCK_J:
-          return std::make_unique<BlockJ>(heavy);
+          return std::make_unique<BlockJ>(std::forward<Args>(args)...);
         case Block::Type::BLOCK_L:
-          return std::make_unique<BlockL>(heavy);
+          return std::make_unique<BlockL>(std::forward<Args>(args)...);
         case Block::Type::BLOCK_O:
-          return std::make_unique<BlockO>(heavy);
+          return std::make_unique<BlockO>(std::forward<Args>(args)...);
         case Block::Type::BLOCK_S:
-          return std::make_unique<BlockS>(heavy);
+          return std::make_unique<BlockS>(std::forward<Args>(args)...);
         case Block::Type::BLOCK_T:
-          return std::make_unique<BlockT>(heavy);
+          return std::make_unique<BlockT>(std::forward<Args>(args)...);
         case Block::Type::BLOCK_Z:
-          return std::make_unique<BlockZ>(heavy);
+          return std::make_unique<BlockZ>(std::forward<Args>(args)...);
         default:
           assert(!"We have accounted for all block types. This should not happen");
       }
       return nullptr;
-    };
+    }
   }
 
   BaseLevel::BaseLevel(Board& b) : Level{b} {
   }
 
   void BaseLevel::_defaultInitialization() {
-    const auto& nextBlockPtr = _board.nextBlockPtr();
-    // if nextBlockPtr already exists... then our next value will actually
-    // be ignored. So don't poll our 'nextBlockType'
-    _nextBlockType = nextBlockPtr ? Block::Type::EMPTY : nextBlockType();
     _ensureBlocksGenerated();
     _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
   }
@@ -103,15 +100,17 @@ namespace qd {
     bool heavy = _shouldGenerateHeavyBlocks();
 
     if (activeBlockPtr == nullptr) {
+      auto blockType = nextBlockType();
       if (nextBlockPtr == nullptr) {
-        activeBlockPtr = createBlockFromType(_nextBlockType, heavy);
+        // this should only happen when we first start a game
+        activeBlockPtr = createBlockFromType(blockType, heavy);
+        blockType = nextBlockType();
       } else {
         activeBlockPtr = std::move(nextBlockPtr);
       }
 
-      _nextBlockType = nextBlockType();
-      nextBlockPtr = createBlockFromType(_nextBlockType, heavy);
-      _board.nextBlockGenerated().notifyObservers(_nextBlockType);
+      nextBlockPtr = createBlockFromType(blockType, heavy);
+      _board.nextBlockGenerated().notifyObservers(blockType);
 
       activeBlockPtr->position = { 0, 0 };
     }
