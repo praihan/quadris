@@ -161,6 +161,11 @@ namespace qd {
         for (unsigned int i = 0; i < command.multiplier(); ++i) {
           if (_canMove(*activeBlockPtr, movementDir)) {
             moveInDirection(activeBlockPtr->position, movementDir);
+
+            if (this->_shouldGenerateHeavyBlocks() && movementDir != Direction::DOWN &&
+                _canMove(*activeBlockPtr, Direction::DOWN)) { 
+              moveInDirection(activeBlockPtr->position, Direction::DOWN);
+            }
           }
           else {
             success = false;
@@ -198,6 +203,10 @@ namespace qd {
           if (!_isValidBlock(*activeBlockPtr)) {
             activeBlockPtr->rotate(antiRotationDirection);
             success = false;
+          }
+
+          if (this->_shouldGenerateHeavyBlocks() && _canMove(*activeBlockPtr, Direction::DOWN)) { 
+            activeBlockPtr->position.row += 1;
           }
         }
         notifyCellsUpdated();
