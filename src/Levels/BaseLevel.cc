@@ -13,6 +13,31 @@
 #include "Blocks/BlockZ.h"
 
 namespace qd {
+
+  namespace {
+    auto createBlockFromType = [](Block::Type type) -> std::unique_ptr<Block> {
+      switch(type) {
+        case Block::Type::BLOCK_I:
+          return std::make_unique<BlockI>();
+        case Block::Type::BLOCK_J:
+          return std::make_unique<BlockJ>();
+        case Block::Type::BLOCK_L:
+          return std::make_unique<BlockL>();
+        case Block::Type::BLOCK_O:
+          return std::make_unique<BlockO>();
+        case Block::Type::BLOCK_S:
+          return std::make_unique<BlockS>();
+        case Block::Type::BLOCK_T:
+          return std::make_unique<BlockT>();
+        case Block::Type::BLOCK_Z:
+          return std::make_unique<BlockZ>();
+        default:
+          assert(!"We have accounted for all block types. This should not happen");
+      }
+      return nullptr;
+    };
+  }
+
   BaseLevel::BaseLevel(Board& b) : Level{b} {
   }
 
@@ -74,28 +99,6 @@ namespace qd {
   void BaseLevel::_ensureBlocksGenerated() {
     std::unique_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
     std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
-
-    auto createBlockFromType = [](Block::Type type) -> std::unique_ptr<Block> {
-      switch(type) {
-        case Block::Type::BLOCK_I:
-          return std::make_unique<BlockI>();
-        case Block::Type::BLOCK_J:
-          return std::make_unique<BlockJ>();
-        case Block::Type::BLOCK_L:
-          return std::make_unique<BlockL>();
-        case Block::Type::BLOCK_O:
-          return std::make_unique<BlockO>();
-        case Block::Type::BLOCK_S:
-          return std::make_unique<BlockS>();
-        case Block::Type::BLOCK_T:
-          return std::make_unique<BlockT>();
-        case Block::Type::BLOCK_Z:
-          return std::make_unique<BlockZ>();
-        default:
-          assert(!"We have accounted for all block types. This should not happen");
-      }
-      return nullptr;
-    };
 
     if (activeBlockPtr == nullptr) {
       if (nextBlockPtr == nullptr) {
@@ -165,7 +168,7 @@ namespace qd {
         notifyCellsUpdated();
         return success;
       }
-      break;
+        break;
 
       case Command::Type::CLOCKWISE:
       case Command::Type::COUNTER_CLOCKWISE: {
@@ -198,7 +201,7 @@ namespace qd {
         notifyCellsUpdated();
         return success;
       }
-      break;
+        break;
 
       case Command::Type::DROP: {
         while (_canMove(*activeBlockPtr, BaseLevel::Direction::DOWN)) {
@@ -222,46 +225,44 @@ namespace qd {
 
         return true;
       }
-      break;
+        break;
 
-      case Command::Type::BLOCK_I: {
-        return false;
-      }
-      break;
-
-      case Command::Type::BLOCK_J: {
-        return false;
-      }
-      break;
-
-      case Command::Type::BLOCK_L: {
-        return false;
-      }
-      break;
-
-      case Command::Type::BLOCK_O: {
-        return false;
-      }
-      break;
-
-      case Command::Type::BLOCK_S: {
-        return false;
-      }
-      break;
-      
-      case Command::Type::BLOCK_Z: {
-        return false;
-      }
-      break;
-
+      case Command::Type::BLOCK_I:
+      case Command::Type::BLOCK_J:
+      case Command::Type::BLOCK_L:
+      case Command::Type::BLOCK_O:
+      case Command::Type::BLOCK_S:
+      case Command::Type::BLOCK_Z:
       case Command::Type::BLOCK_T: {
-        return false;
+        const Block::Type blockType = iife([&commandType]() -> Block::Type {
+          switch (commandType) {
+            case Command::Type::BLOCK_I:
+              return Block::Type::BLOCK_I;
+            case Command::Type::BLOCK_J:
+              return Block::Type::BLOCK_J;
+            case Command::Type::BLOCK_L:
+              return Block::Type::BLOCK_L;
+            case Command::Type::BLOCK_O:
+              return Block::Type::BLOCK_O;
+            case Command::Type::BLOCK_S:
+              return Block::Type::BLOCK_S;
+            case Command::Type::BLOCK_Z:
+              return Block::Type::BLOCK_S;
+            case Command::Type::BLOCK_T:
+              return Block::Type::BLOCK_T;
+            default:
+              assert(!"Unreachable");
+              break;
+          }
+        });
+        _board.nextBlockPtr() = createBlockFromType(blockType);
+        _board.nextBlockGenerated().notifyObservers(blockType);
+        return true;
       }
-      break;
-
+        break;
       default:
         return false;
-      break;
+        break;
     }
   }
 
