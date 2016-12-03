@@ -60,6 +60,7 @@ int main(int argc, char* argv[]) {
   try {
     board.start();
 
+    textDisplay.outputDisplay();
     while (true) {
       try {
         qd::Command command = commandInterpreter.nextCommand();

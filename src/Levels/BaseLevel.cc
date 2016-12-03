@@ -1,6 +1,7 @@
 #include <cassert>
 #include <memory>
 #include <climits>
+#include <utility>
 #include "Utility.h"
 #include "BaseLevel.h"
 #include "Command.h"
@@ -23,23 +24,24 @@ int abs(int n) {
 namespace qd {
 
   namespace {
+    /// creates a Block from a Block::Type without any metaInfo
     template <class... Args>
-    std::unique_ptr<Block> createBlockFromType(Block::Type type, Args&&... args) {
+    std::unique_ptr<Block> createRawBlockFromType(Block::Type type) {
       switch(type) {
         case Block::Type::BLOCK_I:
-          return std::make_unique<BlockI>(std::forward<Args>(args)...);
+          return std::make_unique<BlockI>();
         case Block::Type::BLOCK_J:
-          return std::make_unique<BlockJ>(std::forward<Args>(args)...);
+          return std::make_unique<BlockJ>();
         case Block::Type::BLOCK_L:
-          return std::make_unique<BlockL>(std::forward<Args>(args)...);
+          return std::make_unique<BlockL>();
         case Block::Type::BLOCK_O:
-          return std::make_unique<BlockO>(std::forward<Args>(args)...);
+          return std::make_unique<BlockO>();
         case Block::Type::BLOCK_S:
-          return std::make_unique<BlockS>(std::forward<Args>(args)...);
+          return std::make_unique<BlockS>();
         case Block::Type::BLOCK_T:
-          return std::make_unique<BlockT>(std::forward<Args>(args)...);
+          return std::make_unique<BlockT>();
         case Block::Type::BLOCK_Z:
-          return std::make_unique<BlockZ>(std::forward<Args>(args)...);
+          return std::make_unique<BlockZ>();
         default:
           assert(!"We have accounted for all block types. This should not happen");
       }
@@ -105,8 +107,8 @@ namespace qd {
           }
         }
 
-        if (activeBlockPtr->heavy() && movementDir != Direction::DOWN &&
-          _canMove(*activeBlockPtr, Direction::DOWN)) { 
+        if (activeBlockPtr->metaInfo().heavy.valueOr(false) && movementDir != Direction::DOWN &&
+          _canMove(*activeBlockPtr, Direction::DOWN)) {
           moveInDirection(activeBlockPtr->position, Direction::DOWN);
         }
 
@@ -144,7 +146,10 @@ namespace qd {
           }
         }
 
-        if (activeBlockPtr->heavy() && _canMove(*activeBlockPtr, Direction::DOWN)) { 
+        if (
+          activeBlockPtr->metaInfo().heavy.valueOr(false) &&
+          _canMove(*activeBlockPtr, Direction::DOWN)
+        ) {
           activeBlockPtr->position.row += 1;
         }
 
@@ -201,7 +206,7 @@ namespace qd {
               break;
           }
         });
-        _board.nextBlockPtr() = createBlockFromType(blockType, _shouldGenerateHeavyBlocks());
+        _board.nextBlockPtr() = _createBlockFromType(blockType);
         _board.nextBlockGenerated().notifyObservers(blockType);
         return true;
       }
@@ -289,7 +294,7 @@ namespace qd {
       // if we switch levels, since we have already generated the next Block
       // we have to apply our own heaviness rules before it becomes our active
       // block. In essence, we take ownership of it.
-      nextBlockPtr->heavy(_shouldGenerateHeavyBlocks());
+      _inheritBlock(*nextBlockPtr);
     }
 
     _ensureBlocksGenerated();
@@ -387,23 +392,36 @@ namespace qd {
     return true;
   }
 
+  void BaseLevel::_inheritBlock(Block& block) const {
+    Block::MetaInfo metaInfo;
+    metaInfo.heavy = _shouldGenerateHeavyBlocks();
+    metaInfo.spawnLevel = levelNumber();
+    block.metaInfo() = metaInfo;
+  }
+
+  std::unique_ptr<Block> BaseLevel::_createBlockFromType(
+    Block::Type blockType
+  ) const {
+    auto blockPtr = createRawBlockFromType(blockType);
+    _inheritBlock(*blockPtr);
+    return blockPtr;
+  }
+
   void BaseLevel::_ensureBlocksGenerated() {
     std::unique_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
     std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
-
-    bool heavy = _shouldGenerateHeavyBlocks();
 
     if (activeBlockPtr == nullptr) {
       auto blockType = nextBlockType();
       if (nextBlockPtr == nullptr) {
         // this should only happen when we first start a game
-        activeBlockPtr = createBlockFromType(blockType, heavy);
+        activeBlockPtr = _createBlockFromType(blockType);
         blockType = nextBlockType();
       } else {
         activeBlockPtr = std::move(nextBlockPtr);
       }
 
-      nextBlockPtr = createBlockFromType(blockType, heavy);
+      nextBlockPtr = _createBlockFromType(blockType);
       _board.nextBlockGenerated().notifyObservers(blockType);
 
       activeBlockPtr->position = { 0, 0 };

@@ -5,11 +5,19 @@
 #include "Position.h"
 
 namespace qd {
-  BlockZ::BlockZ(const bool heavy) : Block(heavy), state(0) {
+<<<<<<< HEAD
+  BlockZ::BlockZ(const bool heavy) : state{0} {
     occupiedPositions.emplace_back(2, 0); // State 0
     occupiedPositions.emplace_back(2, 1); //
     occupiedPositions.emplace_back(3, 1); // ZZ
     occupiedPositions.emplace_back(3, 2); //  ZZ
+=======
+  BlockZ::BlockZ() : state{0} {
+    occupiedPositions.emplace_back(2, 0);
+    occupiedPositions.emplace_back(2, 1);
+    occupiedPositions.emplace_back(3, 1);
+    occupiedPositions.emplace_back(3, 2);
+>>>>>>> 72583384af9ff3f00c5c598a0e687a3bb5413e1f
   }
 
   void BlockZ::rotate(Rotation dir) { // Z rotation with 2 states

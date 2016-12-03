@@ -34,6 +34,10 @@ namespace qd {
     virtual void _checkScoring();
     virtual bool _checkGameEnd();
 
+    virtual void _inheritBlock(Block&) const;
+
+    virtual std::unique_ptr<Block> _createBlockFromType(Block::Type) const;
+
     /// Determines if a Cell denoted by the given Position is not empty.
     bool _isCellOccupied(const Position& p) const;
     /// Determines if the given Position corresponds to a valid Cell

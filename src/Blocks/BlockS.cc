@@ -5,11 +5,19 @@
 #include "Position.h"
 
 namespace qd {
-  BlockS::BlockS(const bool heavy) : Block(heavy), state(0) {
+<<<<<<< HEAD
+  BlockS::BlockS(const bool heavy) : state{0} {
     occupiedPositions.emplace_back(2, 2); // State 0
     occupiedPositions.emplace_back(2, 1); //
     occupiedPositions.emplace_back(3, 1); //  SS
     occupiedPositions.emplace_back(3, 0); // SS
+=======
+  BlockS::BlockS() : state{0} {
+    occupiedPositions.emplace_back(2, 2);
+    occupiedPositions.emplace_back(2, 1);
+    occupiedPositions.emplace_back(3, 1);
+    occupiedPositions.emplace_back(3, 0);
+>>>>>>> 72583384af9ff3f00c5c598a0e687a3bb5413e1f
   }
 
   void BlockS::rotate(Rotation dir) { // S rotation with 2 states

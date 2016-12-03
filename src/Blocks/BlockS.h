@@ -13,7 +13,7 @@ namespace qd {
     int state;
     
   public:
-    BlockS(const bool heavy = false);
+    BlockS();
     virtual void rotate(Rotation) override;
     virtual Type type() const override;
     virtual std::unique_ptr<Block> clone() override;

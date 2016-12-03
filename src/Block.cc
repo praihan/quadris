@@ -1,15 +1,11 @@
 #include "Block.h"
 
 namespace qd {
-  Block::Block(const bool heavy) : _heavy(heavy) {
+  Block::Block() {
   }
 
-  bool Block::heavy() const {
-    return _heavy;
-  }
-  bool Block::heavy(bool value) {
-    return _heavy = value;
-  }
+  Block::MetaInfo& Block::metaInfo() { return _metaInfo; }
+  const Block::MetaInfo& Block::metaInfo() const { return _metaInfo; }
 
   Block::PositionIterator Block::begin() const {
     return { *this, this->occupiedPositions.cbegin() };
