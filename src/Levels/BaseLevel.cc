@@ -311,7 +311,6 @@ namespace qd {
 
   void BaseLevel::_checkScoring() {
     auto& cells = _board.cells();
-    std::vector<int> linesCleared;
 
     // this array represents how much a line has to move by.
     // to be exact:
@@ -321,6 +320,8 @@ namespace qd {
     // something like:
     //   2 2 2 2 2 2 1 0 0 0 0 0 0
     std::array<int, BOARD_HEIGHT> linesDiff = { };
+
+    int numberOfLinesCleared = 0;
 
     for (auto i = cells.begin() + 3; i != cells.end(); ++i) {
       if (std::any_of(i->cbegin(), i->cend(), [](const Cell& cell) {
@@ -343,46 +344,37 @@ namespace qd {
           cell.clear();
         }
       );
-      linesCleared.push_back(lineIndex);
+      ++numberOfLinesCleared;
     }
-
-    int numberOfLinesCleared = static_cast<int>(linesCleared.size());
 
     decltype(linesDiff) markedLinesDiff;
     markedLinesDiff[0] = linesDiff[0];
 
-    if (numberOfLinesCleared > 0) {
-      std::transform(
-        linesDiff.begin(), linesDiff.end() - 1,
-        linesDiff.begin() + 1, markedLinesDiff.begin() + 1,
-        [](auto prevDiff, auto curDiff) {
-          // if the current diff < prev, this means that current line
-          // is being cleared, so we mark it as such with a -1
-          return curDiff < prevDiff ? -1 : curDiff;
-        }
-      );
-
-      for (auto i = markedLinesDiff.rbegin(); i != markedLinesDiff.rend(); ++i) {
-        if (*i <= 0) {
-          continue;
-        }
-        auto baseItr = i.base();
-        auto sourceDistance = std::distance(markedLinesDiff.begin(), baseItr) + 3 - 1;
-
-        auto& sourceRow = cells.at(sourceDistance);
-        auto& destRow = cells.at(sourceDistance + *i);
-
-        std::cout << sourceDistance - 3 << " => " << sourceDistance - 3 + *i << std::endl;
-        destRow = std::move(sourceRow);
-      }
+    if (numberOfLinesCleared == 0) {
+      return;
     }
-    if (numberOfLinesCleared > 0) {
-      std::cout << "[ ";
-      std::copy(
-        markedLinesDiff.begin(), markedLinesDiff.end(),
-        std::ostream_iterator<int>(std::cout, " ")
-      );
-      std::cout << "]" << std::endl;
+
+    std::transform(
+      linesDiff.begin(), linesDiff.end() - 1,
+      linesDiff.begin() + 1, markedLinesDiff.begin() + 1,
+      [](auto prevDiff, auto curDiff) {
+        // if the current diff < prev, this means that current line
+        // is being cleared, so we mark it as such with a -1
+        return curDiff < prevDiff ? -1 : curDiff;
+      }
+    );
+
+    for (auto i = markedLinesDiff.rbegin(); i != markedLinesDiff.rend(); ++i) {
+      if (*i <= 0) {
+        continue;
+      }
+      auto baseItr = i.base();
+      auto sourceDistance = std::distance(markedLinesDiff.begin(), baseItr) + 3 - 1;
+
+      auto& sourceRow = cells.at(sourceDistance);
+      auto& destRow = cells.at(sourceDistance + *i);
+
+      destRow = std::move(sourceRow);
     }
   }
 
