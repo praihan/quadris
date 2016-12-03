@@ -8,16 +8,24 @@
 #include <cstddef>
 #include <iterator>
 #include "Position.h"
+#include "Optional.h"
 
 namespace qd {
 
   class Block {
+  public:
+    struct MetaInfo {
+      Optional<bool> heavy;
+      Optional<int> spawnLevel;
+    };
   protected:
-    std::vector<Position> occupiedPositions;
-    bool _heavy;
+    mutable std::vector<Position> occupiedPositions;
+    mutable MetaInfo _metaInfo;
+  public:
+    Position position;
 
   public:
-    Block(const bool heavy = false);
+    Block();
     virtual ~Block() = default;
 
     enum class Type {
@@ -73,10 +81,8 @@ namespace qd {
       typename std::vector<Position>::const_iterator _iter;
     };
 
-    Position position;
-
-    virtual bool heavy() const;
-    virtual bool heavy(bool value);
+    MetaInfo& metaInfo();
+    const MetaInfo& metaInfo() const;
 
     virtual void rotate(Rotation) = 0;
     virtual PositionIterator begin() const;
