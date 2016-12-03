@@ -3,11 +3,12 @@
 
 #include "Display.h"
 
+
 namespace qd {
 
   class GraphicDisplay : public Display {
   public:
-    using Display::Display;
+    GraphicDisplay(const Board& b);
 
   protected:
     virtual void onCellsUpdated(const Board::CellGrid&, const Block* b) override;

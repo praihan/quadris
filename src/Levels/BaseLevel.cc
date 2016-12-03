@@ -1,6 +1,6 @@
 #include <cassert>
 #include <memory>
-#include <climits>
+#include <cfloat>
 #include "Utility.h"
 #include "BaseLevel.h"
 #include "Command.h"
@@ -208,71 +208,68 @@ namespace qd {
         break;
 
       case Command::Type::HINT: {
-        std::unique_ptr<Block> activeBlockCpy = activeBlockPtr->clone();
-	Position bestPos = activeBlockCpy->position;
+        int bestPos = 0;
         int rotation = 0;
-        int bestVariance = INT_MAX;
-        int initialHeight = activeBlockCpy->position.row;
+        int initialHeight = activeBlockPtr->position.row;
+        double highestScore = -1000000;
 
-        for (auto i = 0; i < 3; i++) {
-          std::unique_ptr<Block> bcpyl = activeBlockCpy->clone();
+        // Iterate through all rotations
+        for (auto i = 0; i < 4; i++) {
+          // Block used to test all positions
+          std::unique_ptr<Block> activeBlockCopy = activeBlockPtr->clone();
 
+          // Go to leftmost position
           while(true) {
-            bcpyl->position.col--;
-         
-            if(!(_isValidBlock(*bcpyl))) {
-              bcpyl->position.col++;
+            activeBlockCopy->position.col--;
+            
+            if(!(_isValidBlock(*activeBlockCopy))) {
+              activeBlockCopy->position.col++;
               break;
             }
           }
-  
+ 
+          // Try drop for all positions 
           while(true) {
-            bcpyl->position.row = initialHeight;
+            activeBlockCopy->position.row = initialHeight;
 
-            while (_canMove(*bcpyl, BaseLevel::Direction::DOWN)) {
-              bcpyl->position.row += 1;
+            // Drop
+            while (_canMove(*activeBlockCopy, BaseLevel::Direction::DOWN)) {
+              activeBlockCopy->position.row += 1;
             }
 
             // Set
-            for (Position p : *bcpyl) {
-              _board.cells()[p.row][p.col].blockType = bcpyl->type();
+            for (Position p : *activeBlockCopy) {
+              _board.cells()[p.row][p.col].blockType = activeBlockCopy->type();
             }
              
-            // Scan and compare
-            int currVariance = 0;
-            for (std::size_t j = 0; j < BOARD_WIDTH - 2; j++) {
-              currVariance += abs(_getHeight(j) - _getHeight(j+1));
-            }
+            // Get score
+            double moveScore = _calculateScore();
+
+            std::cout << "SCORE: " << moveScore << " ROTATION: " << i << std::endl;
 
             // Update best
-            if (currVariance < bestVariance) {
-              std::cout << currVariance << std::endl;
-              bestVariance = currVariance;
+            if (moveScore > highestScore) {
+              std::cout << "UPDATE" << std::endl;
+              highestScore = moveScore;
               rotation = i;
-              bestPos = bcpyl->position;
-            }
-            else if (currVariance == bestVariance && bcpyl->position.row < bestPos.row) {
-              std::cout << currVariance << std::endl;
-              bestVariance = currVariance;
-              rotation = i;
-              bestPos = bcpyl->position;
+              bestPos = activeBlockCopy->position.col;
             }
 
             // Unset
-            for (Position p : *bcpyl) {
+            for (Position p : *activeBlockCopy) {
               _board.cells()[p.row][p.col].blockType = Block::Type::EMPTY;
             }
 
-            bcpyl->position.col++;
+            activeBlockCopy->position.col++;
            
-            if(!(_isValidBlock(*bcpyl))) {
+            if(!(_isValidBlock(*activeBlockCopy))) {
               break;
             }
           }
 
-          activeBlockCpy->rotate(Block::Rotation::CLOCKWISE);
+          activeBlockCopy->rotate(Block::Rotation::CLOCKWISE);
         }
-        std::cout << "x = " << bestPos.col << ", y = " << bestPos.row << std::endl;
+        std::cout << "x = " << bestPos << std::endl;
         std::cout << "rotation = " << rotation << std::endl;
         return true;
       }
@@ -331,19 +328,6 @@ namespace qd {
     return true;
   }
 
-  int BaseLevel::_getHeight(const int col) const {
-    int height=0;
-    for (std::size_t i = BOARD_HEIGHT + 2; i > 0; i--) {
-      if (_board.cells()[i][col].blockType != Block::Type::EMPTY) {
-        height++;
-      }
-      else {
-        break;
-      }
-    }
-    return height;
-  }
-
   bool BaseLevel::_canMove(const Block &b, Direction d) const {
     for (Position p : b) {
       switch (d) {
@@ -392,6 +376,99 @@ namespace qd {
 
   bool BaseLevel::_shouldGenerateHeavyBlocks() const {
     return false;
+  }
+
+  int BaseLevel::_getHeight(int col) {
+    int height = BOARD_HEIGHT;
+
+    for (std::size_t i = BOARD_EXTRA_SPACE; i < BOARD_HEIGHT + BOARD_EXTRA_SPACE; i++) {
+      if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
+        height--;
+      }
+      else {
+        break;
+      }
+    }
+
+    return height;
+  }
+
+  int BaseLevel::_getAggregateHeight() {
+    int aggregateHeight = 0;
+
+    for (std::size_t i = 0; i < BOARD_WIDTH; i++) {
+      aggregateHeight += _getHeight(i);
+    }
+
+    return aggregateHeight;
+  }
+
+  int BaseLevel::_getCompleteLines() {
+    int completeLines = 0;
+
+    for (std::size_t i = BOARD_EXTRA_SPACE; i < BOARD_HEIGHT + BOARD_EXTRA_SPACE; i++) {
+      bool complete = true;
+      for (std::size_t j = 0; j < BOARD_WIDTH; j++) {
+        if (_board.cells()[i][j].blockType == Block::Type::EMPTY) {
+          complete = false;
+          break;
+        }
+      }
+
+      if (complete) {
+        completeLines++;
+      }
+    }
+
+    return completeLines;
+  }
+
+  int BaseLevel::_getHoles() {
+    int totalHoles = 0;
+
+    for (std::size_t i = 0; i < BOARD_WIDTH; i++) {
+      int holes = 0;
+      int start = BOARD_HEIGHT + BOARD_EXTRA_SPACE - _getHeight(i) + 1;
+
+      for (std::size_t j = start; j < BOARD_HEIGHT + BOARD_EXTRA_SPACE; j++) {
+        if (_board.cells()[j][i].blockType == Block::Type::EMPTY) {
+          holes++;
+        }
+      }
+
+      totalHoles += holes;
+    }
+
+    return totalHoles;
+  }
+
+  int BaseLevel::_abs(int n) {
+    return n < 0 ? 0 - n : n;
+  }
+
+  int BaseLevel::_getBumpiness() {
+    int bumpiness = 0;
+
+    for (std::size_t i = 0; i < BOARD_WIDTH - 1; i++) {
+      bumpiness += _abs(_getHeight(i) - _getHeight(i + 1));
+    }
+
+    return bumpiness;
+  }
+
+  double BaseLevel::_calculateScore() {
+    double a = 0;
+    double b = 0;
+    double c = -10;
+    double d = -20;
+
+    int aggregateHeight = _getAggregateHeight();
+    int completeLines = _getCompleteLines();
+    int holes = _getHoles();
+    int bumpiness = _getBumpiness();
+
+    return (static_cast<double>(a) * aggregateHeight + static_cast<double>(b) * completeLines + static_cast<double>(c) * holes + static_cast<double>(d) * bumpiness);
+
   }
 
 }

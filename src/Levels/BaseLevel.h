@@ -57,6 +57,20 @@ namespace qd {
     /// this Level are "heavy".
     virtual bool _shouldGenerateHeavyBlocks() const;
 
+    int _getHeight(int col);
+
+    int _getAggregateHeight();
+
+    int _getCompleteLines();
+
+    int _getHoles();
+
+    int _abs(int n);
+
+    int _getBumpiness();
+
+    double _calculateScore();
+
     /// \endcond
   };
 }

@@ -3,15 +3,17 @@
 #include <string>
 
 namespace qd {
+
+  GraphicDisplay::GraphicDisplay(const Board& b) : Display{b} {
+    
+  }
   
   void GraphicDisplay::onCellsUpdated(const Board::CellGrid& cells, const Block* b) {
     
   }
 
   void GraphicDisplay::onScoreUpdated(int score) {
-    //std::string scoreStr = "Score: " + std::to_string(score);
-
-    //drawString(x, y, scoreStr)
+    
   }
 
   void GraphicDisplay::onHiScoreUpdated(int hiScore) {

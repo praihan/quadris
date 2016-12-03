@@ -21,11 +21,12 @@ namespace qd {
 
   constexpr std::size_t BOARD_WIDTH = 11;
   constexpr std::size_t BOARD_HEIGHT = 15;
+  constexpr std::size_t BOARD_EXTRA_SPACE = 3;
 
   class Board {
   public:
     using LevelFactory = std::function<std::unique_ptr<Level>(Board&)>;
-    using CellGrid = std::array<std::array<Cell, BOARD_WIDTH>, BOARD_HEIGHT + 3>;
+    using CellGrid = std::array<std::array<Cell, BOARD_WIDTH>, BOARD_HEIGHT + BOARD_EXTRA_SPACE>;
     using RandomEngine = std::mt19937;
 
     struct InitArgs {
