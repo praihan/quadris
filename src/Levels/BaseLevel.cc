@@ -376,6 +376,9 @@ namespace qd {
 
       destRow = std::move(sourceRow);
     }
+
+    int deltaScore = levelNumber() + numberOfLinesCleared * numberOfLinesCleared;
+    _board.score().incrementBy(deltaScore);
   }
 
   bool BaseLevel::_isCellOccupied(const Position& p) const {
