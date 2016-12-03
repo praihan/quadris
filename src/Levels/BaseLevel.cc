@@ -243,11 +243,13 @@ namespace qd {
              
             // Scan and compare
             int currVariance = 0;
-            for (std::size_t j = 0; j < BOARD_WIDTH - 2; j++) {
-              currVariance += _ifHole(j) + abs(_getHeight(j) - _getHeight(j+1));
+            for (std::size_t j = 0; j < BOARD_WIDTH - 1; j++) {
+              currVariance += abs(_getHeight(j) - _getHeight(j+1));
             }
-            currVariance += _ifHole(10);
 
+            for (std::size_t j = 0; j < BOARD_WIDTH - 2; j++) {
+              currVariance += _ifHole(j);
+            }
             // Update best
             if (currVariance < bestVariance) {
               std::cout << currVariance << std::endl;
@@ -363,7 +365,7 @@ namespace qd {
 
     for (; i < BOARD_HEIGHT+3; i++) {
       if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
-        return 3;
+        return 5;
       }
     }
     return 0;
