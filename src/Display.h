@@ -3,6 +3,16 @@
 
 #include "Event.h"
 #include "Board.h"
+#include "Optional.h"
+#include "Blocks/BlockI.h"
+#include "Blocks/BlockJ.h"
+#include "Blocks/BlockL.h"
+#include "Blocks/BlockO.h"
+#include "Blocks/BlockS.h"
+#include "Blocks/BlockT.h"
+#include "Blocks/BlockZ.h"
+#include <map>
+#include <array>
 
 namespace qd {
 
@@ -13,13 +23,13 @@ namespace qd {
     Display(const Board&);
 
   protected:
-    virtual void onCellsUpdated(const Board::CellGrid&, const Block*) = 0;
-    virtual void onScoreUpdated(int score) = 0;
-    virtual void onHiScoreUpdated(int hiScore) = 0;
-    virtual void onNextBlockGenerated(Block::Type) = 0;
-    virtual void onGameStarted() = 0;
-    virtual void onGameEnded() = 0;
-    virtual void onLevelChanged(int level) = 0;
+    virtual void onCellsUpdated(const Board::CellGrid&, const Block*);
+    virtual void onScoreUpdated(int score);
+    virtual void onHiScoreUpdated(int hiScore);
+    virtual void onNextBlockGenerated(Block::Type);
+    virtual void onGameStarted();
+    virtual void onGameEnded();
+    virtual void onLevelChanged(int level);
 
   public:
     virtual void outputDisplay() = 0;
@@ -34,7 +44,22 @@ namespace qd {
     ObserverSlot<> _gameEndedSlot;
     ObserverSlot<int> _levelChangedSlot;
 
-    int _level;
+    Optional<int> _level;
+    Optional<Block::Type> _nextBlockType;
+    Optional<int> _score;
+    Optional<int> _hiScore;
+
+    std::array<std::array<Block::Type, BOARD_WIDTH>, BOARD_HEIGHT + 3> _boardState;
+
+    static const BlockI _sampleBlockI;
+    static const BlockJ _sampleBlockJ;
+    static const BlockL _sampleBlockL;
+    static const BlockO _sampleBlockO;
+    static const BlockS _sampleBlockS;
+    static const BlockS _sampleBlockT;
+    static const BlockZ _sampleBlockZ;
+
+    static const std::map<Block::Type, const Block*> sampleBlocks;
   };
 
 }

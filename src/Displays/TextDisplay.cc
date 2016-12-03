@@ -1,18 +1,9 @@
 #include "TextDisplay.h"
 #include <iostream>
-#include <iterator>
-#include <algorithm>
 #include <map>
-#include <memory>
 
 #include "Utility.h"
-#include "Blocks/BlockI.h"
-#include "Blocks/BlockJ.h"
-#include "Blocks/BlockL.h"
-#include "Blocks/BlockO.h"
-#include "Blocks/BlockS.h"
-#include "Blocks/BlockT.h"
-#include "Blocks/BlockZ.h"
+#include "Block.h"
 
 namespace qd {
 
@@ -27,130 +18,64 @@ namespace qd {
       { Block::Type::BLOCK_T, 'T' },
       { Block::Type::BLOCK_Z, 'Z' },
     };
-
-    const BlockI _sampleBlockI = iife([]() { BlockI b; b.position = { -2, 0 }; return b; });
-    const BlockJ _sampleBlockJ = iife([]() { BlockJ b; b.position = { -2, 0 }; return b; });
-    const BlockL _sampleBlockL = iife([]() { BlockL b; b.position = { -2, 0 }; return b; });
-    const BlockO _sampleBlockO = iife([]() { BlockO b; b.position = { -2, 0 }; return b; });
-    const BlockS _sampleBlockS = iife([]() { BlockS b; b.position = { -2, 0 }; return b; });
-    const BlockT _sampleBlockT = iife([]() { BlockT b; b.position = { -2, 0 }; return b; });
-    const BlockZ _sampleBlockZ = iife([]() { BlockZ b; b.position = { -2, 0 }; return b; });
-
-    const std::map<Block::Type, const Block*> sampleBlocks = {
-      { Block::Type::EMPTY, nullptr },
-      { Block::Type::BLOCK_I, std::addressof(_sampleBlockI) },
-      { Block::Type::BLOCK_J, std::addressof(_sampleBlockJ) },
-      { Block::Type::BLOCK_L, std::addressof(_sampleBlockL) },
-      { Block::Type::BLOCK_O, std::addressof(_sampleBlockO) },
-      { Block::Type::BLOCK_S, std::addressof(_sampleBlockS) },
-      { Block::Type::BLOCK_T, std::addressof(_sampleBlockT) },
-      { Block::Type::BLOCK_Z, std::addressof(_sampleBlockZ) },
-    };
-  }
-
-  TextDisplay::TextDisplay(const Board& b) : Display{b} {
-    _displayBuffer = {
-      "Level:",
-      "Score:",
-      "Hi Score:",
-      "-----------",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "           ",
-      "-----------",
-      "Next:",
-      "",
-      "",
-    };
-  }
-
-  void TextDisplay::onCellsUpdated(const Board::CellGrid& cells, const Block* b) {
-    std::transform(
-      cells.begin() + 3, cells.end(), // we skip the first 3 lines of the CellGrid
-      _displayBuffer.begin() + 4, // we also skip outputting to the first 4 lines
-      [](const auto& cellRow) {
-        std::string line;
-        // map each blockType to a char
-        std::transform(
-          cellRow.begin(), cellRow.end(),
-          std::back_inserter(line), [](const Cell& cell) -> char {
-            return blockTypeToChar.at(cell.blockType);
-          }
-        );
-        return line;
-      }
-    );
-
-    if (b != nullptr) {
-      const Block& block = *b;
-      for (Position p : block) {
-        if (p.row < 3) {
-          continue;
-        }
-        const int rowIndex = p.row - 3 + 4; // -3 for the unseen rows, +4 for the text at the top
-        _displayBuffer[rowIndex][p.col] = blockTypeToChar.at(block.type());
-      }
-    }
-  }
-
-  void TextDisplay::onScoreUpdated(int score) {
-    auto scoreString = std::to_string(score);
-    _displayBuffer[1] = "Score: " + scoreString;
-  }
-
-  void TextDisplay::onHiScoreUpdated(int hiScore) {
-    auto hiScoreString = std::to_string(hiScore);
-    _displayBuffer[2] = "Hi Score: " + hiScoreString;
-  }
-
-  void TextDisplay::onNextBlockGenerated(Block::Type blockType) {
-    const Block* sampleBlock = sampleBlocks.at(blockType);
-
-    const auto nextBlockLineItr = _displayBuffer.begin() + 21; // we have the nextBlock preview here
-    nextBlockLineItr[0] = nextBlockLineItr[1] = "           ";
-
-    if (sampleBlock == nullptr) {
-      // we've already cleared it
-      return;
-    }
-    for (Position p : *sampleBlock) {
-      nextBlockLineItr[p.row][p.col] = blockTypeToChar.at(sampleBlock->type());
-    }
-  }
-
-  void TextDisplay::onGameStarted() {
-    outputDisplay();
-  }
-
-  void TextDisplay::onGameEnded() {
-    std::cout << "GAME ENDED" << std::endl;
   }
 
   void TextDisplay::outputDisplay() {
-    std::copy(
-      _displayBuffer.begin(),
-      _displayBuffer.end(),
-      std::ostream_iterator<std::string>(std::cout, "\n")
-    );
-    std::cout << "--------------------------------------------------------------------------------";
-    std::cout << std::endl;
-  }
+    auto levelString = "Level: " + (_level.hasValue() ? std::to_string(*_level) : "");
+    auto scoreString = "Score: " + (_score.hasValue() ? std::to_string(*_score) : "");
+    auto hiScoreString = "Hi Score: " + (_hiScore.hasValue() ? std::to_string(*_hiScore) : "");
+    auto separatorString = "--------------------------------------------------------------------------------";
+    auto boardBorder = "-----------";
 
-  void TextDisplay::onLevelChanged(int level) {
-    auto levelString = std::to_string(level);
-    _displayBuffer[0] = "Level: " + levelString;
+    std::cout << separatorString << std::endl;
+
+    std::cout << levelString << std::endl;
+    std::cout << scoreString << std::endl;
+    std::cout << hiScoreString << std::endl;
+
+    std::cout << boardBorder << std::endl;
+
+    // the buffer representing the current line
+    std::string lineBuffer(BOARD_WIDTH, ' ');
+
+    std::transform(
+      _boardState.begin() + 3, _boardState.end(),
+      std::ostream_iterator<std::string>(std::cout, "\n"),
+      [&lineBuffer](auto& row) -> const std::string& {
+        std::transform(
+          row.begin(), row.end(),
+          lineBuffer.begin(),
+          [](Block::Type type) -> char {
+            return blockTypeToChar.at(type);
+          }
+        );
+        return lineBuffer;
+      }
+    );
+
+    std::cout << boardBorder << std::endl;
+
+    if (_nextBlockType.hasValue() && *_nextBlockType != Block::Type::EMPTY) {
+      const Block* sampleBlock = sampleBlocks.at(*_nextBlockType);
+      std::array<std::string, 3> _nextBlockPreviewState = {{
+        "Next:",
+        std::string(BOARD_WIDTH, ' '),
+        std::string(BOARD_WIDTH, ' '),
+      }};
+      if (sampleBlock != nullptr) {
+        for (Position p : *sampleBlock) {
+          _nextBlockPreviewState.at(p.row - 2 + 1).at(p.col) = blockTypeToChar.at(sampleBlock->type());
+        }
+      }
+
+      std::copy(
+        _nextBlockPreviewState.begin(),
+        _nextBlockPreviewState.end(),
+        std::ostream_iterator<std::string>(std::cout, "\n")
+      );
+    }
+
+    std::cout << separatorString << std::endl;
   }
 
 }
