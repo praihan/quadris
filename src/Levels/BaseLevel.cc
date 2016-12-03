@@ -170,9 +170,9 @@ namespace qd {
         activeBlockPtr = nullptr;
         _ensureBlocksGenerated();
 
+        _checkScoring();
         notifyCellsUpdated();
 
-        _checkScoring();
         _checkGameEnd();
         return true;
       }
@@ -310,7 +310,80 @@ namespace qd {
   }
 
   void BaseLevel::_checkScoring() {
-    
+    auto& cells = _board.cells();
+    std::vector<int> linesCleared;
+
+    // this array represents how much a line has to move by.
+    // to be exact:
+    //   linesDiff[i] represents how many lines the current i'th
+    //                line should go down by
+    // if 2 consecutive lines in the middle are cleared you'll get
+    // something like:
+    //   2 2 2 2 2 2 1 0 0 0 0 0 0
+    std::array<int, BOARD_HEIGHT> linesDiff = { };
+
+    for (auto i = cells.begin() + 3; i != cells.end(); ++i) {
+      if (std::any_of(i->cbegin(), i->cend(), [](const Cell& cell) {
+        return cell.blockType == Block::Type::EMPTY;
+      })) {
+        // if any blockType is empty, this row doesn't count
+        continue;
+      }
+
+      auto lineIndex = static_cast<int>(std::distance(cells.begin(), i) - 3);
+      std::transform(
+        linesDiff.begin(), linesDiff.begin() + lineIndex,
+        linesDiff.begin(),
+        [](int val) {
+          return val + 1;
+        }
+      );
+      std::for_each(
+        i->begin(), i->end(), [](Cell& cell) {
+          cell.clear();
+        }
+      );
+      linesCleared.push_back(lineIndex);
+    }
+
+    int numberOfLinesCleared = static_cast<int>(linesCleared.size());
+
+    decltype(linesDiff) markedLinesDiff;
+    markedLinesDiff[0] = linesDiff[0];
+
+    if (numberOfLinesCleared > 0) {
+      std::transform(
+        linesDiff.begin(), linesDiff.end() - 1,
+        linesDiff.begin() + 1, markedLinesDiff.begin() + 1,
+        [](auto prevDiff, auto curDiff) {
+          // if the current diff < prev, this means that current line
+          // is being cleared, so we mark it as such with a -1
+          return curDiff < prevDiff ? -1 : curDiff;
+        }
+      );
+
+      for (auto i = markedLinesDiff.rbegin(); i != markedLinesDiff.rend(); ++i) {
+        if (*i <= 0) {
+          continue;
+        }
+        auto baseItr = i.base();
+        auto sourceDistance = std::distance(markedLinesDiff.begin(), baseItr) + 3 - 1;
+
+        auto& sourceRow = cells.at(sourceDistance);
+        auto& destRow = cells.at(sourceDistance + *i);
+
+        std::cout << sourceDistance - 3 << " => " << sourceDistance - 3 + *i << std::endl;
+        destRow = std::move(sourceRow);
+      }
+    }
+    if (numberOfLinesCleared > 0) {
+      std::cout << "[ ";
+      std::copy(
+        markedLinesDiff.begin(), markedLinesDiff.end(),
+        std::ostream_iterator<int>(std::cout, " ")
+      );
+      std::cout << "]" << std::endl;
+    }
   }
 
   bool BaseLevel::_isCellOccupied(const Position& p) const {
