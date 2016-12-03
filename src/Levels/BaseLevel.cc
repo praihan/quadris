@@ -351,23 +351,20 @@ namespace qd {
   }
 
   int BaseLevel::_ifHole(const int col) const {
-    int row=0;
+    int hole=0;
     std::size_t i = 0;
     for (; i < BOARD_HEIGHT+3; i++) {
-      if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
-        row++;
-      }
-      else {
+      if (!(_board.cells()[i][col].blockType == Block::Type::EMPTY)) {
         break;
       }
     }
 
     for (; i < BOARD_HEIGHT+3; i++) {
       if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
-        row += 4;
+        hole += 4;
       }
     }
-    return row;
+    return hole;
   }
 
   bool BaseLevel::_canMove(const Block &b, Direction d) const {
