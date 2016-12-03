@@ -7,6 +7,7 @@
 #include "CommandInterpreter.h"
 #include "Command.h"
 #include "Board.h"
+#include "Utility.h"
 #include "Displays/TextDisplay.h"
 #include "Levels/Level0.h"
 #include "Levels/Level1.h"
@@ -24,18 +25,26 @@ auto makeLevelFactory() {
 int main(int argc, char* argv[]) {
   qd::CommandLineArguments cmdLineArgs{ argc, argv };
 
-  std::cout << "Seed: " << (cmdLineArgs.seed ? std::to_string(*cmdLineArgs.seed) : "<none>") << std::endl;
-  std::cout << "Start Level: " << (cmdLineArgs.startLevel ? std::to_string(*cmdLineArgs.startLevel) : "<none>") << std::endl;
-  std::cout << "Text: " << (cmdLineArgs.text ? (*cmdLineArgs.text ? "true" : "false") : "<none>") << std::endl;
-  std::cout << "Script File: " << (cmdLineArgs.scriptFile ? *cmdLineArgs.scriptFile : "<none>") << std::endl;
+  std::cout << "Seed: " << (cmdLineArgs.seed.hasValue() ? std::to_string(*cmdLineArgs.seed) : "<none>") << std::endl;
+  std::cout << "Start Level: " << (cmdLineArgs.startLevel.hasValue() ? std::to_string(*cmdLineArgs.startLevel) : "<none>") << std::endl;
+  std::cout << "Text: " << (cmdLineArgs.text.hasValue() ? (*cmdLineArgs.text ? "true" : "false") : "<none>") << std::endl;
+  std::cout << "Script File: " << (cmdLineArgs.scriptFile.hasValue() ? *cmdLineArgs.scriptFile : "<none>") << std::endl;
 
-  if (cmdLineArgs.scriptFile) {
+  if (cmdLineArgs.scriptFile.hasValue()) {
     qd::Level0::sequenceFileName = *cmdLineArgs.scriptFile;
   }
 
   qd::Board::InitArgs boardInitArgs;
-  boardInitArgs.seed = (cmdLineArgs.seed ? *cmdLineArgs.seed : 420);
-  boardInitArgs.levelNumber = (cmdLineArgs.startLevel ? *cmdLineArgs.startLevel : 0);
+  boardInitArgs.seed = (cmdLineArgs.seed.hasValue() ? *cmdLineArgs.seed : 420);
+
+  boardInitArgs.levelNumber =   qd::iife([&cmdLineArgs]() {
+    int wantedLevel = (cmdLineArgs.startLevel.hasValue() ? *cmdLineArgs.startLevel : 0);
+    if (wantedLevel < 0 || wantedLevel > 4) {
+      std::cerr << "Error: Only levels 0-4 supported. Defaulting to level 0." << std::endl;
+      return 0;
+    }
+    return wantedLevel;
+  });
 
   qd::Board board { boardInitArgs };
   board.registerLevel(0, makeLevelFactory<qd::Level0>());

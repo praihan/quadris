@@ -30,7 +30,7 @@ namespace qd {
     std::unordered_map<std::string, std::function<void()>> argument_actions;
 
     argument_actions[ARG_TEXT] = [this]() {
-      this->text = std::make_unique<bool>(true);
+      this->text = true;
     };
 
     argument_actions[ARG_SEED] = [this, &i, &getNextArg]() {
@@ -38,13 +38,13 @@ namespace qd {
       if (!tryParseInt(seed, getNextArg(ARG_SEED))) {
         throw BadCommandLineArgumentError{ARG_SEED};
       }
-      this->seed = std::make_unique<int>(seed);
+      this->seed = seed;
       ++i;
     };
 
     argument_actions[ARG_SCRIPTFILE] = [this, &i, &getNextArg]() {
       std::string scriptFile = getNextArg(ARG_SCRIPTFILE);
-      this->scriptFile = std::make_unique<std::string>(std::move(scriptFile));
+      this->scriptFile = std::move(scriptFile);
       ++i;
     };
 
@@ -53,7 +53,7 @@ namespace qd {
       if (!tryParseInt(startLevel, getNextArg(ARG_STARTLEVEL))) {
         throw BadCommandLineArgumentError{ARG_STARTLEVEL};
       }
-      this->startLevel = std::make_unique<int>(startLevel);
+      this->startLevel = startLevel;
       ++i;
     };
     
