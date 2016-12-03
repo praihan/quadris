@@ -213,14 +213,13 @@ namespace qd {
         break;
 
       case Command::Type::HINT: {
+        std::unique_ptr<Block> bcpyl = activeBlockPtr->clone();
 	      Position bestPos = activeBlockPtr->position;
         int rotation = 0;
         int bestVariance = INT_MAX;
         int initialHeight = activeBlockPtr->position.row;
 
         for (auto i = 0; i < 3; i++) {
-          std::unique_ptr<Block> bcpyl = activeBlockPtr->clone();
-
           while(true) {
             bcpyl->position.col--;
          
@@ -276,10 +275,19 @@ namespace qd {
             }
           }
 
-          activeBlockPtr->rotate(Block::Rotation::CLOCKWISE);
+          bcpyl->rotate(Block::Rotation::CLOCKWISE);
         }
         std::cout << "x = " << bestPos.col << ", y = " << bestPos.row << std::endl;
         std::cout << "rotation = " << rotation << std::endl;
+
+        for (int i = 0; i <= rotation; i++) {
+          bcpyl->rotate(Block::Rotation::CLOCKWISE);
+        }
+
+        bcpyl->position = bestPos;
+
+        _board.hintProvided().notifyObservers(std::vector<Position>(bcpyl->begin(), bcpyl->end()));
+
         return true;
       }
         break;
@@ -351,23 +359,20 @@ namespace qd {
   }
 
   int BaseLevel::_ifHole(const int col) const {
-    int row=0;
+    int hole=0;
     std::size_t i = 0;
     for (; i < BOARD_HEIGHT+3; i++) {
-      if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
-        row++;
-      }
-      else {
+      if (!(_board.cells()[i][col].blockType == Block::Type::EMPTY)) {
         break;
       }
     }
 
     for (; i < BOARD_HEIGHT+3; i++) {
       if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
-        row += 4;
+        hole += 4;
       }
     }
-    return row;
+    return hole;
   }
 
   bool BaseLevel::_canMove(const Block &b, Direction d) const {

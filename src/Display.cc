@@ -51,6 +51,9 @@ namespace qd {
     board.levelChanged().addObserver(
       _levelChangedSlot, std::bind(&Display::onLevelChanged, this, std::placeholders::_1)
     );
+     board.hintProvided().addObserver(
+      _hintProvidedSlot, std::bind(&Display::onHint, this, std::placeholders::_1)
+    );
 
     for (auto& row : _boardState) {
       for (Block::Type& blockType : row) {

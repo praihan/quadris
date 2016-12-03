@@ -44,7 +44,7 @@ namespace qd {
     ObserverSlot<> _gameStartedSlot;
     ObserverSlot<> _gameEndedSlot;
     ObserverSlot<int> _levelChangedSlot;
-    ObserverSlot<const std::vector<Position>&> _onHint;
+    ObserverSlot<const std::vector<Position>&> _hintProvidedSlot;
 
     Optional<int> _level;
     Optional<Block::Type> _nextBlockType;
