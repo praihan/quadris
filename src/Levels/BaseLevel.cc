@@ -213,14 +213,13 @@ namespace qd {
         break;
 
       case Command::Type::HINT: {
-        std::unique_ptr<Block> activeBlockCpy = activeBlockPtr->clone();
-	Position bestPos = activeBlockCpy->position;
+	      Position bestPos = activeBlockPtr->position;
         int rotation = 0;
         int bestVariance = INT_MAX;
-        int initialHeight = activeBlockCpy->position.row;
+        int initialHeight = activeBlockPtr->position.row;
 
         for (auto i = 0; i < 3; i++) {
-          std::unique_ptr<Block> bcpyl = activeBlockCpy->clone();
+          std::unique_ptr<Block> bcpyl = activeBlockPtr->clone();
 
           while(true) {
             bcpyl->position.col--;
@@ -277,7 +276,7 @@ namespace qd {
             }
           }
 
-          activeBlockCpy->rotate(Block::Rotation::CLOCKWISE);
+          activeBlockPtr->rotate(Block::Rotation::CLOCKWISE);
         }
         std::cout << "x = " << bestPos.col << ", y = " << bestPos.row << std::endl;
         std::cout << "rotation = " << rotation << std::endl;

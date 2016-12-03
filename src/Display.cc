@@ -97,5 +97,10 @@ namespace qd {
   void Display::onGameEnded() {
     std::cout << "GAME ENDED" << std::endl;
   }
+  void Display::onHint(const std::vector<Position>& positions) {
+    for (Position p : positions) {
+      _boardState[p.row][p.col] = Block::Type::BLOCK_HINT;
+    }
+  }
 
 }

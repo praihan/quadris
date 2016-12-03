@@ -30,6 +30,7 @@ namespace qd {
     virtual void onGameStarted();
     virtual void onGameEnded();
     virtual void onLevelChanged(int level);
+    virtual void onHint(const std::vector<Position>&);
 
   public:
     virtual void outputDisplay() = 0;
@@ -43,6 +44,7 @@ namespace qd {
     ObserverSlot<> _gameStartedSlot;
     ObserverSlot<> _gameEndedSlot;
     ObserverSlot<int> _levelChangedSlot;
+    ObserverSlot<const std::vector<Position>&> _onHint;
 
     Optional<int> _level;
     Optional<Block::Type> _nextBlockType;

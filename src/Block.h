@@ -36,7 +36,8 @@ namespace qd {
       BLOCK_O,
       BLOCK_S,
       BLOCK_T,
-      BLOCK_Z
+      BLOCK_Z,
+      BLOCK_HINT
     };
 
     enum class Rotation {
