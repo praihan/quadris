@@ -365,10 +365,10 @@ namespace qd {
 
     for (; i < BOARD_HEIGHT+3; i++) {
       if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
-        return 5;
+        row += 4;
       }
     }
-    return 0;
+    return row;
   }
 
   bool BaseLevel::_canMove(const Block &b, Direction d) const {
