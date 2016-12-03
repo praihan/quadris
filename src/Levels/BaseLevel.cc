@@ -247,7 +247,7 @@ namespace qd {
               currVariance += abs(_getHeight(j) - _getHeight(j+1));
             }
 
-            for (std::size_t j = 0; j < BOARD_WIDTH - 2; j++) {
+            for (std::size_t j = 0; j < BOARD_WIDTH; j++) {
               currVariance += _ifHole(j);
             }
             // Update best
