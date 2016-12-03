@@ -33,6 +33,8 @@ namespace qd {
     ObserverSlot<> _gameStartedSlot;
     ObserverSlot<> _gameEndedSlot;
     ObserverSlot<int> _levelChangedSlot;
+
+    int _level;
   };
 
 }
