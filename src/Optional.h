@@ -193,7 +193,7 @@ namespace qd {
     template <class U>
     T valueOr(U&& defaultValue) const {
       if (!hasValue()) {
-        throw defaultValue;
+        return defaultValue;
       }
       return **this;
     }

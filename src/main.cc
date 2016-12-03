@@ -35,10 +35,10 @@ int main(int argc, char* argv[]) {
   }
 
   qd::Board::InitArgs boardInitArgs;
-  boardInitArgs.seed = (cmdLineArgs.seed.hasValue() ? *cmdLineArgs.seed : 420);
+  boardInitArgs.seed = cmdLineArgs.seed.valueOr(420);
 
   boardInitArgs.levelNumber =   qd::iife([&cmdLineArgs]() {
-    int wantedLevel = (cmdLineArgs.startLevel.hasValue() ? *cmdLineArgs.startLevel : 0);
+    int wantedLevel = cmdLineArgs.startLevel.valueOr(0);
     if (wantedLevel < 0 || wantedLevel > 4) {
       std::cerr << "Error: Only levels 0-4 supported. Defaulting to level 0." << std::endl;
       return 0;
