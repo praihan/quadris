@@ -227,8 +227,6 @@ namespace qd {
           }
   
           while(true) {
-            bcpyl->position.row = initialHeight;
-
             while (_canMove(*bcpyl, BaseLevel::Direction::DOWN)) {
               bcpyl->position.row += 1;
             }
@@ -241,8 +239,9 @@ namespace qd {
             // Scan and compare
             int currVariance = 0;
             for (std::size_t j = 0; j < BOARD_WIDTH - 2; j++) {
-              currVariance += abs(_getHeight(j) - _getHeight(j+1));
+              currVariance += _ifHole(j) + abs(_getHeight(j) - _getHeight(j+1));
             }
+            currVariance += _ifHole(10);
 
             // Update best
             if (currVariance < bestVariance) {
@@ -251,7 +250,7 @@ namespace qd {
               rotation = i;
               bestPos = bcpyl->position;
             }
-            else if (currVariance == bestVariance && bcpyl->position.row < bestPos.row) {
+            else if (currVariance == bestVariance && bcpyl->position.row > bestPos.row) {
               std::cout << currVariance << std::endl;
               bestVariance = currVariance;
               rotation = i;
@@ -264,6 +263,7 @@ namespace qd {
             }
 
             bcpyl->position.col++;
+            bcpyl->position.row = initialHeight;
            
             if(!(_isValidBlock(*bcpyl))) {
               break;
@@ -332,16 +332,36 @@ namespace qd {
   }
 
   int BaseLevel::_getHeight(const int col) const {
-    int height=0;
-    for (std::size_t i = BOARD_HEIGHT + 2; i > 0; i--) {
-      if (_board.cells()[i][col].blockType != Block::Type::EMPTY) {
-        height++;
+    int row=0;
+    for (std::size_t i = 0; i < BOARD_HEIGHT+3; i++) {
+      if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
+        row++;
       }
       else {
         break;
       }
     }
-    return height;
+    return row;
+  }
+
+  int BaseLevel::_ifHole(const int col) const {
+    int row=0;
+    std::size_t i = 0;
+    for (; i < BOARD_HEIGHT+3; i++) {
+      if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
+        row++;
+      }
+      else {
+        break;
+      }
+    }
+
+    for (; i < BOARD_HEIGHT+3; i++) {
+      if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
+        return 3;
+      }
+    }
+    return 0;
   }
 
   bool BaseLevel::_canMove(const Block &b, Direction d) const {

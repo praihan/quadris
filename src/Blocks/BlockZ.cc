@@ -6,25 +6,25 @@
 
 namespace qd {
   BlockZ::BlockZ(const bool heavy) : Block(heavy), state(0) {
-    occupiedPositions.emplace_back(2, 0);
-    occupiedPositions.emplace_back(2, 1);
-    occupiedPositions.emplace_back(3, 1);
-    occupiedPositions.emplace_back(3, 2);
+    occupiedPositions.emplace_back(2, 0); // State 0
+    occupiedPositions.emplace_back(2, 1); //
+    occupiedPositions.emplace_back(3, 1); // ZZ
+    occupiedPositions.emplace_back(3, 2); //  ZZ
   }
 
   void BlockZ::rotate(Rotation dir) { // Z rotation with 2 states
     if (state == 0) {
-      occupiedPositions[0] = {1,1};
-      occupiedPositions[1] = {2,1};
-      occupiedPositions[2] = {2,0};
-      occupiedPositions[3] = {3,0};
+      occupiedPositions[0] = {1,1}; // State 1
+      occupiedPositions[1] = {2,1}; //  Z
+      occupiedPositions[2] = {2,0}; // ZZ
+      occupiedPositions[3] = {3,0}; // Z
       state = 1;
     }
     else {
-      occupiedPositions[0] = {2,0};
-      occupiedPositions[1] = {2,1};
-      occupiedPositions[2] = {3,1};
-      occupiedPositions[3] = {3,2};
+      occupiedPositions[0] = {2,0}; // State 0
+      occupiedPositions[1] = {2,1}; //
+      occupiedPositions[2] = {3,1}; // ZZ
+      occupiedPositions[3] = {3,2}; //  ZZ
       state = 0;
     }
   }
