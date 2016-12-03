@@ -49,7 +49,7 @@ namespace qd {
       _gameEndedSlot, std::bind(&Display::onGameEnded, this)
     );
     board.levelChanged().addObserver(
-      _levelChangedSlot, [](int){}//std::bind(&Display::onLevelChanged, this, std::placeholders::_1)
+      _levelChangedSlot, std::bind(&Display::onLevelChanged, this, std::placeholders::_1)
     );
 
     for (auto& row : _boardState) {
