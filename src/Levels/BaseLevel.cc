@@ -1,5 +1,6 @@
 #include <cassert>
 #include <memory>
+#include <climits>
 #include "Utility.h"
 #include "BaseLevel.h"
 #include "Command.h"
@@ -11,6 +12,13 @@
 #include "Blocks/BlockS.h"
 #include "Blocks/BlockT.h"
 #include "Blocks/BlockZ.h"
+
+int abs(int n) {
+  if (n>=0 ) {
+    return n;
+  }
+  return -n;
+}
 
 namespace qd {
 
@@ -198,6 +206,77 @@ namespace qd {
         return true;
       }
         break;
+
+      case Command::Type::HINT: {
+        std::unique_ptr<Block> activeBlockCpy = activeBlockPtr->clone();
+	Position bestPos = activeBlockCpy->position;
+        int rotation = 0;
+        int bestVariance = INT_MAX;
+        int initialHeight = activeBlockCpy->position.row;
+
+        for (auto i = 0; i < 3; i++) {
+          std::unique_ptr<Block> bcpyl = activeBlockCpy->clone();
+
+          while(true) {
+            bcpyl->position.col--;
+         
+            if(!(_isValidBlock(*bcpyl))) {
+              bcpyl->position.col++;
+              break;
+            }
+          }
+  
+          while(true) {
+            bcpyl->position.row = initialHeight;
+
+            while (_canMove(*bcpyl, BaseLevel::Direction::DOWN)) {
+              bcpyl->position.row += 1;
+            }
+
+            // Set
+            for (Position p : *bcpyl) {
+              _board.cells()[p.row][p.col].blockType = bcpyl->type();
+            }
+             
+            // Scan and compare
+            int currVariance = 0;
+            for (std::size_t j = 0; j < BOARD_WIDTH - 2; j++) {
+              currVariance += abs(_getHeight(j) - _getHeight(j+1));
+            }
+
+            // Update best
+            if (currVariance < bestVariance) {
+              std::cout << currVariance << std::endl;
+              bestVariance = currVariance;
+              rotation = i;
+              bestPos = bcpyl->position;
+            }
+            else if (currVariance == bestVariance && bcpyl->position.row < bestPos.row) {
+              std::cout << currVariance << std::endl;
+              bestVariance = currVariance;
+              rotation = i;
+              bestPos = bcpyl->position;
+            }
+
+            // Unset
+            for (Position p : *bcpyl) {
+              _board.cells()[p.row][p.col].blockType = Block::Type::EMPTY;
+            }
+
+            bcpyl->position.col++;
+           
+            if(!(_isValidBlock(*bcpyl))) {
+              break;
+            }
+          }
+
+          activeBlockCpy->rotate(Block::Rotation::CLOCKWISE);
+        }
+        std::cout << "x = " << bestPos.col << ", y = " << bestPos.row << std::endl;
+        std::cout << "rotation = " << rotation << std::endl;
+        return true;
+      }
+        break;
       default:
         return false;
         break;
@@ -250,6 +329,19 @@ namespace qd {
     }
 
     return true;
+  }
+
+  int BaseLevel::_getHeight(const int col) const {
+    int height=0;
+    for (std::size_t i = BOARD_HEIGHT + 2; i > 0; i--) {
+      if (_board.cells()[i][col].blockType != Block::Type::EMPTY) {
+        height++;
+      }
+      else {
+        break;
+      }
+    }
+    return height;
   }
 
   bool BaseLevel::_canMove(const Block &b, Direction d) const {
