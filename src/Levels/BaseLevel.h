@@ -43,6 +43,8 @@ namespace qd {
     /// A Block is considered valid iff its occupied positions are currently
     /// empty.
     bool _isValidBlock(const Block &b) const;
+    /// Determines the lowest row before hitting the bottom of grid or an active cell
+    int _getHeight(const int col) const;
     /// Determines if the given Block can move in the given Direction and still
     /// be valid.
     bool _canMove(const Block &b, Direction d) const;

@@ -58,6 +58,7 @@ namespace qd {
       case Command::Type::BLOCK_Z:
       case Command::Type::NORANDOM:
       case Command::Type::RANDOM:
+      case Command::Type::HINT:
       case Command::Type::SEQUENCE:
         assert(_level != nullptr);
         _level->executeCommand(command);
@@ -76,9 +77,6 @@ namespace qd {
         break;
       case Command::Type::RESTART:
         reset();
-        break;
-      case Command::Type::HINT:
-        assert(!"Not implemented");
         break;
       case Command::Type::UNKNOWN:
         assert(!"Command with type UNKNOWN should never get here");
