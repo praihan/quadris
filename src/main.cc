@@ -61,6 +61,7 @@ int main(int argc, char* argv[]) {
     board.start();
 
     while (true) {
+      textDisplay.outputDisplay();
       try {
         qd::Command command = commandInterpreter.nextCommand();
         if (command.type() == qd::Command::Type::UNKNOWN) {
@@ -68,7 +69,6 @@ int main(int argc, char* argv[]) {
           continue;
         }
         board.executeCommand(command);
-        textDisplay.outputDisplay();
       }
       catch (const qd::CommandArityError& cmdArityErr) {
         std::cerr << "Error: " << cmdArityErr.what() << std::endl;
