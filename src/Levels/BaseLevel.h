@@ -31,7 +31,7 @@ namespace qd {
     /// when our constructor is executed.
     void _defaultInitialization();
 
-    virtual void _checkScoring();
+    virtual void _checkBlocksCleared();
     virtual bool _checkGameEnd();
 
     virtual void _inheritBlock(Block&) const;

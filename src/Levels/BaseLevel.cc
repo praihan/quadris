@@ -170,7 +170,7 @@ namespace qd {
         activeBlockPtr = nullptr;
         _ensureBlocksGenerated();
 
-        _checkScoring();
+        _checkBlocksCleared();
         notifyCellsUpdated();
 
         _checkGameEnd();
@@ -291,7 +291,7 @@ namespace qd {
   }
 
   void BaseLevel::_defaultInitialization() {
-    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
+    std::shared_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
     if (nextBlockPtr) {
       // if we switch levels, since we have already generated the next Block
       // we have to apply our own heaviness rules before it becomes our active
@@ -311,7 +311,7 @@ namespace qd {
     return false;
   }
 
-  void BaseLevel::_checkScoring() {
+  void BaseLevel::_checkBlocksCleared() {
     auto& cells = _board.cells();
 
     // this array represents how much a line has to move by.
@@ -478,8 +478,8 @@ namespace qd {
   }
 
   void BaseLevel::_ensureBlocksGenerated() {
-    std::unique_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
-    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
+    std::shared_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
+    std::shared_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
 
     if (activeBlockPtr == nullptr) {
       auto blockType = nextBlockType();

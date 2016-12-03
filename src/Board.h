@@ -51,10 +51,10 @@ namespace qd {
     RandomEngine& randomEngine() { return _randomEngine; }
     const RandomEngine& randomEngine() const { return _randomEngine; }
 
-    std::unique_ptr<Block>& activeBlockPtr() { return _activeBlock; }
-    const std::unique_ptr<Block>& activeBlockPtr() const { return _activeBlock; }
-    std::unique_ptr<Block>& nextBlockPtr() { return _nextBlock; }
-    const std::unique_ptr<Block>& nextBlockPtr() const { return _nextBlock; }
+    std::shared_ptr<Block>& activeBlockPtr() { return _activeBlock; }
+    const std::shared_ptr<Block>& activeBlockPtr() const { return _activeBlock; }
+    std::shared_ptr<Block>& nextBlockPtr() { return _nextBlock; }
+    const std::shared_ptr<Block>& nextBlockPtr() const { return _nextBlock; }
 
     const Event<const CellGrid&, const Block*>& cellsUpdated() const { return _cellsUpdated; }
     Event<const CellGrid&, const Block*>& cellsUpdated() { return _cellsUpdated; }
@@ -75,8 +75,8 @@ namespace qd {
 
   private:
     CellGrid _cells;
-    std::unique_ptr<Block> _activeBlock;
-    std::unique_ptr<Block> _nextBlock;
+    std::shared_ptr<Block> _activeBlock;
+    std::shared_ptr<Block> _nextBlock;
     Score _score;
     std::unique_ptr<Level> _level;
     RandomEngine _randomEngine;
