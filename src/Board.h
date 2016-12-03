@@ -6,6 +6,7 @@
 #include "Cell.h"
 #include "Block.h"
 #include "Level.h"
+#include "Position.h"
 #include <array>
 #include <memory>
 #include <cstddef>
@@ -69,6 +70,8 @@ namespace qd {
     Event<>& gameEnded() { return _gameEnded; }
     const Event<int>& levelChanged() const { return _levelChanged; }
     Event<int>& levelChanged() { return _levelChanged; }
+    const Event<const std::vector<Position>&>& hintProvided() const { return _hintProvided; }
+    Event<const std::vector<Position>&>& hintProvided() { return _hintProvided; }
 
   private:
     CellGrid _cells;
@@ -86,6 +89,7 @@ namespace qd {
     Event<> _gameStarted;
     Event<> _gameEnded;
     Event<int> _levelChanged;
+    Event<const std::vector<Position>&> _hintProvided;
 
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;

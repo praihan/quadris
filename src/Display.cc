@@ -97,4 +97,5 @@ namespace qd {
   void Display::onGameEnded() {
     std::cout << "GAME ENDED" << std::endl;
   }
+
 }
