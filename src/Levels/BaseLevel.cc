@@ -234,9 +234,7 @@ namespace qd {
         int initialHeight = activeBlockPtr->position.row;
 
         for (int i = 0; i < 4; i++) {
-          std::cout << i << std::endl;
           bcpyl->position.col = activeBlockPtr->position.col;
-          bcpyl->cout();
           while (_isValidBlock(*bcpyl)) {
             bcpyl->position.col--;
           }
@@ -387,18 +385,31 @@ namespace qd {
     // this is where we actually move around the rows.
     // we go through the markedLinesDiff array and apply it
     // to our cells using move assignments.
-    for (auto i = markedLinesDiff.rbegin(); i != markedLinesDiff.rend(); ++i) {
+    for (auto i = markedLinesDiff.end() - 1; i >= markedLinesDiff.begin(); --i) {
       if (*i <= 0) {
         continue;
       }
-      auto baseItr = i.base();
-      auto sourceDistance = std::distance(markedLinesDiff.begin(), baseItr) + 3 - 1;
+      auto sourceDistance = std::distance(markedLinesDiff.begin(), i);
 
-      auto& sourceRow = cells.at(sourceDistance);
-      auto& destRow = cells.at(sourceDistance + *i);
-
+      auto& sourceRow = cells.at(sourceDistance + 3);
+      auto& destRow = cells.at(sourceDistance + *i + 3);
+      
       destRow = std::move(sourceRow);
     }
+
+    std::cout << "[ ";
+    std::copy(
+      linesDiff.begin(), linesDiff.end(),
+      std::ostream_iterator<int>(std::cout, " ")
+    );
+    std::cout << "]" << std::endl;
+
+    std::cout << "[ ";
+    std::copy(
+      markedLinesDiff.begin(), markedLinesDiff.end(),
+      std::ostream_iterator<int>(std::cout, " ")
+    );
+    std::cout << "]" << std::endl;
 
     // Calculate the scoring based on what we have cleared
     auto sqr = [](int a) -> int { return a * a; };

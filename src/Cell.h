@@ -10,6 +10,10 @@ namespace qd {
   class Cell {
   public:
     Cell();
+    Cell(const Cell&);
+    Cell(Cell&&);
+    Cell& operator=(const Cell&);
+    Cell& operator=(Cell&&);
     void clear();
 
     Block::Type blockType;
