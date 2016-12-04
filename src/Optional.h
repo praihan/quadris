@@ -201,8 +201,8 @@ namespace qd {
     bool hasValue() const noexcept { return _hasValue; }
     explicit operator bool() const noexcept { return hasValue(); }
 
-    T* operator->() { return _dataPtr; }
-    const T* operator->() const { return _dataPtr; }
+    T* operator->() { return _dataPtr(); }
+    const T* operator->() const { return _dataPtr(); }
 
     T& operator*() { return _storage.value; }
     const T& operator*() const { return _storage.value; }
