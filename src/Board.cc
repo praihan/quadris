@@ -1,5 +1,6 @@
 #include "Board.h"
 #include "CommandInterpreter.h"
+#include "QdDefs.h"
 #include <cassert>
 #include <functional>
 #include <iostream>
@@ -122,6 +123,7 @@ namespace qd {
         break;
       case Command::Type::UNKNOWN:
         assert(!"Command with type UNKNOWN should never get here");
+        QD_UNREACHABLE();
         break;
     }
   }
