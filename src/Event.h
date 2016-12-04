@@ -53,6 +53,8 @@ namespace qd {
     void addObserver(SlotType& slot, Function&& callback) const;
     void notifyObservers(EventArgs... args);
 
+    void clearObservers();
+
   private:
     mutable std::vector<SlotType*> _listeners;
 
@@ -143,8 +145,14 @@ namespace qd {
     for (auto& l : this->_listeners) {
       assert(l != nullptr);
       assert(static_cast<bool>(l->_callback));
+      assert(l->_event == this);
       l->_callback(args...);
     }
+  }
+
+  template <class... EventArgs>
+  void Event<EventArgs...>::clearObservers() {
+    this->_listeners.clear();
   }
 } // namespace qd
 

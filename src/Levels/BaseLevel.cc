@@ -2,6 +2,7 @@
 #include <memory>
 #include <climits>
 #include <utility>
+#include <functional>
 #include "Utility.h"
 #include "BaseLevel.h"
 #include "Command.h"
@@ -50,6 +51,9 @@ namespace qd {
   }
 
   BaseLevel::BaseLevel(Board& b) : Level{b} {
+  }
+
+  BaseLevel::~BaseLevel() {
   }
 
   bool BaseLevel::executeCommand(const Command& command) {
@@ -164,15 +168,17 @@ namespace qd {
         }
 
         for (Position p : *activeBlockPtr) {
-          _board.cells()[p.row][p.col].blockType = activeBlockPtr->type();
+          Cell& cell = _board.cells()[p.row][p.col];
+          cell.blockType = activeBlockPtr->type();
+          cell.owningBlock = activeBlockPtr;
         }
+
+        _board.trackActiveBlock();
 
         activeBlockPtr = nullptr;
         _ensureBlocksGenerated();
-
         _checkBlocksCleared();
         notifyCellsUpdated();
-
         _checkGameEnd();
         return true;
       }
@@ -348,6 +354,8 @@ namespace qd {
           return val + 1;
         }
       );
+      // clear a row
+      // this may raise Events such as Block::destroyed()
       std::for_each(
         i->begin(), i->end(), [](Cell& cell) {
           cell.clear();
@@ -356,12 +364,12 @@ namespace qd {
       ++numberOfLinesCleared;
     }
 
-    decltype(linesDiff) markedLinesDiff;
-    markedLinesDiff[0] = linesDiff[0];
-
     if (numberOfLinesCleared == 0) {
       return;
     }
+
+    decltype(linesDiff) markedLinesDiff;
+    markedLinesDiff[0] = linesDiff[0];
 
     std::transform(
       linesDiff.begin(), linesDiff.end() - 1,
@@ -373,6 +381,9 @@ namespace qd {
       }
     );
 
+    // this is where we actually move around the rows.
+    // we go through the markedLinesDiff array and apply it
+    // to our cells using move assignments.
     for (auto i = markedLinesDiff.rbegin(); i != markedLinesDiff.rend(); ++i) {
       if (*i <= 0) {
         continue;
@@ -386,8 +397,21 @@ namespace qd {
       destRow = std::move(sourceRow);
     }
 
-    int deltaScore = levelNumber() + numberOfLinesCleared * numberOfLinesCleared;
-    _board.score().incrementBy(deltaScore);
+    // Calculate the scoring based on what we have cleared
+
+    int baseScore = levelNumber() + numberOfLinesCleared * numberOfLinesCleared;
+
+    int clearedBlocksScore = 0;
+    auto& trackedBlockInfo = _board.trackedBlockHistory();
+    // if any Blocks were cleared, then trackedBlockInfo should
+    // contain the MetaInfo we need to calculate scoring
+    while (!trackedBlockInfo.empty()) {
+      const Block::MetaInfo& blockMetaInfo = trackedBlockInfo.front();
+      int spawnLevel = blockMetaInfo.spawnLevel.value();
+      clearedBlocksScore += (spawnLevel + 1) * (spawnLevel + 1);
+      trackedBlockInfo.pop_back();
+    }
+    _board.score().incrementBy(baseScore + clearedBlocksScore);
   }
 
   bool BaseLevel::_isCellOccupied(const Position& p) const {
@@ -503,7 +527,7 @@ namespace qd {
   }
 
   bool BaseLevel::_shouldGenerateHeavyBlocks() const {
-    return false;
+    return  false;
   }
 
 }
