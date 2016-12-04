@@ -335,7 +335,7 @@ namespace qd {
     //   2 2 2 2 2 2 1 0 0 0 0 0 0
     std::array<int, BOARD_HEIGHT> linesDiff = { };
 
-    int numberOfLinesCleared = 0;
+    std::vector<int> lineIndexesCleared;
 
     for (auto i = cells.begin() + 3; i != cells.end(); ++i) {
       if (std::any_of(i->cbegin(), i->cend(), [](const Cell& cell) {
@@ -345,27 +345,38 @@ namespace qd {
         continue;
       }
 
-      auto lineIndex = static_cast<int>(std::distance(cells.begin(), i) - 3);
+      auto lineIndex = static_cast<int>(std::distance(cells.begin(), i));
       std::transform(
-        linesDiff.begin(), linesDiff.begin() + lineIndex,
+        linesDiff.begin(), linesDiff.begin() + lineIndex - 3,
         linesDiff.begin(),
         [](int val) {
           return val + 1;
         }
       );
-      // clear a row
-      // this may raise Events such as Block::destroyed()
-      std::for_each(
-        i->begin(), i->end(), [](Cell& cell) {
-          cell.clear();
-        }
-      );
-      ++numberOfLinesCleared;
+      lineIndexesCleared.push_back(lineIndex);
     }
 
+    const int numberOfLinesCleared = lineIndexesCleared.size();
     if (numberOfLinesCleared == 0) {
       return;
     }
+
+    // we notify linesCleared _before_ we actually clear them
+    _board.linesCleared().notifyObservers(lineIndexesCleared);
+
+    std::for_each(
+      lineIndexesCleared.begin(), lineIndexesCleared.end(),
+      [&](int i) {
+        // clear a row
+        // this may raise Events such as Block::destroyed()
+        std::for_each(
+          cells[i].begin(), cells[i].end(), [](Cell& cell) {
+            cell.clear();
+          }
+        );
+      }
+    );
+
 
     decltype(linesDiff) markedLinesDiff;
     markedLinesDiff[0] = linesDiff[0];

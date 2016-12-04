@@ -79,6 +79,8 @@ namespace qd {
     Event<int>& levelChanged() { return _levelChanged; }
     const Event<const std::vector<Position>&>& hintProvided() const { return _hintProvided; }
     Event<const std::vector<Position>&>& hintProvided() { return _hintProvided; }
+    Event<const std::vector<int>&>& linesCleared() { return _linesCleared; }
+    const Event<const std::vector<int>&>& linesCleared() const { return _linesCleared; }
 
   private:
     CellGrid _cells;
@@ -102,6 +104,7 @@ namespace qd {
     Event<> _gameEnded;
     Event<int> _levelChanged;
     Event<const std::vector<Position>&> _hintProvided;
+    Event<const std::vector<int>&> _linesCleared;
 
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;
