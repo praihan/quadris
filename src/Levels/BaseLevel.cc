@@ -4,6 +4,7 @@
 #include <utility>
 #include <fstream>
 #include <stdexcept>
+#include <functional>
 #include "Utility.h"
 #include "BaseLevel.h"
 #include "Command.h"
@@ -15,6 +16,7 @@
 #include "Blocks/BlockS.h"
 #include "Blocks/BlockT.h"
 #include "Blocks/BlockZ.h"
+#include "QdDefs.h"
 
 int abs(int n) {
   if (n>=0 ) {
@@ -54,6 +56,9 @@ namespace qd {
   BaseLevel::BaseLevel(Board& b) : Level{b} {
   }
 
+  BaseLevel::~BaseLevel() {
+  }
+
   bool BaseLevel::executeCommand(const Command& command) {
     if (command.multiplier() == 0) {
       return true;
@@ -82,6 +87,7 @@ namespace qd {
               return Direction::RIGHT;
             default:
               assert(!"Unreachable");
+              QD_UNREACHABLE();
               break;
           }
         });
@@ -130,6 +136,7 @@ namespace qd {
               return Block::Rotation::COUNTER_CLOCKWISE;
             default:
               assert(!"Unreachable");
+              QD_UNREACHABLE();
               break;
           }
         });
@@ -161,21 +168,27 @@ namespace qd {
         break;
 
       case Command::Type::DROP: {
-        while (_canMove(*activeBlockPtr, BaseLevel::Direction::DOWN)) {
-          activeBlockPtr->position.row += 1;
+        for (unsigned int i = 0; i < command.multiplier(); ++i) {
+          while (_canMove(*activeBlockPtr, BaseLevel::Direction::DOWN)) {
+            activeBlockPtr->position.row += 1;
+          }
+
+          for (Position p : *activeBlockPtr) {
+            Cell& cell = _board.cells()[p.row][p.col];
+            cell.blockType = activeBlockPtr->type();
+            cell.owningBlock = activeBlockPtr;
+          }
+
+          _board.trackActiveBlock();
+          activeBlockPtr = nullptr;
+
+          _ensureBlocksGenerated();
+          _checkBlocksCleared();
+          notifyCellsUpdated();
+          if (_checkGameEnd()) {
+            break;
+          }
         }
-
-        for (Position p : *activeBlockPtr) {
-          _board.cells()[p.row][p.col].blockType = activeBlockPtr->type();
-        }
-
-        activeBlockPtr = nullptr;
-        _ensureBlocksGenerated();
-
-        _checkBlocksCleared();
-        notifyCellsUpdated();
-
-        _checkGameEnd();
         return true;
       }
         break;
@@ -205,6 +218,7 @@ namespace qd {
               return Block::Type::BLOCK_T;
             default:
               assert(!"Unreachable");
+              QD_UNREACHABLE();
               break;
           }
         });
@@ -253,7 +267,7 @@ namespace qd {
         int bestVariance = INT_MAX;
         int initialHeight = activeBlockPtr->position.row;
 
-        for (auto i = 0; i < 3; i++) {
+        for (auto i = 0; i < 4; i++) {
           while(true) {
             bcpyl->position.col--;
          
@@ -314,7 +328,7 @@ namespace qd {
         std::cout << "x = " << bestPos.col << ", y = " << bestPos.row << std::endl;
         std::cout << "rotation = " << rotation << std::endl;
 
-        for (int i = 0; i <= rotation; i++) {
+        for (int i = 0; i < rotation; i++) {
           bcpyl->rotate(Block::Rotation::CLOCKWISE);
         }
 
@@ -382,6 +396,8 @@ namespace qd {
           return val + 1;
         }
       );
+      // clear a row
+      // this may raise Events such as Block::destroyed()
       std::for_each(
         i->begin(), i->end(), [](Cell& cell) {
           cell.clear();
@@ -390,12 +406,12 @@ namespace qd {
       ++numberOfLinesCleared;
     }
 
-    decltype(linesDiff) markedLinesDiff;
-    markedLinesDiff[0] = linesDiff[0];
-
     if (numberOfLinesCleared == 0) {
       return;
     }
+
+    decltype(linesDiff) markedLinesDiff;
+    markedLinesDiff[0] = linesDiff[0];
 
     std::transform(
       linesDiff.begin(), linesDiff.end() - 1,
@@ -407,6 +423,9 @@ namespace qd {
       }
     );
 
+    // this is where we actually move around the rows.
+    // we go through the markedLinesDiff array and apply it
+    // to our cells using move assignments.
     for (auto i = markedLinesDiff.rbegin(); i != markedLinesDiff.rend(); ++i) {
       if (*i <= 0) {
         continue;
@@ -420,8 +439,22 @@ namespace qd {
       destRow = std::move(sourceRow);
     }
 
-    int deltaScore = levelNumber() + numberOfLinesCleared * numberOfLinesCleared;
-    _board.score().incrementBy(deltaScore);
+    // Calculate the scoring based on what we have cleared
+    auto sqr = [](int a) -> int { return a * a; };
+
+    int baseScore = sqr(levelNumber() + numberOfLinesCleared);
+
+    int clearedBlocksScore = 0;
+    auto& trackedBlockInfo = _board.trackedBlockHistory();
+    // if any Blocks were cleared, then trackedBlockInfo should
+    // contain the MetaInfo we need to calculate scoring
+    while (!trackedBlockInfo.empty()) {
+      const Block::MetaInfo& blockMetaInfo = trackedBlockInfo.front();
+      int spawnLevel = blockMetaInfo.spawnLevel.value();
+      clearedBlocksScore += sqr(spawnLevel + 1);
+      trackedBlockInfo.pop_back();
+    }
+    _board.score().incrementBy(baseScore + clearedBlocksScore);
   }
 
   bool BaseLevel::_isCellOccupied(const Position& p) const {
@@ -537,6 +570,6 @@ namespace qd {
   }
 
   bool BaseLevel::_shouldGenerateHeavyBlocks() const {
-    return false;
+    return  false;
   }
 }

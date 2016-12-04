@@ -212,11 +212,7 @@ namespace qd {
         return;
       }
       _hasValue = false;
-      try {
-        (**this).T::~T();
-      }
-      catch (...) {
-      }
+      (**this).T::~T();
     }
 
     template <class... Args>

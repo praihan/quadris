@@ -39,7 +39,7 @@ namespace qd {
 
     do {
       if (!std::getline(_input, line)) {
-        throw CommandError("Reached end of command input");
+        throw CommandEndOfInputError{};
       }
       std::istringstream lineParts { line };
       std::copy(
@@ -50,7 +50,7 @@ namespace qd {
     } while (commandLine.size() == 0);
 
     if (commandLine.size() == 0) {
-      throw CommandError("Reached end of command input");
+      throw CommandEndOfInputError{};
     }
 
     const std::string& commandName = commandLine[0];
@@ -136,6 +136,9 @@ namespace qd {
 
     return returnCommand;
   }
+
+  CommandEndOfInputError::CommandEndOfInputError() :
+    CommandError{"Reached end of command input"} { }
 
   CommandArityError::CommandArityError(
     Command::Type type,

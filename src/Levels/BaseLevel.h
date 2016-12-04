@@ -6,11 +6,15 @@
 #include "Command.h"
 #include "Position.h"
 #include "Block.h"
+#include "Event.h"
+#include <map>
+#include <queue>
 
 namespace qd {
   class BaseLevel : public Level {
   public:
     BaseLevel(Board& b);
+    virtual ~BaseLevel();
 
     virtual int levelNumber() const = 0;
     virtual Block::Type nextBlockType() = 0;

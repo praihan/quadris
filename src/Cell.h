@@ -2,11 +2,13 @@
 #define CELL_H_
 
 #include "Block.h"
+#include "Event.h"
 #include <memory>
 
 namespace qd {
 
-  struct Cell {
+  class Cell {
+  public:
     Cell();
     void clear();
 
