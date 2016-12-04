@@ -28,18 +28,4 @@ namespace qd {
   int Level4::levelNumber() const {
     return 4;
   }
-
-  Block::Type Level4::nextBlockType() {
-    int rand = std::rand() % (weightedBlockTypes.size());
-    
-    return weightedBlockTypes[rand];
-  }
-
-  bool Level4::executeCommand(const Command& command) {
-    return BaseLevel::executeCommand(command);
-  }
-
-  bool Level4::_shouldGenerateHeavyBlocks() const {
-    return true;
-  }
 }
