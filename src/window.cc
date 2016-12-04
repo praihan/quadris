@@ -1,5 +1,4 @@
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#include "X11.h"
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -70,6 +69,12 @@ void Xwindow::fillRectangle(int x, int y, int width, int height, int colour) {
   XSetForeground(d, gc, colours[Black]);
 }
 
+void Xwindow::drawRectangle(int x, int y, int width, int height, int colour) {
+  XSetForeground(d, gc, colours[colour]);
+  XDrawRectangle(d, w, gc, x, y, width, height);
+  XSetForeground(d, gc, colours[Black]);
+}
+
 void Xwindow::drawString(int x, int y, string msg, int colour) {
   XSetForeground(d, gc, colours[colour]);
   Font f = XLoadFont(d, "6x13");
@@ -99,11 +104,4 @@ void Xwindow::drawBigString(int x, int y, string msg, int colour) {
   XDrawText(d, w, gc, x, y, &ti, 1);
   XSetForeground(d, gc, colours[Black]);
   XFlush(d);
-}
-
-void Xwindow::showAvailableFonts() {
-  int count;
-  char** fnts = XListFonts(d, "*", 10000, &count);
-
-  for (int i = 0; i < count; ++i) cout << fnts[i] << endl;
 }

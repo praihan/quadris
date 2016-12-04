@@ -1,6 +1,6 @@
 #ifndef __WINDOW_H__
 #define __WINDOW_H__
-#include <X11/Xlib.h>
+#include "X11.h"
 #include <iostream>
 #include <string>
 
@@ -23,14 +23,14 @@ class Xwindow {
   // Draws a rectangle
   void fillRectangle(int x, int y, int width, int height, int colour=Black);
 
+  // Draws a rectangle outline
+  void drawRectangle(int x, int y, int width, int height, int colour=Black);
+
   // Draws a string
   void drawString(int x, int y, std::string msg, int colour=Black);
 
   // Draws a string
   void drawBigString(int x, int y, std::string msg, int colour=Black);
-
-  // Prints the first 10000 available fonts
-  void showAvailableFonts();
 };
 
 #endif
