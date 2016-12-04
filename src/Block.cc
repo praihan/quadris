@@ -1,11 +1,29 @@
 #include "Block.h"
+#include <utility>
 
 namespace qd {
   Block::Block() {
   }
+  Block::Block(const Block& other) {
+    *this = other;
+  }
+  Block::Block(Block&& other) {
+    *this = std::move(other);
+  }
+  Block& Block::operator=(const Block& other) {
+    occupiedPositions = other.occupiedPositions;
+    _metaInfo = other._metaInfo;
+    return *this;
+  }
+  Block& Block::operator=(Block&& other) {
+    occupiedPositions = std::move(other.occupiedPositions);
+    _metaInfo = std::move(other._metaInfo);
+    return *this;
+  }
 
-  Block::MetaInfo& Block::metaInfo() { return _metaInfo; }
-  const Block::MetaInfo& Block::metaInfo() const { return _metaInfo; }
+  Block::~Block() {
+    destroyed().notifyObservers(*this);
+  }
 
   Block::PositionIterator Block::begin() const {
     return { *this, this->occupiedPositions.cbegin() };

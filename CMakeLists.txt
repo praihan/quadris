@@ -11,7 +11,9 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXXFLAGS}")
 set (SOURCES
   src/main.cc
 
+  src/QdDefs.h
   src/Event.h
+  src/Optional.h
 
   src/Level.h
   src/Level.cc

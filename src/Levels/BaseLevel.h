@@ -6,11 +6,15 @@
 #include "Command.h"
 #include "Position.h"
 #include "Block.h"
+#include "Event.h"
+#include <map>
+#include <queue>
 
 namespace qd {
   class BaseLevel : public Level {
   public:
     BaseLevel(Board& b);
+    virtual ~BaseLevel();
 
     virtual int levelNumber() const = 0;
     virtual Block::Type nextBlockType() = 0;
@@ -31,7 +35,7 @@ namespace qd {
     /// when our constructor is executed.
     void _defaultInitialization();
 
-    virtual void _checkScoring();
+    virtual void _checkBlocksCleared();
     virtual bool _checkGameEnd();
 
     virtual void _inheritBlock(Block&) const;

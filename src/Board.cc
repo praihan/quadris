@@ -95,7 +95,7 @@ namespace qd {
     activeBlockPtr() = nullptr;
     nextBlockPtr() = nullptr;
     bool changeSuccessful = _changeLevelTo(_currentLevelNumber);
-    assert(changeSuccessful);
+    assert(changeSuccessful); (void)changeSuccessful;
     score().reset();
     gameStarted().notifyObservers();
   }
@@ -111,6 +111,31 @@ namespace qd {
   ) {
     assert(factory);
     _levelFactories[levelNumber] = factory;
+  }
+
+  void Board::trackActiveBlock() {
+    if (activeBlockPtr() == nullptr) {
+      return;
+    }
+    // set up an observer for the Block's death
+    ObserverSlot<const Block&> observerSlot;
+    activeBlockPtr()->destroyed().addObserver(
+      observerSlot,
+      std::bind(&Board::_onTrackedBlockDestroyed, this, std::placeholders::_1)
+    );
+    _trackedBlockDestroyedObserverSlots.insert(
+      std::make_pair(activeBlockPtr().get(), std::move(observerSlot))
+    );
+  }
+
+  void Board::_onTrackedBlockDestroyed(const Block& block) {
+    // a Block can only be destroyed once, so it's safe to
+    // remove the slot after this is called.
+    _trackedBlockDestroyedObserverSlots.erase(
+      _trackedBlockDestroyedObserverSlots.find(std::addressof(block))
+    );
+    // save the Block's info for later use
+    _trackedBlockHistory.push_back(block.metaInfo());
   }
 
   bool Board::_changeLevelTo(int levelNumber) {

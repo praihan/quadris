@@ -13,6 +13,7 @@
 #include <functional>
 #include <map>
 #include <random>
+#include <vector>
 
 namespace qd {
 
@@ -35,12 +36,15 @@ namespace qd {
     };
 
     Board(const InitArgs&);
+    ~Board() = default;
 
     void start();
     void reset();
     void executeCommand(const Command& command);
 
     void registerLevel(int levelNumber, const LevelFactory& factory);
+
+    void trackActiveBlock();
 
     CellGrid& cells() { return _cells; }
     const CellGrid& cells() const { return _cells; }
@@ -51,10 +55,13 @@ namespace qd {
     RandomEngine& randomEngine() { return _randomEngine; }
     const RandomEngine& randomEngine() const { return _randomEngine; }
 
-    std::unique_ptr<Block>& activeBlockPtr() { return _activeBlock; }
-    const std::unique_ptr<Block>& activeBlockPtr() const { return _activeBlock; }
-    std::unique_ptr<Block>& nextBlockPtr() { return _nextBlock; }
-    const std::unique_ptr<Block>& nextBlockPtr() const { return _nextBlock; }
+    std::shared_ptr<Block>& activeBlockPtr() { return _activeBlock; }
+    const std::shared_ptr<Block>& activeBlockPtr() const { return _activeBlock; }
+    std::shared_ptr<Block>& nextBlockPtr() { return _nextBlock; }
+    const std::shared_ptr<Block>& nextBlockPtr() const { return _nextBlock; }
+
+    std::vector<Block::MetaInfo>& trackedBlockHistory() { return _trackedBlockHistory; }
+    const std::vector<Block::MetaInfo>& trackedBlockHistory() const { return _trackedBlockHistory; }
 
     const Event<const CellGrid&, const Block*>& cellsUpdated() const { return _cellsUpdated; }
     Event<const CellGrid&, const Block*>& cellsUpdated() { return _cellsUpdated; }
@@ -75,12 +82,17 @@ namespace qd {
 
   private:
     CellGrid _cells;
-    std::unique_ptr<Block> _activeBlock;
-    std::unique_ptr<Block> _nextBlock;
+    std::shared_ptr<Block> _activeBlock;
+    std::shared_ptr<Block> _nextBlock;
     Score _score;
     std::unique_ptr<Level> _level;
     RandomEngine _randomEngine;
     std::map<int, LevelFactory> _levelFactories;
+
+    std::vector<Block::MetaInfo> _trackedBlockHistory;
+    std::map<
+      const Block*, ObserverSlot<const Block&>
+    > _trackedBlockDestroyedObserverSlots;
 
     Event<const CellGrid&, const Block*> _cellsUpdated;
     Event<int> _scoreUpdated;
@@ -107,6 +119,8 @@ namespace qd {
     // All these do are forward the event from the Score to our own observers
     void _scoreUpdatedObserver(int score);
     void _hiScoreUpdatedObserver(int score);
+
+    void _onTrackedBlockDestroyed(const Block&);
   };
 
 }

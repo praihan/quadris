@@ -9,6 +9,7 @@
 #include <iterator>
 #include "Position.h"
 #include "Optional.h"
+#include "Event.h"
 
 namespace qd {
 
@@ -19,14 +20,19 @@ namespace qd {
       Optional<int> spawnLevel;
     };
   protected:
-    mutable std::vector<Position> occupiedPositions;
-    mutable MetaInfo _metaInfo;
+    std::vector<Position> occupiedPositions;
+    MetaInfo _metaInfo;
+    Event<const Block&> _destroyed;
   public:
     Position position;
 
   public:
     Block();
-    virtual ~Block() = default;
+    Block(const Block&);
+    Block(Block&&);
+    Block& operator=(const Block&);
+    Block& operator=(Block&&);
+    virtual ~Block();
 
     enum class Type {
       EMPTY,
@@ -39,11 +45,21 @@ namespace qd {
       BLOCK_Z,
       BLOCK_HINT
     };
+    virtual Type type() const = 0;
 
     enum class Rotation {
       CLOCKWISE,
       COUNTER_CLOCKWISE
     };
+    virtual void rotate(Rotation) = 0;
+
+    MetaInfo& metaInfo() { return _metaInfo; }
+    const MetaInfo& metaInfo() const { return _metaInfo; }
+
+    Event<const Block&>& destroyed() { return _destroyed; }
+    const Event<const Block&>& destroyed() const { return _destroyed; }
+
+    virtual std::unique_ptr<Block> clone() = 0;
 
     class PositionIterator : public std::iterator<
         std::random_access_iterator_tag, // iterator_category
@@ -82,14 +98,8 @@ namespace qd {
       typename std::vector<Position>::const_iterator _iter;
     };
 
-    MetaInfo& metaInfo();
-    const MetaInfo& metaInfo() const;
-
-    virtual void rotate(Rotation) = 0;
     virtual PositionIterator begin() const;
     virtual PositionIterator end() const;
-    virtual Type type() const = 0;
-    virtual std::unique_ptr<Block> clone() = 0;
   };
 
 }

@@ -2,6 +2,7 @@
 #include <memory>
 #include <climits>
 #include <utility>
+#include <functional>
 #include "Utility.h"
 #include "BaseLevel.h"
 #include "Command.h"
@@ -13,6 +14,7 @@
 #include "Blocks/BlockS.h"
 #include "Blocks/BlockT.h"
 #include "Blocks/BlockZ.h"
+#include "QdDefs.h"
 
 int abs(int n) {
   if (n>=0 ) {
@@ -52,6 +54,9 @@ namespace qd {
   BaseLevel::BaseLevel(Board& b) : Level{b} {
   }
 
+  BaseLevel::~BaseLevel() {
+  }
+
   bool BaseLevel::executeCommand(const Command& command) {
     if (command.multiplier() == 0) {
       return true;
@@ -80,6 +85,7 @@ namespace qd {
               return Direction::RIGHT;
             default:
               assert(!"Unreachable");
+              QD_UNREACHABLE();
               break;
           }
         });
@@ -128,6 +134,7 @@ namespace qd {
               return Block::Rotation::COUNTER_CLOCKWISE;
             default:
               assert(!"Unreachable");
+              QD_UNREACHABLE();
               break;
           }
         });
@@ -164,15 +171,17 @@ namespace qd {
         }
 
         for (Position p : *activeBlockPtr) {
-          _board.cells()[p.row][p.col].blockType = activeBlockPtr->type();
+          Cell& cell = _board.cells()[p.row][p.col];
+          cell.blockType = activeBlockPtr->type();
+          cell.owningBlock = activeBlockPtr;
         }
+
+        _board.trackActiveBlock();
 
         activeBlockPtr = nullptr;
         _ensureBlocksGenerated();
-
+        _checkBlocksCleared();
         notifyCellsUpdated();
-
-        _checkScoring();
         _checkGameEnd();
         return true;
       }
@@ -203,6 +212,7 @@ namespace qd {
               return Block::Type::BLOCK_T;
             default:
               assert(!"Unreachable");
+              QD_UNREACHABLE();
               break;
           }
         });
@@ -298,7 +308,7 @@ namespace qd {
   }
 
   void BaseLevel::_defaultInitialization() {
-    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
+    std::shared_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
     if (nextBlockPtr) {
       // if we switch levels, since we have already generated the next Block
       // we have to apply our own heaviness rules before it becomes our active
@@ -318,8 +328,94 @@ namespace qd {
     return false;
   }
 
-  void BaseLevel::_checkScoring() {
-    
+  void BaseLevel::_checkBlocksCleared() {
+    auto& cells = _board.cells();
+
+    // this array represents how much a line has to move by.
+    // to be exact:
+    //   linesDiff[i] represents how many lines the current i'th
+    //                line should go down by
+    // if 2 consecutive lines in the middle are cleared you'll get
+    // something like:
+    //   2 2 2 2 2 2 1 0 0 0 0 0 0
+    std::array<int, BOARD_HEIGHT> linesDiff = { };
+
+    int numberOfLinesCleared = 0;
+
+    for (auto i = cells.begin() + 3; i != cells.end(); ++i) {
+      if (std::any_of(i->cbegin(), i->cend(), [](const Cell& cell) {
+        return cell.blockType == Block::Type::EMPTY;
+      })) {
+        // if any blockType is empty, this row doesn't count
+        continue;
+      }
+
+      auto lineIndex = static_cast<int>(std::distance(cells.begin(), i) - 3);
+      std::transform(
+        linesDiff.begin(), linesDiff.begin() + lineIndex,
+        linesDiff.begin(),
+        [](int val) {
+          return val + 1;
+        }
+      );
+      // clear a row
+      // this may raise Events such as Block::destroyed()
+      std::for_each(
+        i->begin(), i->end(), [](Cell& cell) {
+          cell.clear();
+        }
+      );
+      ++numberOfLinesCleared;
+    }
+
+    if (numberOfLinesCleared == 0) {
+      return;
+    }
+
+    decltype(linesDiff) markedLinesDiff;
+    markedLinesDiff[0] = linesDiff[0];
+
+    std::transform(
+      linesDiff.begin(), linesDiff.end() - 1,
+      linesDiff.begin() + 1, markedLinesDiff.begin() + 1,
+      [](auto prevDiff, auto curDiff) {
+        // if the current diff < prev, this means that current line
+        // is being cleared, so we mark it as such with a -1
+        return curDiff < prevDiff ? -1 : curDiff;
+      }
+    );
+
+    // this is where we actually move around the rows.
+    // we go through the markedLinesDiff array and apply it
+    // to our cells using move assignments.
+    for (auto i = markedLinesDiff.rbegin(); i != markedLinesDiff.rend(); ++i) {
+      if (*i <= 0) {
+        continue;
+      }
+      auto baseItr = i.base();
+      auto sourceDistance = std::distance(markedLinesDiff.begin(), baseItr) + 3 - 1;
+
+      auto& sourceRow = cells.at(sourceDistance);
+      auto& destRow = cells.at(sourceDistance + *i);
+
+      destRow = std::move(sourceRow);
+    }
+
+    // Calculate the scoring based on what we have cleared
+
+    int baseScore = levelNumber() + numberOfLinesCleared * numberOfLinesCleared;
+
+    int clearedBlocksScore = 0;
+    auto& trackedBlockInfo = _board.trackedBlockHistory();
+    // if any Blocks were cleared, then trackedBlockInfo should
+    // contain the MetaInfo we need to calculate scoring
+    while (!trackedBlockInfo.empty()) {
+      const Block::MetaInfo& blockMetaInfo = trackedBlockInfo.front();
+      int spawnLevel = blockMetaInfo.spawnLevel.value();
+      clearedBlocksScore += (spawnLevel + 1) * (spawnLevel + 1);
+      trackedBlockInfo.pop_back();
+    }
+    _board.score().incrementBy(baseScore + clearedBlocksScore);
   }
 
   bool BaseLevel::_isCellOccupied(const Position& p) const {
@@ -414,8 +510,8 @@ namespace qd {
   }
 
   void BaseLevel::_ensureBlocksGenerated() {
-    std::unique_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
-    std::unique_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
+    std::shared_ptr<Block>& activeBlockPtr = _board.activeBlockPtr();
+    std::shared_ptr<Block>& nextBlockPtr = _board.nextBlockPtr();
 
     if (activeBlockPtr == nullptr) {
       auto blockType = nextBlockType();
@@ -435,7 +531,7 @@ namespace qd {
   }
 
   bool BaseLevel::_shouldGenerateHeavyBlocks() const {
-    return false;
+    return  false;
   }
 
 }
