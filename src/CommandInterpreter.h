@@ -18,6 +18,11 @@ namespace qd {
     std::unordered_map<std::string, Command::Type> _commandMappings;
   };
 
+  class CommandEndOfInputError : public CommandError {
+  public:
+    CommandEndOfInputError();
+  };
+
   class CommandArityError : public CommandError {
   public:
     CommandArityError(

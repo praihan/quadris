@@ -166,23 +166,27 @@ namespace qd {
         break;
 
       case Command::Type::DROP: {
-        while (_canMove(*activeBlockPtr, BaseLevel::Direction::DOWN)) {
-          activeBlockPtr->position.row += 1;
+        for (unsigned int i = 0; i < command.multiplier(); ++i) {
+          while (_canMove(*activeBlockPtr, BaseLevel::Direction::DOWN)) {
+            activeBlockPtr->position.row += 1;
+          }
+
+          for (Position p : *activeBlockPtr) {
+            Cell& cell = _board.cells()[p.row][p.col];
+            cell.blockType = activeBlockPtr->type();
+            cell.owningBlock = activeBlockPtr;
+          }
+
+          _board.trackActiveBlock();
+          activeBlockPtr = nullptr;
+
+          _ensureBlocksGenerated();
+          _checkBlocksCleared();
+          notifyCellsUpdated();
+          if (_checkGameEnd()) {
+            break;
+          }
         }
-
-        for (Position p : *activeBlockPtr) {
-          Cell& cell = _board.cells()[p.row][p.col];
-          cell.blockType = activeBlockPtr->type();
-          cell.owningBlock = activeBlockPtr;
-        }
-
-        _board.trackActiveBlock();
-
-        activeBlockPtr = nullptr;
-        _ensureBlocksGenerated();
-        _checkBlocksCleared();
-        notifyCellsUpdated();
-        _checkGameEnd();
         return true;
       }
         break;

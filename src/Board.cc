@@ -1,8 +1,10 @@
 #include "Board.h"
+#include "CommandInterpreter.h"
 #include <cassert>
 #include <functional>
 #include <iostream>
 #include <stdexcept>
+#include <fstream>
 
 namespace qd {
 
@@ -59,7 +61,6 @@ namespace qd {
       case Command::Type::NORANDOM:
       case Command::Type::RANDOM:
       case Command::Type::HINT:
-      case Command::Type::SEQUENCE:
         assert(_level != nullptr);
         _level->executeCommand(command);
         break;
@@ -74,6 +75,47 @@ namespace qd {
           // failure is okay
           _changeLevelTo(_currentLevelNumber - 1);
         }
+        break;
+      case Command::Type::SEQUENCE: {
+          const std::string& sequenceFileName = command.arguments()[0];
+          std::ifstream file{ sequenceFileName };
+          if (file.fail()) {
+            std::cerr << "Error(" << sequenceFileName << "): Could not open file." << std::endl;
+            return;
+          }
+          CommandInterpreter commandInterpreter { file };
+          for (unsigned i = 0; i < command.multiplier(); ++i) {
+            while (true) {
+              try {
+                qd::Command command = commandInterpreter.nextCommand();
+                if (command.type() == qd::Command::Type::UNKNOWN) {
+                  std::cerr << "Error(" << sequenceFileName << "): Unknown command ";
+                  std::cerr << "'" << command.name() << "'" << std::endl;
+                  continue;
+                }
+                this->executeCommand(command);
+              }
+              catch (const qd::CommandArityError& cmdArityErr) {
+                std::cerr << "Error(" << sequenceFileName << "): " << cmdArityErr.what() << std::endl;
+              }
+              catch (const qd::CommandAmbiguousError& cmdAmbiguousErr) {
+                std::cerr << "Error(" << sequenceFileName << "): ";
+                std::cerr << "'" << cmdAmbiguousErr.query() << "'";
+                std::cerr << " is ambiguous. It matched commands:\n";
+                std::cerr << "[ ";
+                for (const auto& cmdPair : cmdAmbiguousErr.commandMatches()) {
+                  std::cerr << cmdPair.first << " ";
+                }
+                std::cerr << "]" << std::endl;
+              }
+              catch (const qd::CommandEndOfInputError& cmdEndErr) {
+                break;
+              }
+            }
+            file.clear();
+            file.seekg(0, std::ios::beg);
+          }
+      }
         break;
       case Command::Type::RESTART:
         reset();
