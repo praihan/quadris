@@ -86,6 +86,6 @@ int main(int argc, char* argv[]) {
     }
   }
   catch (const qd::CommandError& cmdErr) {
-    std::cerr << "Error: " <<  cmdErr.what() << std::endl;
+    std::cerr << "Reached end of input. Bye!" << std::endl;
   }
 }
