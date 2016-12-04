@@ -397,19 +397,19 @@ namespace qd {
       destRow = std::move(sourceRow);
     }
 
-    std::cout << "[ ";
-    std::copy(
-      linesDiff.begin(), linesDiff.end(),
-      std::ostream_iterator<int>(std::cout, " ")
-    );
-    std::cout << "]" << std::endl;
+    // std::cout << "[ ";
+    // std::copy(
+    //   linesDiff.begin(), linesDiff.end(),
+    //   std::ostream_iterator<int>(std::cout, " ")
+    // );
+    // std::cout << "]" << std::endl;
 
-    std::cout << "[ ";
-    std::copy(
-      markedLinesDiff.begin(), markedLinesDiff.end(),
-      std::ostream_iterator<int>(std::cout, " ")
-    );
-    std::cout << "]" << std::endl;
+    // std::cout << "[ ";
+    // std::copy(
+    //   markedLinesDiff.begin(), markedLinesDiff.end(),
+    //   std::ostream_iterator<int>(std::cout, " ")
+    // );
+    // std::cout << "]" << std::endl;
 
     // Calculate the scoring based on what we have cleared
     auto sqr = [](int a) -> int { return a * a; };
