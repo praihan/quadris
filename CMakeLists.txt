@@ -19,6 +19,8 @@ set (SOURCES
   src/Level.cc
   src/Levels/BaseLevel.h
   src/Levels/BaseLevel.cc
+  src/Levels/SequencedBaseLevel.h
+  src/Levels/SequencedBaseLevel.cc
   src/Levels/Level0.h
   src/Levels/Level0.cc
   src/Levels/Level1.h

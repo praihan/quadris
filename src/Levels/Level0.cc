@@ -52,7 +52,7 @@ namespace qd {
     return *_current++;
   }
 
-  bool Level0::executeCommand(const Command& command) {
-    return BaseLevel::executeCommand(command);
+  void Level0::executeCommand(const Command& command) {
+    BaseLevel::executeCommand(command);
   }
 }

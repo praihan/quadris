@@ -11,11 +11,15 @@ namespace qd {
     protected:
       std::vector<Block::Type> _sequence;
       std::vector<Block::Type>::const_iterator _current;
+      bool _useSequenceFile;
 
       virtual Block::Type nextBlockType() override;
       void _setSequence(std::string sequenceFileName);
-      virtual bool executeCommand(const Command& command) override;
+      virtual void executeCommand(const Command& command) override;
       virtual bool _shouldGenerateHeavyBlocks() const override;
+
+      virtual void _turnOffRandom(std::string filename) override;
+      virtual void _turnOnRandom() override;
 
     public:
       SequencedBaseLevel(Board &b);

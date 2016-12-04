@@ -57,9 +57,9 @@ namespace qd {
   BaseLevel::~BaseLevel() {
   }
 
-  bool BaseLevel::executeCommand(const Command& command) {
+  void BaseLevel::executeCommand(const Command& command) {
     if (command.multiplier() == 0) {
-      return true;
+      return;
     }
 
     auto& activeBlockPtr = _board.activeBlockPtr();
@@ -102,13 +102,11 @@ namespace qd {
               break;
           }
         };
-        bool success = true;
         for (unsigned int i = 0; i < command.multiplier(); ++i) {
           if (_canMove(*activeBlockPtr, movementDir)) {
             moveInDirection(activeBlockPtr->position, movementDir);
           }
           else {
-            success = false;
             break;
           }
         }
@@ -119,7 +117,6 @@ namespace qd {
         }
 
         notifyCellsUpdated();
-        return success;
       }
         break;
 
@@ -143,13 +140,11 @@ namespace qd {
           return rotationDirection == Block::Rotation::CLOCKWISE ?
             Block::Rotation::COUNTER_CLOCKWISE : Block::Rotation::CLOCKWISE;
         });
-        bool success = true;
         for (unsigned int i = 0; i < command.multiplier() % 4; ++i) {
           activeBlockPtr->rotate(rotationDirection);
 
           if (!_isValidBlock(*activeBlockPtr)) {
             activeBlockPtr->rotate(antiRotationDirection);
-            success = false;
           }
         }
 
@@ -161,7 +156,6 @@ namespace qd {
         }
 
         notifyCellsUpdated();
-        return success;
       }
         break;
 
@@ -187,7 +181,6 @@ namespace qd {
             break;
           }
         }
-        return true;
       }
         break;
 
@@ -222,13 +215,21 @@ namespace qd {
         });
         _board.nextBlockPtr() = _createBlockFromType(blockType);
         _board.nextBlockGenerated().notifyObservers(blockType);
-        return true;
+      }
+        break;
+
+      case Command::Type::NORANDOM: {
+        _turnOffRandom(command.arguments()[0]);
+      }
+        break;
+      case Command::Type::RANDOM: {
+        _turnOnRandom();
       }
         break;
 
       case Command::Type::HINT: {
         std::unique_ptr<Block> bcpyl = activeBlockPtr->clone();
-	Position bestPos = activeBlockPtr->position;
+	      Position bestPos = activeBlockPtr->position;
         int rotation = 0;
         int bestVariance = INT_MAX;
         int initialHeight = activeBlockPtr->position.row;
@@ -294,12 +295,9 @@ namespace qd {
         bcpyl->position = bestPos;
 
         _board.hintProvided().notifyObservers(std::vector<Position>(bcpyl->begin(), bcpyl->end()));
-
-        return true;
       }
         break;
       default:
-        return false;
         break;
     }
   }
@@ -543,6 +541,12 @@ namespace qd {
 
   bool BaseLevel::_shouldGenerateHeavyBlocks() const {
     return  false;
+  }
+
+  void BaseLevel::_turnOffRandom(std::string filename) {
+  }
+
+  void BaseLevel::_turnOnRandom() {
   }
 
 }

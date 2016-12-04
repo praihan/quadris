@@ -63,14 +63,22 @@ namespace qd {
     assert(_sequence.cbegin() != _sequence.cend());
 
     _current = _sequence.begin();
-    _defaultInitialization();
   }
 
   bool SequencedBaseLevel::_shouldGenerateHeavyBlocks() const {
     return true;
   }
 
-  bool SequencedBaseLevel::executeCommand(const Command& command) {
-    return BaseLevel::executeCommand(command);
+  void SequencedBaseLevel::executeCommand(const Command& command) {
+    BaseLevel::executeCommand(command);
+  }
+
+  void SequencedBaseLevel::_turnOffRandom(std::string filename) {
+    _useSequenceFile = true;
+    _setSequence(filename);
+  }
+
+  void SequencedBaseLevel::_turnOnRandom() {
+    _useSequenceFile = false;
   }
 }
