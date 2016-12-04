@@ -29,7 +29,7 @@ namespace qd {
     /// creates a Block from a Block::Type without any metaInfo
     template <class... Args>
     std::unique_ptr<Block> createRawBlockFromType(Block::Type type) {
-      switch(type) {
+      switch (type) {
         case Block::Type::BLOCK_I:
           return std::make_unique<BlockI>();
         case Block::Type::BLOCK_J:
@@ -211,7 +211,7 @@ namespace qd {
             case Command::Type::BLOCK_S:
               return Block::Type::BLOCK_S;
             case Command::Type::BLOCK_Z:
-              return Block::Type::BLOCK_S;
+              return Block::Type::BLOCK_Z;
             case Command::Type::BLOCK_T:
               return Block::Type::BLOCK_T;
             default:

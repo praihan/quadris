@@ -58,7 +58,7 @@ namespace qd {
     static const BlockL _sampleBlockL;
     static const BlockO _sampleBlockO;
     static const BlockS _sampleBlockS;
-    static const BlockS _sampleBlockT;
+    static const BlockT _sampleBlockT;
     static const BlockZ _sampleBlockZ;
 
     static const std::map<Block::Type, const Block*> sampleBlocks;

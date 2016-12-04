@@ -12,7 +12,7 @@ namespace qd {
   const BlockL Display::_sampleBlockL{};
   const BlockO Display::_sampleBlockO{};
   const BlockS Display::_sampleBlockS{};
-  const BlockS Display::_sampleBlockT{};
+  const BlockT Display::_sampleBlockT{};
   const BlockZ Display::_sampleBlockZ{};
 
   const std::map<Block::Type, const Block*> Display::sampleBlocks = {
