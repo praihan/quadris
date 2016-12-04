@@ -181,8 +181,8 @@ namespace qd {
           activeBlockPtr = nullptr;
 
           _ensureBlocksGenerated();
-          notifyCellsUpdated();
           _checkBlocksCleared();
+          notifyCellsUpdated();
           if (_checkGameEnd()) {
             break;
           }
