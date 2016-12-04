@@ -219,7 +219,7 @@ namespace qd {
         int bestVariance = INT_MAX;
         int initialHeight = activeBlockPtr->position.row;
 
-        for (auto i = 0; i < 3; i++) {
+        for (auto i = 0; i < 4; i++) {
           while(true) {
             bcpyl->position.col--;
          
@@ -280,7 +280,7 @@ namespace qd {
         std::cout << "x = " << bestPos.col << ", y = " << bestPos.row << std::endl;
         std::cout << "rotation = " << rotation << std::endl;
 
-        for (int i = 0; i <= rotation; i++) {
+        for (int i = 0; i < rotation; i++) {
           bcpyl->rotate(Block::Rotation::CLOCKWISE);
         }
 
