@@ -8,6 +8,18 @@
 
 namespace qd {
 
+  namespace {
+    const std::map<std::string, Block::Type> blockMap {
+      { "I", Block::Type::BLOCK_I },
+      { "J", Block::Type::BLOCK_J },
+      { "L", Block::Type::BLOCK_L },
+      { "O", Block::Type::BLOCK_O },
+      { "S", Block::Type::BLOCK_S },
+      { "T", Block::Type::BLOCK_T },
+      { "Z", Block::Type::BLOCK_Z } 
+    };
+  }
+
   std::string Level0::sequenceFileName = "sequence.txt";
 
   Level0::Level0(Board& b) : BaseLevel(b) {

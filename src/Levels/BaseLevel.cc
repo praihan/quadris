@@ -2,8 +2,6 @@
 #include <memory>
 #include <climits>
 #include <utility>
-#include <fstream>
-#include <stdexcept>
 #include <functional>
 #include "Utility.h"
 #include "BaseLevel.h"
@@ -31,7 +29,7 @@ namespace qd {
     /// creates a Block from a Block::Type without any metaInfo
     template <class... Args>
     std::unique_ptr<Block> createRawBlockFromType(Block::Type type) {
-      switch(type) {
+      switch (type) {
         case Block::Type::BLOCK_I:
           return std::make_unique<BlockI>();
         case Block::Type::BLOCK_J:
@@ -213,7 +211,7 @@ namespace qd {
             case Command::Type::BLOCK_S:
               return Block::Type::BLOCK_S;
             case Command::Type::BLOCK_Z:
-              return Block::Type::BLOCK_S;
+              return Block::Type::BLOCK_Z;
             case Command::Type::BLOCK_T:
               return Block::Type::BLOCK_T;
             default:
@@ -228,56 +226,21 @@ namespace qd {
       }
         break;
 
-      case Command::Type::NORANDOM: {
-        _useSequenceFile = true;
-
-        std::string sequenceFileName = command.arguments()[0];
-        std::ifstream file{ sequenceFileName };
-          
-        if (file.fail()) {
-          throw std::runtime_error{ "Could not open file: '" + sequenceFileName + "'" };
-        }
-
-        std::string nextBlock;
-        while (file >> nextBlock) {
-          auto blockIter = blockMap.find(nextBlock);
-          assert(blockIter != blockMap.end());
-          _sequence.emplace_back(blockIter->second);
-        }
-      
-        assert(_sequence.cbegin() != _sequence.cend());
-      
-        _current = _sequence.begin();
-        
-        return true;  
-      }
-        break;
-
-      case Command::Type::RANDOM: {
-        _useSequenceFile = false;
-        
-        return true;
-      }
-        break;
-
       case Command::Type::HINT: {
         std::unique_ptr<Block> bcpyl = activeBlockPtr->clone();
-	      Position bestPos = activeBlockPtr->position;
+	Position bestPos = activeBlockPtr->position;
         int rotation = 0;
         int bestVariance = INT_MAX;
         int initialHeight = activeBlockPtr->position.row;
 
-        for (auto i = 0; i < 4; i++) {
-          while(true) {
+        for (int i = 0; i < 4; i++) {
+          bcpyl->position.col = activeBlockPtr->position.col;
+          while (_isValidBlock(*bcpyl)) {
             bcpyl->position.col--;
-         
-            if(!(_isValidBlock(*bcpyl))) {
-              bcpyl->position.col++;
-              break;
-            }
           }
-  
-          while(true) {
+          bcpyl->position.col++;
+
+          while (_isValidBlock(*bcpyl)) {
             while (_canMove(*bcpyl, BaseLevel::Direction::DOWN)) {
               bcpyl->position.row += 1;
             }
@@ -286,7 +249,7 @@ namespace qd {
             for (Position p : *bcpyl) {
               _board.cells()[p.row][p.col].blockType = bcpyl->type();
             }
-             
+
             // Scan and compare
             int currVariance = 0;
             for (std::size_t j = 0; j < BOARD_WIDTH - 1; j++) {
@@ -315,16 +278,12 @@ namespace qd {
               _board.cells()[p.row][p.col].blockType = Block::Type::EMPTY;
             }
 
-            bcpyl->position.col++;
             bcpyl->position.row = initialHeight;
-           
-            if(!(_isValidBlock(*bcpyl))) {
-              break;
-            }
+            bcpyl->position.col++;
           }
-
-          bcpyl->rotate(Block::Rotation::CLOCKWISE);
+        bcpyl->rotate(Block::Rotation::CLOCKWISE);
         }
+          
         std::cout << "x = " << bestPos.col << ", y = " << bestPos.row << std::endl;
         std::cout << "rotation = " << rotation << std::endl;
 
@@ -426,18 +385,31 @@ namespace qd {
     // this is where we actually move around the rows.
     // we go through the markedLinesDiff array and apply it
     // to our cells using move assignments.
-    for (auto i = markedLinesDiff.rbegin(); i != markedLinesDiff.rend(); ++i) {
+    for (auto i = markedLinesDiff.end() - 1; i >= markedLinesDiff.begin(); --i) {
       if (*i <= 0) {
         continue;
       }
-      auto baseItr = i.base();
-      auto sourceDistance = std::distance(markedLinesDiff.begin(), baseItr) + 3 - 1;
+      auto sourceDistance = std::distance(markedLinesDiff.begin(), i);
 
-      auto& sourceRow = cells.at(sourceDistance);
-      auto& destRow = cells.at(sourceDistance + *i);
-
+      auto& sourceRow = cells.at(sourceDistance + 3);
+      auto& destRow = cells.at(sourceDistance + *i + 3);
+      
       destRow = std::move(sourceRow);
     }
+
+    // std::cout << "[ ";
+    // std::copy(
+    //   linesDiff.begin(), linesDiff.end(),
+    //   std::ostream_iterator<int>(std::cout, " ")
+    // );
+    // std::cout << "]" << std::endl;
+
+    // std::cout << "[ ";
+    // std::copy(
+    //   markedLinesDiff.begin(), markedLinesDiff.end(),
+    //   std::ostream_iterator<int>(std::cout, " ")
+    // );
+    // std::cout << "]" << std::endl;
 
     // Calculate the scoring based on what we have cleared
     auto sqr = [](int a) -> int { return a * a; };
@@ -504,7 +476,7 @@ namespace qd {
 
     for (; i < BOARD_HEIGHT+3; i++) {
       if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
-        hole += 4;
+        hole += 8;
       }
     }
     return hole;
@@ -572,4 +544,5 @@ namespace qd {
   bool BaseLevel::_shouldGenerateHeavyBlocks() const {
     return  false;
   }
+
 }

@@ -1,17 +1,14 @@
 #ifndef LEVEL4_H_
 #define LEVEL4_H_
 
-#include "BaseLevel.h"
+#include "SequencedBaseLevel.h"
 
 namespace qd {
-  class Level4 : public BaseLevel {
+  class Level4 : public SequencedBaseLevel {
   public:
     Level4(Board&);
   protected:
     virtual int levelNumber() const override;
-    virtual Block::Type nextBlockType() override;
-    virtual bool executeCommand(const Command& command) override;
-    virtual bool _shouldGenerateHeavyBlocks() const override;
   };
 
 }
