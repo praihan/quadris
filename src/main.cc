@@ -9,6 +9,7 @@
 #include "Board.h"
 #include "Utility.h"
 #include "Displays/TextDisplay.h"
+#include "Displays/GraphicDisplay.h"
 #include "Levels/Level0.h"
 #include "Levels/Level1.h"
 #include "Levels/Level2.h"
@@ -54,6 +55,12 @@ int main(int argc, char* argv[]) {
   board.registerLevel(4, makeLevelFactory<qd::Level4>());
 
   qd::TextDisplay textDisplay { board };
+  // we can't use Optional because it's not copy-able or move-able
+  std::unique_ptr<qd::GraphicDisplay> graphicDisplayPtr;
+
+  if (!cmdLineArgs.text.valueOr(false)) {
+    graphicDisplayPtr = std::make_unique<qd::GraphicDisplay>(board);
+  }
 
   qd::CommandInterpreter commandInterpreter { std::cin };
 
@@ -61,6 +68,7 @@ int main(int argc, char* argv[]) {
     board.start();
 
     textDisplay.outputDisplay();
+    if (graphicDisplayPtr) { graphicDisplayPtr->outputDisplay(); }
     while (true) {
       try {
         qd::Command command = commandInterpreter.nextCommand();
@@ -70,6 +78,7 @@ int main(int argc, char* argv[]) {
         }
         board.executeCommand(command);
         textDisplay.outputDisplay();
+        if (graphicDisplayPtr) { graphicDisplayPtr->outputDisplay(); }
       }
       catch (const qd::CommandArityError& cmdArityErr) {
         std::cerr << "Error: " << cmdArityErr.what() << std::endl;

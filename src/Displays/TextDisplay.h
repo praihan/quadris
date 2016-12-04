@@ -2,8 +2,6 @@
 #define TEXT_DISPLAY_H_
 
 #include "Display.h"
-#include <vector>
-#include <string>
 
 namespace qd {
 

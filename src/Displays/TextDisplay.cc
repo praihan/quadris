@@ -22,11 +22,11 @@ namespace qd {
   }
 
   void TextDisplay::outputDisplay() {
-    auto levelString = "Level: " + (_level.hasValue() ? std::to_string(*_level) : "");
-    auto scoreString = "Score: " + (_score.hasValue() ? std::to_string(*_score) : "");
-    auto hiScoreString = "Hi Score: " + (_hiScore.hasValue() ? std::to_string(*_hiScore) : "");
-    auto separatorString = "--------------------------------------------------------------------------------";
-    auto boardBorder = "-----------";
+    const auto levelString = "Level: " + (_level.hasValue() ? std::to_string(*_level) : "");
+    const auto scoreString = "Score: " + (_score.hasValue() ? std::to_string(*_score) : "");
+    const auto hiScoreString = "Hi Score: " + (_hiScore.hasValue() ? std::to_string(*_hiScore) : "");
+    const auto separatorString = "--------------------------------------------------------------------------------";
+    const auto boardBorder = "-----------";
 
     std::cout << separatorString << std::endl;
 
