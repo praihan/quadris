@@ -2,6 +2,8 @@
 #include <memory>
 #include <climits>
 #include <utility>
+#include <fstream>
+#include <stdexcept>
 #include "Utility.h"
 #include "BaseLevel.h"
 #include "Command.h"
@@ -212,6 +214,38 @@ namespace qd {
       }
         break;
 
+      case Command::Type::NORANDOM: {
+        _useSequenceFile = true;
+
+        std::string sequenceFileName = command.arguments()[0];
+        std::ifstream file{ sequenceFileName };
+          
+        if (file.fail()) {
+          throw std::runtime_error{ "Could not open file: '" + sequenceFileName + "'" };
+        }
+
+        std::string nextBlock;
+        while (file >> nextBlock) {
+          auto blockIter = blockMap.find(nextBlock);
+          assert(blockIter != blockMap.end());
+          _sequence.emplace_back(blockIter->second);
+        }
+      
+        assert(_sequence.cbegin() != _sequence.cend());
+      
+        _current = _sequence.begin();
+        
+        return true;  
+      }
+        break;
+
+      case Command::Type::RANDOM: {
+        _useSequenceFile = false;
+        
+        return true;
+      }
+        break;
+
       case Command::Type::HINT: {
         std::unique_ptr<Block> bcpyl = activeBlockPtr->clone();
 	      Position bestPos = activeBlockPtr->position;
@@ -305,7 +339,8 @@ namespace qd {
       // block. In essence, we take ownership of it.
       _inheritBlock(*nextBlockPtr);
     }
-
+    
+    _useSequenceFile = false;
     _ensureBlocksGenerated();
     _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
   }
@@ -505,5 +540,4 @@ namespace qd {
   bool BaseLevel::_shouldGenerateHeavyBlocks() const {
     return false;
   }
-
 }

@@ -30,9 +30,16 @@ namespace qd {
   }
 
   Block::Type Level4::nextBlockType() {
-    int rand = std::rand() % (weightedBlockTypes.size());
-    
-    return weightedBlockTypes[rand];
+    if (_useSequenceFile) {
+      if (_current == _sequence.cend()) {
+        _current = _sequence.begin();
+      }
+      return *_current++;
+    }
+    else {
+      int rand = std::rand() % (weightedBlockTypes.size());
+      return weightedBlockTypes[rand];
+    }
   }
 
   bool Level4::executeCommand(const Command& command) {
