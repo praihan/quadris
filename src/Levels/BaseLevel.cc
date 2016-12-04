@@ -339,8 +339,7 @@ namespace qd {
       // block. In essence, we take ownership of it.
       _inheritBlock(*nextBlockPtr);
     }
-    
-    _useSequenceFile = false;
+
     _ensureBlocksGenerated();
     _board.cellsUpdated().notifyObservers(_board.cells(), _board.activeBlockPtr().get());
   }

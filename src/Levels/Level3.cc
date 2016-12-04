@@ -23,6 +23,7 @@ namespace qd {
   }
 
   Level3::Level3(Board& b) : BaseLevel{b} {
+    _useSequenceFile = false;
     _defaultInitialization();
   }
 
