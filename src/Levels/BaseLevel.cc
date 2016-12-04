@@ -402,8 +402,9 @@ namespace qd {
     }
 
     // Calculate the scoring based on what we have cleared
+    auto sqr = [](int a) -> int { return a * a; };
 
-    int baseScore = levelNumber() + numberOfLinesCleared * numberOfLinesCleared;
+    int baseScore = sqr(levelNumber() + numberOfLinesCleared);
 
     int clearedBlocksScore = 0;
     auto& trackedBlockInfo = _board.trackedBlockHistory();
@@ -412,7 +413,7 @@ namespace qd {
     while (!trackedBlockInfo.empty()) {
       const Block::MetaInfo& blockMetaInfo = trackedBlockInfo.front();
       int spawnLevel = blockMetaInfo.spawnLevel.value();
-      clearedBlocksScore += (spawnLevel + 1) * (spawnLevel + 1);
+      clearedBlocksScore += sqr(spawnLevel + 1);
       trackedBlockInfo.pop_back();
     }
     _board.score().incrementBy(baseScore + clearedBlocksScore);
