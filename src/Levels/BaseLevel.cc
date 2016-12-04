@@ -224,22 +224,21 @@ namespace qd {
 
       case Command::Type::HINT: {
         std::unique_ptr<Block> bcpyl = activeBlockPtr->clone();
-	      Position bestPos = activeBlockPtr->position;
+	Position bestPos = activeBlockPtr->position;
         int rotation = 0;
         int bestVariance = INT_MAX;
         int initialHeight = activeBlockPtr->position.row;
 
-        for (auto i = 0; i < 4; i++) {
-          while(true) {
+        for (int i = 0; i < 4; i++) {
+          std::cout << i << std::endl;
+          bcpyl->position.col = activeBlockPtr->position.col;
+          bcpyl->cout();
+          while (_isValidBlock(*bcpyl)) {
             bcpyl->position.col--;
-         
-            if(!(_isValidBlock(*bcpyl))) {
-              bcpyl->position.col++;
-              break;
-            }
           }
-  
-          while(true) {
+          bcpyl->position.col++;
+
+          while (_isValidBlock(*bcpyl)) {
             while (_canMove(*bcpyl, BaseLevel::Direction::DOWN)) {
               bcpyl->position.row += 1;
             }
@@ -248,7 +247,7 @@ namespace qd {
             for (Position p : *bcpyl) {
               _board.cells()[p.row][p.col].blockType = bcpyl->type();
             }
-             
+
             // Scan and compare
             int currVariance = 0;
             for (std::size_t j = 0; j < BOARD_WIDTH - 1; j++) {
@@ -277,16 +276,12 @@ namespace qd {
               _board.cells()[p.row][p.col].blockType = Block::Type::EMPTY;
             }
 
-            bcpyl->position.col++;
             bcpyl->position.row = initialHeight;
-           
-            if(!(_isValidBlock(*bcpyl))) {
-              break;
-            }
+            bcpyl->position.col++;
           }
-
-          bcpyl->rotate(Block::Rotation::CLOCKWISE);
+        bcpyl->rotate(Block::Rotation::CLOCKWISE);
         }
+          
         std::cout << "x = " << bestPos.col << ", y = " << bestPos.row << std::endl;
         std::cout << "rotation = " << rotation << std::endl;
 
@@ -466,7 +461,7 @@ namespace qd {
 
     for (; i < BOARD_HEIGHT+3; i++) {
       if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
-        hole += 4;
+        hole += 8;
       }
     }
     return hole;
