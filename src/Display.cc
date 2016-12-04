@@ -51,6 +51,9 @@ namespace qd {
     board.levelChanged().addObserver(
       _levelChangedSlot, std::bind(&Display::onLevelChanged, this, std::placeholders::_1)
     );
+     board.hintProvided().addObserver(
+      _hintProvidedSlot, std::bind(&Display::onHint, this, std::placeholders::_1)
+    );
 
     for (auto& row : _boardState) {
       for (Block::Type& blockType : row) {
@@ -96,6 +99,11 @@ namespace qd {
   }
   void Display::onGameEnded() {
     std::cout << "GAME ENDED" << std::endl;
+  }
+  void Display::onHint(const std::vector<Position>& positions) {
+    for (Position p : positions) {
+      _boardState[p.row][p.col] = Block::Type::BLOCK_HINT;
+    }
   }
 
 }
