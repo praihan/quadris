@@ -14,6 +14,7 @@
 #include "Blocks/BlockS.h"
 #include "Blocks/BlockT.h"
 #include "Blocks/BlockZ.h"
+#include "QdDefs.h"
 
 int abs(int n) {
   if (n>=0 ) {
@@ -84,6 +85,7 @@ namespace qd {
               return Direction::RIGHT;
             default:
               assert(!"Unreachable");
+              QD_UNREACHABLE();
               break;
           }
         });
@@ -132,6 +134,7 @@ namespace qd {
               return Block::Rotation::COUNTER_CLOCKWISE;
             default:
               assert(!"Unreachable");
+              QD_UNREACHABLE();
               break;
           }
         });
@@ -209,6 +212,7 @@ namespace qd {
               return Block::Type::BLOCK_T;
             default:
               assert(!"Unreachable");
+              QD_UNREACHABLE();
               break;
           }
         });

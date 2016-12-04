@@ -95,7 +95,7 @@ namespace qd {
     activeBlockPtr() = nullptr;
     nextBlockPtr() = nullptr;
     bool changeSuccessful = _changeLevelTo(_currentLevelNumber);
-    assert(changeSuccessful);
+    assert(changeSuccessful); (void)changeSuccessful;
     score().reset();
     gameStarted().notifyObservers();
   }
