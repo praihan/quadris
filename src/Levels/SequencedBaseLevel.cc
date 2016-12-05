@@ -69,10 +69,6 @@ namespace qd {
     return true;
   }
 
-  void SequencedBaseLevel::executeCommand(const Command& command) {
-    BaseLevel::executeCommand(command);
-  }
-
   void SequencedBaseLevel::_turnOffRandom(std::string filename) {
     _useSequenceFile = true;
     _setSequence(filename);
