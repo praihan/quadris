@@ -12,7 +12,10 @@
   // // Draws a string
   // void drawBigString(int x, int y, std::string msg, int colour=Black);
 
-constexpr int GRAPHIC_DISPLAY_WIDTH = 500;
+constexpr int BOARD_TOP = 70;
+constexpr int BOARD_LEFT = 10;
+constexpr int CELL_WIDTH = 20, CELL_HEIGHT = 20;
+constexpr int GRAPHIC_DISPLAY_WIDTH = qd::BOARD_WIDTH * CELL_WIDTH + BOARD_LEFT * 2;
 constexpr int GRAPHIC_DISPLAY_HEIGHT = 500;
 
 namespace qd {
@@ -48,10 +51,6 @@ namespace qd {
     _window.drawString(10, 20, levelString);
     _window.drawString(10, 35, scoreString);
     _window.drawString(10, 50, hiScoreString);
-
-    constexpr int BOARD_TOP = 70;
-    constexpr int BOARD_LEFT = 10;
-    constexpr int CELL_WIDTH = 20, CELL_HEIGHT = 20;
 
     auto positionForCell = [](int rowIndex, int colIndex) {
       struct Pos { int x, y; };
