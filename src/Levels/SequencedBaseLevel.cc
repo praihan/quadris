@@ -42,8 +42,11 @@ namespace qd {
       return *_current++;
     }
     else {
-      int rand = std::rand() % (weightedBlockTypes.size());
-      return weightedBlockTypes[rand];
+      std::uniform_int_distribution<> dis(0, (weightedBlockTypes.size() - 1));
+    
+      auto index = dis(_board.randomEngine());
+    
+      return weightedBlockTypes[index];
     }
   }
 
