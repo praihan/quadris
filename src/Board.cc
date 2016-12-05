@@ -59,8 +59,14 @@ namespace qd {
       case Command::Type::RANDOM:
       case Command::Type::HINT:
         assert(_level != nullptr);
-        if (!_level->executeCommand(command)) {
-          if (command.type() == Command::Type::DROP) {
+        {
+          bool hasGameEnded = false;
+          ObserverSlot<> gameEndedObserverSlot;
+          gameEnded().addObserver(gameEndedObserverSlot, [&]() {
+            hasGameEnded = true;
+          });
+          _level->executeCommand(command);
+          if (hasGameEnded) {
             reset();
           }
         }
