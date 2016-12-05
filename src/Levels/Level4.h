@@ -8,7 +8,7 @@ namespace qd {
   class Level4 : public SequencedBaseLevel {
   public:
     Level4(Board&);
-    virtual void executeCommand(const Command& command) override;
+    virtual bool executeCommand(const Command& command) override;
   protected:
     int _consecutiveNoClears;
     ObserverSlot<const std::vector<int>&> _linesClearedSlot;

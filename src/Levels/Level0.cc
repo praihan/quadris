@@ -51,8 +51,4 @@ namespace qd {
     }
     return *_current++;
   }
-
-  void Level0::executeCommand(const Command& command) {
-    BaseLevel::executeCommand(command);
-  }
 }

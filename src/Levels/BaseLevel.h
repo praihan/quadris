@@ -18,7 +18,7 @@ namespace qd {
 
     virtual int levelNumber() const = 0;
     virtual Block::Type nextBlockType() = 0;
-    virtual void executeCommand(const Command& command) override;
+    virtual bool executeCommand(const Command& command) override;
 
   protected:
     /// \cond INTERNAL

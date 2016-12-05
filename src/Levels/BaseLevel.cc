@@ -57,9 +57,9 @@ namespace qd {
   BaseLevel::~BaseLevel() {
   }
 
-  void BaseLevel::executeCommand(const Command& command) {
+  bool BaseLevel::executeCommand(const Command& command) {
     if (command.multiplier() == 0) {
-      return;
+      return true;
     }
 
     auto& activeBlockPtr = _board.activeBlockPtr();
@@ -117,6 +117,7 @@ namespace qd {
         }
 
         notifyCellsUpdated();
+        return true;
       }
         break;
 
@@ -156,6 +157,7 @@ namespace qd {
         }
 
         notifyCellsUpdated();
+        return true;
       }
         break;
 
@@ -178,9 +180,11 @@ namespace qd {
           _checkBlocksCleared();
           notifyCellsUpdated();
           if (_checkGameEnd()) {
-            break;
+            return false;
           }
         }
+
+        return true;
       }
         break;
 
@@ -215,15 +219,19 @@ namespace qd {
         });
         _board.nextBlockPtr() = _createBlockFromType(blockType);
         _board.nextBlockGenerated().notifyObservers(blockType);
+
+        return true;
       }
         break;
 
       case Command::Type::NORANDOM: {
         _turnOffRandom(command.arguments()[0]);
+        return true;
       }
         break;
       case Command::Type::RANDOM: {
         _turnOnRandom();
+        return true;
       }
         break;
 
@@ -290,9 +298,11 @@ namespace qd {
         bcpyl->position = bestPos;
 
         _board.hintProvided().notifyObservers(std::vector<Position>(bcpyl->begin(), bcpyl->end()));
+        return true;
       }
         break;
       default:
+        return false;
         break;
     }
   }

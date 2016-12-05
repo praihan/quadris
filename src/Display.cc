@@ -98,7 +98,6 @@ namespace qd {
   void Display::onGameStarted() {
   }
   void Display::onGameEnded() {
-    std::cout << "GAME ENDED" << std::endl;
   }
   void Display::onHint(const std::vector<Position>& positions) {
     for (Position p : positions) {

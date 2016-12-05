@@ -9,11 +9,7 @@ namespace qd {
     _useSequenceFile = false;
     _defaultInitialization();
   }
-
-  void Level3::executeCommand(const Command& command) {
-    BaseLevel::executeCommand(command);
-  }
-
+  
   int Level3::levelNumber() const {
     return 3;
   }

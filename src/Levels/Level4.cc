@@ -13,38 +13,42 @@ namespace qd {
     _board.linesCleared().addObserver(
       _linesClearedSlot, std::bind(&Level4::onLinesCleared, this, std::placeholders::_1)
     );
+
+    for (int i = BOARD_HEIGHT + 2; i >= 4; i--) {
+      _board.cells().at(i).at(5).blockType = Block::Type::BLOCK_SINGLE;
+    }
   }
 
-  void Level4::executeCommand(const Command& command) {
-    if (command.type() == Command::Type::DROP) {
-      _consecutiveNoClears++;
+  bool Level4::executeCommand(const Command& command) {
+    if (command.type() != Command::Type::DROP) {
+      return BaseLevel::executeCommand(command);
     }
-    
-    BaseLevel::executeCommand(command);
+    _consecutiveNoClears++;
+    if (!BaseLevel::executeCommand(command)) {
+      return false;
+    }
+    if (_consecutiveNoClears % 5 == 0 && _consecutiveNoClears) {
+      int col = BOARD_WIDTH / 2;
 
-    if (command.type() == Command::Type::DROP) {
-      if (_consecutiveNoClears % 5 == 0 && _consecutiveNoClears) {
-        int col = BOARD_WIDTH / 2;
-
-        int colHeight = _getColHeight(col);
-        
-        if (colHeight == BOARD_HEIGHT) {
-          _board.gameEnded().notifyObservers();
-          return;
-        }
-
-        int row = BOARD_HEIGHT - colHeight + BOARD_EXTRA_SPACE - 1;
-
-        _board.cells().at(row).at(col).blockType = Block::Type::BLOCK_SINGLE;
-
-        _checkBlocksCleared();
-
-        _board.cellsUpdated().notifyObservers(
-          _board.cells(),
-          _board.activeBlockPtr().get()
-        );
+      int colHeight = _getColHeight(col);
+      
+      if (colHeight == BOARD_HEIGHT) {
+        _board.gameEnded().notifyObservers();
+        return false;
       }
+
+      int row = BOARD_HEIGHT - colHeight + BOARD_EXTRA_SPACE - 1;
+
+      _board.cells().at(row).at(col).blockType = Block::Type::BLOCK_SINGLE;
+
+      _checkBlocksCleared();
+
+      _board.cellsUpdated().notifyObservers(
+        _board.cells(),
+        _board.activeBlockPtr().get()
+      );
     }
+    return true;
   } 
 
   int Level4::levelNumber() const {

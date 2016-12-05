@@ -6,7 +6,6 @@ namespace qd {
   class Level3 : public SequencedBaseLevel {
   public:
     Level3(Board&);
-    virtual void executeCommand(const Command& command) override;
   protected:
     virtual int levelNumber() const override;
   };

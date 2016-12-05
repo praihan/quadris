@@ -80,4 +80,8 @@ namespace qd {
     std::cout << separatorString << std::endl;
   }
 
+  void TextDisplay::onGameEnded() {
+    std::cout << "GAME ENDED" << std::endl;
+  }
+
 }
