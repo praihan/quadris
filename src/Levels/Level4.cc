@@ -19,19 +19,25 @@ namespace qd {
     if (command.type() == Command::Type::DROP) {
       _consecutiveNoClears++;
     }
-
-    std::cout << _consecutiveNoClears << std::endl;
     
     BaseLevel::executeCommand(command);
 
     if (command.type() == Command::Type::DROP) {
       if (_consecutiveNoClears % 5 == 0 && _consecutiveNoClears) {
         int col = BOARD_WIDTH / 2;
-        int row = BOARD_HEIGHT - _getColHeight(col) + BOARD_EXTRA_SPACE - 1;
 
-        std::cout << "COL: " << col << "ROW: " << row << std::endl;
+        int colHeight = _getColHeight(col);
+        
+        if (colHeight == BOARD_HEIGHT) {
+          _board.gameEnded().notifyObservers();
+          return;
+        }
+
+        int row = BOARD_HEIGHT - colHeight + BOARD_EXTRA_SPACE - 1;
 
         _board.cells().at(row).at(col).blockType = Block::Type::BLOCK_SINGLE;
+
+        _checkBlocksCleared();
 
         _board.cellsUpdated().notifyObservers(
           _board.cells(),
