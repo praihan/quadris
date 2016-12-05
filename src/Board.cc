@@ -30,10 +30,6 @@ namespace qd {
       _hiScoreUpdatedSlot,
       std::bind(&Board::_hiScoreUpdatedObserver, this, std::placeholders::_1)
     );
-    gameEnded().addObserver(
-      _gameEndedSlot,
-      std::bind(&Board::_gameEndedObserver, this)
-    );
     _currentLevelNumber = initArgs.levelNumber;
   }
 
@@ -63,7 +59,11 @@ namespace qd {
       case Command::Type::RANDOM:
       case Command::Type::HINT:
         assert(_level != nullptr);
-        _level->executeCommand(command);
+        if (!_level->executeCommand(command)) {
+          if (command.type() == Command::Type::DROP) {
+            reset();
+          }
+        }
         break;
       case Command::Type::LEVELUP:
         for (auto i = 0u; i < command.multiplier(); ++i) {
@@ -192,8 +192,6 @@ namespace qd {
     levelChanged().notifyObservers(_currentLevelNumber);
     return true;
   }
-
-  void Board::_gameEndedObserver() { reset(); }
 
   void Board::_scoreUpdatedObserver(int score) { _scoreUpdated.notifyObservers(score); }
   void Board::_hiScoreUpdatedObserver(int score) { _hiScoreUpdated.notifyObservers(score); }

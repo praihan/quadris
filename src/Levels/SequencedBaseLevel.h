@@ -15,7 +15,6 @@ namespace qd {
 
       virtual Block::Type nextBlockType() override;
       void _setSequence(std::string sequenceFileName);
-      virtual void executeCommand(const Command& command) override;
       virtual bool _shouldGenerateHeavyBlocks() const override;
 
       virtual void _turnOffRandom(std::string filename) override;

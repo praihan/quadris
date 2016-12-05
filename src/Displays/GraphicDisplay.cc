@@ -25,6 +25,7 @@ namespace qd {
       { Block::Type::BLOCK_T, Xwindow::Magenta },
       { Block::Type::BLOCK_Z, Xwindow::Orange },
       { Block::Type::BLOCK_HINT, Xwindow::Black },
+      { Block::Type::BLOCK_SINGLE, Xwindow::Brown}
     };
   }
 

@@ -10,7 +10,7 @@ namespace qd {
   public:
     Level(Board&);
     virtual ~Level() = default;
-    virtual void executeCommand(const Command& command) = 0;
+    virtual bool executeCommand(const Command& command) = 0;
   protected:
     Board& _board;
   };

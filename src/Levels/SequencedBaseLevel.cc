@@ -42,8 +42,11 @@ namespace qd {
       return *_current++;
     }
     else {
-      int rand = std::rand() % (weightedBlockTypes.size());
-      return weightedBlockTypes[rand];
+      std::uniform_int_distribution<> dis(0, (weightedBlockTypes.size() - 1));
+    
+      auto index = dis(_board.randomEngine());
+    
+      return weightedBlockTypes[index];
     }
   }
 
@@ -67,10 +70,6 @@ namespace qd {
 
   bool SequencedBaseLevel::_shouldGenerateHeavyBlocks() const {
     return true;
-  }
-
-  void SequencedBaseLevel::executeCommand(const Command& command) {
-    BaseLevel::executeCommand(command);
   }
 
   void SequencedBaseLevel::_turnOffRandom(std::string filename) {

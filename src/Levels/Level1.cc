@@ -40,7 +40,4 @@ namespace qd {
     return weightedBlockTypes[index];
   }
 
-  void Level1::executeCommand(const Command& command) {
-    BaseLevel::executeCommand(command);
-  }
 }

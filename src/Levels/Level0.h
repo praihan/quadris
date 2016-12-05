@@ -13,7 +13,6 @@ namespace qd {
   protected:
     virtual int levelNumber() const override;
     virtual Block::Type nextBlockType() override;
-    virtual void executeCommand(const Command& command) override;
 
   public:
     static std::string sequenceFileName;

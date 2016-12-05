@@ -23,6 +23,7 @@ namespace qd {
 
   constexpr std::size_t BOARD_WIDTH = 11;
   constexpr std::size_t BOARD_HEIGHT = 15;
+  constexpr std::size_t BOARD_EXTRA_SPACE = 3;
 
   class Board {
   public:
@@ -108,16 +109,12 @@ namespace qd {
 
     ObserverSlot<int> _scoreUpdatedSlot;
     ObserverSlot<int> _hiScoreUpdatedSlot;
-    ObserverSlot<> _gameEndedSlot;
 
     int _currentLevelNumber;
     bool _started;
 
   private:
     bool _changeLevelTo(int levelNumber);
-
-    // Observes itself so it can reset once a game ends
-    void _gameEndedObserver();
 
     // All these do are forward the event from the Score to our own observers
     void _scoreUpdatedObserver(int score);

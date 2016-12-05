@@ -17,7 +17,8 @@ namespace qd {
       { Block::Type::BLOCK_S, 'S' },
       { Block::Type::BLOCK_T, 'T' },
       { Block::Type::BLOCK_Z, 'Z' },
-      { Block::Type::BLOCK_HINT, '?' }
+      { Block::Type::BLOCK_HINT, '?' },
+      { Block::Type::BLOCK_SINGLE, '*'}
     };
   }
 
@@ -77,6 +78,10 @@ namespace qd {
     }
 
     std::cout << separatorString << std::endl;
+  }
+
+  void TextDisplay::onGameEnded() {
+    std::cout << "GAME ENDED" << std::endl;
   }
 
 }

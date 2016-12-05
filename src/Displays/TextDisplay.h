@@ -11,8 +11,8 @@ namespace qd {
 
   public:
     virtual void outputDisplay() override;
+    virtual void onGameEnded() override;
   };
-
 }
 
 #endif

@@ -43,6 +43,7 @@ namespace qd {
       BLOCK_S,
       BLOCK_T,
       BLOCK_Z,
+      BLOCK_SINGLE,
       BLOCK_HINT
     };
     virtual Type type() const = 0;

@@ -57,9 +57,9 @@ namespace qd {
   BaseLevel::~BaseLevel() {
   }
 
-  void BaseLevel::executeCommand(const Command& command) {
+  bool BaseLevel::executeCommand(const Command& command) {
     if (command.multiplier() == 0) {
-      return;
+      return true;
     }
 
     auto& activeBlockPtr = _board.activeBlockPtr();
@@ -117,6 +117,7 @@ namespace qd {
         }
 
         notifyCellsUpdated();
+        return true;
       }
         break;
 
@@ -156,6 +157,7 @@ namespace qd {
         }
 
         notifyCellsUpdated();
+        return true;
       }
         break;
 
@@ -178,9 +180,11 @@ namespace qd {
           _checkBlocksCleared();
           notifyCellsUpdated();
           if (_checkGameEnd()) {
-            break;
+            return false;
           }
         }
+
+        return true;
       }
         break;
 
@@ -215,15 +219,19 @@ namespace qd {
         });
         _board.nextBlockPtr() = _createBlockFromType(blockType);
         _board.nextBlockGenerated().notifyObservers(blockType);
+
+        return true;
       }
         break;
 
       case Command::Type::NORANDOM: {
         _turnOffRandom(command.arguments()[0]);
+        return true;
       }
         break;
       case Command::Type::RANDOM: {
         _turnOnRandom();
+        return true;
       }
         break;
 
@@ -234,15 +242,15 @@ namespace qd {
         int bestVariance = INT_MAX;
         int initialHeight = activeBlockPtr->position.row;
 
-        for (int i = 0; i < 4; i++) {
-          bcpyl->position.col = activeBlockPtr->position.col;
-          while (_isValidBlock(*bcpyl)) {
+        for (int i = 0; i < 4; i++) { // Loop to check all rotations
+          bcpyl->position.col = activeBlockPtr->position.col; // Copy of active block to check validity
+          while (_isValidBlock(*bcpyl)) { // Move current block as left as possible
             bcpyl->position.col--;
           }
           bcpyl->position.col++;
 
-          while (_isValidBlock(*bcpyl)) {
-            while (_canMove(*bcpyl, BaseLevel::Direction::DOWN)) {
+          while (_isValidBlock(*bcpyl)) { // Move block right, while checking surface variance of new grid with dropped block
+            while (_canMove(*bcpyl, BaseLevel::Direction::DOWN)) {// Dropping current block
               bcpyl->position.row += 1;
             }
 
@@ -253,22 +261,20 @@ namespace qd {
 
             // Scan and compare
             int currVariance = 0;
-            for (std::size_t j = 0; j < BOARD_WIDTH - 1; j++) {
+            for (std::size_t j = 0; j < BOARD_WIDTH - 1; j++) { // Calculating variance in column height
               currVariance += abs(_getHeight(j) - _getHeight(j+1));
             }
 
-            for (std::size_t j = 0; j < BOARD_WIDTH; j++) {
+            for (std::size_t j = 0; j < BOARD_WIDTH; j++) { // Calculating hole contribution to variance
               currVariance += _ifHole(j);
             }
             // Update best
             if (currVariance < bestVariance) {
-              std::cout << currVariance << std::endl;
               bestVariance = currVariance;
               rotation = i;
               bestPos = bcpyl->position;
             }
             else if (currVariance == bestVariance && bcpyl->position.row > bestPos.row) {
-              std::cout << currVariance << std::endl;
               bestVariance = currVariance;
               rotation = i;
               bestPos = bcpyl->position;
@@ -279,25 +285,24 @@ namespace qd {
               _board.cells()[p.row][p.col].blockType = Block::Type::EMPTY;
             }
 
-            bcpyl->position.row = initialHeight;
-            bcpyl->position.col++;
+            bcpyl->position.row = initialHeight; // Resetting block to initial height
+            bcpyl->position.col++; // Moving right by one column
           }
         bcpyl->rotate(Block::Rotation::CLOCKWISE);
         }
-          
-        std::cout << "x = " << bestPos.col << ", y = " << bestPos.row << std::endl;
-        std::cout << "rotation = " << rotation << std::endl;
 
-        for (int i = 0; i < rotation; i++) {
+        for (int i = 0; i < rotation; i++) { // Configure to best position by rotating and setting position
           bcpyl->rotate(Block::Rotation::CLOCKWISE);
         }
 
         bcpyl->position = bestPos;
 
         _board.hintProvided().notifyObservers(std::vector<Position>(bcpyl->begin(), bcpyl->end()));
+        return true;
       }
         break;
       default:
+        return false;
         break;
     }
   }
@@ -406,20 +411,6 @@ namespace qd {
       destRow = std::move(sourceRow);
     }
 
-    // std::cout << "[ ";
-    // std::copy(
-    //   linesDiff.begin(), linesDiff.end(),
-    //   std::ostream_iterator<int>(std::cout, " ")
-    // );
-    // std::cout << "]" << std::endl;
-
-    // std::cout << "[ ";
-    // std::copy(
-    //   markedLinesDiff.begin(), markedLinesDiff.end(),
-    //   std::ostream_iterator<int>(std::cout, " ")
-    // );
-    // std::cout << "]" << std::endl;
-
     // Calculate the scoring based on what we have cleared
     auto sqr = [](int a) -> int { return a * a; };
 
@@ -461,7 +452,8 @@ namespace qd {
     return true;
   }
 
-  int BaseLevel::_getHeight(const int col) const {
+  // Returns height of empty cells of col from top to bottom
+  int BaseLevel::_getHeight(const int col) const { 
     int row=0;
     for (std::size_t i = 0; i < BOARD_HEIGHT+3; i++) {
       if (_board.cells()[i][col].blockType == Block::Type::EMPTY) {
@@ -474,7 +466,8 @@ namespace qd {
     return row;
   }
 
-  int BaseLevel::_ifHole(const int col) const {
+  // Returns variance adjustment for each hole in col
+  int BaseLevel::_ifHole(const int col) const { 
     int hole=0;
     std::size_t i = 0;
     for (; i < BOARD_HEIGHT+3; i++) {

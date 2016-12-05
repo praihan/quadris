@@ -28,12 +28,10 @@ namespace qd {
   }
 
   Block::Type Level2::nextBlockType() {
-    int rand = std::rand() % (weightedBlockTypes.size());
+    std::uniform_int_distribution<> dis(0, (weightedBlockTypes.size() - 1));
     
-    return weightedBlockTypes[rand];
-  }
-
-  void Level2::executeCommand(const Command& command) {
-    BaseLevel::executeCommand(command);
+    auto index = dis(_board.randomEngine());
+    
+    return weightedBlockTypes[index];
   }
 }

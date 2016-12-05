@@ -9,7 +9,7 @@ namespace qd {
     _useSequenceFile = false;
     _defaultInitialization();
   }
-
+  
   int Level3::levelNumber() const {
     return 3;
   }
