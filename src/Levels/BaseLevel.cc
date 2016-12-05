@@ -16,11 +16,10 @@
 #include "Blocks/BlockZ.h"
 #include "QdDefs.h"
 
-int abs(int n) {
-  if (n>=0 ) {
-    return n;
+namespace  {
+  int absolute_val(int n) {
+    return (n > 0) ? n : -n;
   }
-  return -n;
 }
 
 namespace qd {
@@ -262,7 +261,7 @@ namespace qd {
             // Scan and compare
             int currVariance = 0;
             for (std::size_t j = 0; j < BOARD_WIDTH - 1; j++) { // Calculating variance in column height
-              currVariance += abs(_getHeight(j) - _getHeight(j+1));
+              currVariance += absolute_val(_getHeight(j) - _getHeight(j+1));
             }
 
             for (std::size_t j = 0; j < BOARD_WIDTH; j++) { // Calculating hole contribution to variance
