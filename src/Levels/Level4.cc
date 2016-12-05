@@ -13,10 +13,6 @@ namespace qd {
     _board.linesCleared().addObserver(
       _linesClearedSlot, std::bind(&Level4::onLinesCleared, this, std::placeholders::_1)
     );
-
-    for (int i = BOARD_HEIGHT + 2; i >= 4; i--) {
-      _board.cells().at(i).at(5).blockType = Block::Type::BLOCK_SINGLE;
-    }
   }
 
   bool Level4::executeCommand(const Command& command) {
