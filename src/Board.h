@@ -23,6 +23,7 @@ namespace qd {
 
   constexpr std::size_t BOARD_WIDTH = 11;
   constexpr std::size_t BOARD_HEIGHT = 15;
+  constexpr std::size_t BOARD_EXTRA_SPACE = 3;
 
   class Board {
   public:

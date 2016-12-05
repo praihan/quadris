@@ -14,6 +14,9 @@ namespace qd {
     ObserverSlot<const std::vector<int>&> _linesClearedSlot;
 
     virtual int levelNumber() const override;
+    virtual void onLinesCleared(const std::vector<int>&);
+
+    int _getColHeight(int col);
   };
 
 }
