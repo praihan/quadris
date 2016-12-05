@@ -31,7 +31,7 @@ namespace qd {
     };
   }
 
-  SequencedBaseLevel::SequencedBaseLevel(Board &b) : BaseLevel(b) {
+  SequencedBaseLevel::SequencedBaseLevel(Board &b) : BaseLevel(b), _useSequenceFile{false} {
   }
 
   Block::Type SequencedBaseLevel::nextBlockType() {
